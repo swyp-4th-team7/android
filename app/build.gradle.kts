@@ -46,6 +46,13 @@ android {
     }
 }
 
+ktlint {
+    android = true
+    coloredOutput = true
+    verbose = true
+    outputToConsole = true
+}
+
 dependencies {
     // --- Android Core & Lifecycle ---
     implementation(libs.androidx.core.ktx)
