@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.ui.theme
+package com.swyp.firsttodo.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
