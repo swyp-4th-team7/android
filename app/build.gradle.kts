@@ -33,6 +33,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties["google.web.client.id"]}\"")
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -108,6 +112,8 @@ dependencies {
     // --- Google ---
     implementation(libs.googleid)
     implementation(libs.play.services.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
 
     // --- Testing ---
     testImplementation(libs.junit)
