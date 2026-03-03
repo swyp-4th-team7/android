@@ -26,6 +26,12 @@ class TokenAuthenticator
             route: Route?,
             response: Response,
         ): Request? {
+            if (responseCount(response) >= 2) {
+                Timber.w("Auth retry limit reached. Stop reissuing.")
+                runBlocking { authManager.logout() }
+                return null
+            }
+
             val requestUrl = response.request.url.toString()
 
             if (requestUrl.contains(REISSUE_END_POINT)) {
@@ -71,6 +77,16 @@ class TokenAuthenticator
             return response.request.newBuilder()
                 .header(AUTHORIZATION, "$BEARER ${newTokens.accessToken}")
                 .build()
+        }
+
+        private fun responseCount(response: Response): Int {
+            var count = 1
+            var prior = response.priorResponse
+            while (prior != null) {
+                count++
+                prior = prior.priorResponse
+            }
+            return count
         }
 
         companion object {
