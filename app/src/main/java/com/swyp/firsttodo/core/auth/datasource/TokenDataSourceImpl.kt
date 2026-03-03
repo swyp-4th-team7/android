@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class TokenDataSourceImpl
@@ -16,9 +15,32 @@ class TokenDataSourceImpl
     ) : TokenDataSource {
         private val tokenPrefs = dataStore.data.distinctUntilChanged()
 
-        override suspend fun getAccessToken(): String? = tokenPrefs.map { it[ACCESS_TOKEN_KEY] }.firstOrNull()
+        @Volatile
+        private var cachedAccessToken: String? = null
 
-        override suspend fun getRefreshToken(): String? = tokenPrefs.map { it[REFRESH_TOKEN_KEY] }.firstOrNull()
+        @Volatile
+        private var cachedRefreshToken: String? = null
+
+        private suspend fun ensureInitialized() {
+            val prefs = tokenPrefs.firstOrNull()
+
+            cachedAccessToken = prefs?.get(ACCESS_TOKEN_KEY)
+            cachedRefreshToken = prefs?.get(REFRESH_TOKEN_KEY)
+        }
+
+        override suspend fun getAccessToken(): String? {
+            if (cachedAccessToken == null) {
+                ensureInitialized()
+            }
+            return cachedAccessToken
+        }
+
+        override suspend fun getRefreshToken(): String? {
+            if (cachedRefreshToken == null) {
+                ensureInitialized()
+            }
+            return cachedRefreshToken
+        }
 
         override suspend fun saveTokens(
             accessToken: String,
@@ -28,6 +50,8 @@ class TokenDataSourceImpl
                 prefs[ACCESS_TOKEN_KEY] = accessToken
                 prefs[REFRESH_TOKEN_KEY] = refreshToken
             }
+            cachedAccessToken = accessToken
+            cachedRefreshToken = refreshToken
         }
 
         override suspend fun clearTokens() {
@@ -35,6 +59,8 @@ class TokenDataSourceImpl
                 prefs.remove(ACCESS_TOKEN_KEY)
                 prefs.remove(REFRESH_TOKEN_KEY)
             }
+            cachedAccessToken = null
+            cachedRefreshToken = null
         }
 
         companion object {
