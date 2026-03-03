@@ -4,7 +4,7 @@ sealed interface Async<out T> {
     data object Empty : Async<Nothing>
 
     data class Loading<out T>(
-        val data: T?,
+        val data: T? = null,
     ) : Async<T>
 
     data class Success<out T>(
