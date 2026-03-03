@@ -30,7 +30,7 @@ class TokenAuthenticator
 
             if (requestUrl.contains(REISSUE_END_POINT)) {
                 Timber.w("Refresh token expired. Need login.")
-                authManager.logout()
+                runBlocking { authManager.logout() }
                 return null
             }
 
@@ -48,7 +48,7 @@ class TokenAuthenticator
 
             if (refreshToken.isNullOrBlank()) {
                 Timber.w("Cannot find refreshToken.")
-                authManager.logout()
+                runBlocking { authManager.logout() }
                 return null
             }
 
@@ -60,7 +60,7 @@ class TokenAuthenticator
 
             val newTokens = reissueResult.getOrElse {
                 Timber.e(it, "Reissue fail.")
-                authManager.logout()
+                runBlocking { authManager.logout() }
                 return null
             }
 
