@@ -14,10 +14,19 @@ class UserRepositoryImpl
         private val apiResponseHandler: ApiResponseHandler,
         private val userDataSource: UserDataSource,
     ) : UserRepository {
-        override suspend fun logout(): Result<Unit> =
-            apiResponseHandler.safeApiCall {
+        override suspend fun logout(): Result<Unit> {
+            val remoteResult = apiResponseHandler.safeApiCall {
                 userDataSource.deleteLogout()
-            }.onSuccess {
-                suspendRunCatching { authManager.logout() }
             }
+
+            val localResult = suspendRunCatching { authManager.logout() }
+
+            return if (remoteResult.isSuccess && localResult.isSuccess) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    remoteResult.exceptionOrNull() ?: localResult.exceptionOrNull() ?: Exception("Both fail"),
+                )
+            }
+        }
     }
