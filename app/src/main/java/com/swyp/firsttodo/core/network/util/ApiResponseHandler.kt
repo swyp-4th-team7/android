@@ -37,7 +37,7 @@ class ApiResponseHandler
             if (code in 20000..20499) {
                 if (response.data == null) {
                     @Suppress("UNCHECKED_CAST")
-                    return (Unit as T) ?: throw ApiError.ServerError("Success code but data is null")
+                    return Unit as? T ?: throw ApiError.ServerError("Success code but data is null")
                 }
                 return response.data
             }
