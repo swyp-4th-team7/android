@@ -28,16 +28,14 @@ class TokenAuthenticator
         ): Request? {
             if (responseCount(response) >= 2) {
                 Timber.w("Auth retry limit reached. Stop reissuing.")
-                runBlocking { authManager.logout() }
-                return null
+                return abortWithLogout()
             }
 
             val requestUrl = response.request.url.toString()
 
             if (requestUrl.contains(REISSUE_END_POINT)) {
                 Timber.w("Refresh token expired. Need login.")
-                runBlocking { authManager.logout() }
-                return null
+                return abortWithLogout()
             }
 
             // 먼저 발생한 요청이 이미 토큰 갱신 완료했다면 리이슈 하지 않음
@@ -54,8 +52,7 @@ class TokenAuthenticator
 
             if (refreshToken.isNullOrBlank()) {
                 Timber.w("Cannot find refreshToken.")
-                runBlocking { authManager.logout() }
-                return null
+                return abortWithLogout()
             }
 
             val reissueResult = runBlocking {
@@ -66,8 +63,7 @@ class TokenAuthenticator
 
             val newTokens = reissueResult.getOrElse {
                 Timber.e(it, "Reissue fail.")
-                runBlocking { authManager.logout() }
-                return null
+                return abortWithLogout()
             }
 
             runBlocking {
@@ -77,6 +73,11 @@ class TokenAuthenticator
             return response.request.newBuilder()
                 .header(AUTHORIZATION, "$BEARER ${newTokens.accessToken}")
                 .build()
+        }
+
+        private fun abortWithLogout(): Nothing? {
+            runBlocking { authManager.logout() }
+            return null
         }
 
         private fun responseCount(response: Response): Int {
