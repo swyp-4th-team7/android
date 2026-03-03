@@ -34,6 +34,7 @@ android {
 
     buildTypes {
         debug {
+            buildConfigField("String", "BASE_URL", properties["base.url"].toString())
             buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties["google.web.client.id"]}\"")
         }
 
