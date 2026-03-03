@@ -1,8 +1,7 @@
 language: ko-KR
 
-tone_instructions: "한국어 존댓말로, 안드로이드 최신 권장 사항(Modern Android Development)에 기반하여 리뷰해줘."
-
 reviews:
+    tone_instructions: "한국어 존댓말로, 안드로이드 최신 권장 사항(Modern Android Development)에 기반하여 리뷰해줘."
     high_level_summary: true
     review_status: true
     poem: true
