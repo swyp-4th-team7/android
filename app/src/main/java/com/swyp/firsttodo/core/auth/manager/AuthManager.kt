@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,8 +36,8 @@ class AuthManager
             _isLoggedIn.update { hasTokens }
         }
 
-        fun logout() {
-            runBlocking { tokenDataSource.clearTokens() }
+        suspend fun logout() {
+            tokenDataSource.clearTokens()
             _isLoggedIn.update { false }
             _sideEffect.trySend(AuthSideEffect.NavigateToLogin)
         }
