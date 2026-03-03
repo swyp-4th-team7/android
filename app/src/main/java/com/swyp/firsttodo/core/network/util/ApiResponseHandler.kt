@@ -35,7 +35,11 @@ class ApiResponseHandler
             val message = response.message
 
             if (code in 20000..20499) {
-                return response.data ?: throw ApiError.ServerError("Success code but data is null")
+                if (response.data == null) {
+                    @Suppress("UNCHECKED_CAST")
+                    return (Unit as T) ?: throw ApiError.ServerError("Success code but data is null")
+                }
+                return response.data
             }
 
             throw when (code) {
