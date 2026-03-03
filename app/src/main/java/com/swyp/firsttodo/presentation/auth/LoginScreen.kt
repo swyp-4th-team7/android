@@ -2,6 +2,7 @@ package com.swyp.firsttodo.presentation.auth
 
 import android.app.Activity
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +58,7 @@ fun LoginRoute(
     LoginScreen(
         uiState = uiState,
         onGoogleLoginClick = viewModel::onGoogleLoginClick,
+        onLogoutClick = viewModel::onLogoutClick,
         modifier = modifier,
     )
 }
@@ -65,17 +67,30 @@ fun LoginRoute(
 fun LoginScreen(
     uiState: LoginUiState,
     onGoogleLoginClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        text = "구글 로그인",
-        modifier = modifier
-            .padding(100.dp)
-            .clickable(onClick = onGoogleLoginClick),
-        style = TextStyle(
-            fontSize = 40.sp,
-        ),
-    )
+    Column(modifier = modifier) {
+        Text(
+            text = "구글 로그인",
+            modifier = Modifier
+                .padding(100.dp)
+                .clickable(onClick = onGoogleLoginClick),
+            style = TextStyle(
+                fontSize = 40.sp,
+            ),
+        )
+
+        Text(
+            text = "로그아웃",
+            modifier = Modifier
+                .padding(100.dp)
+                .clickable(onClick = onLogoutClick),
+            style = TextStyle(
+                fontSize = 40.sp,
+            ),
+        )
+    }
 }
 
 @Preview
@@ -85,6 +100,7 @@ private fun LoginScreenPreview() {
         LoginScreen(
             uiState = LoginUiState(),
             onGoogleLoginClick = {},
+            onLogoutClick = {},
         )
     }
 }
