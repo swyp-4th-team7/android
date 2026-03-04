@@ -26,9 +26,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        viewModel // ViewModel 생성 트리거 (init 블록에서 앱 초기화 수행)
         askNotificationPermission()
         checkGooglePlayServices()
-        viewModel.saveNotificationToken()
 
         setContent {
             val navController = rememberNavController()
