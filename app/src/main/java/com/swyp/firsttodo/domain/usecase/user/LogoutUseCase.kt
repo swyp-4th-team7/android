@@ -1,0 +1,30 @@
+package com.swyp.firsttodo.domain.usecase.user
+
+import com.swyp.firsttodo.core.notification.NotificationTokenProvider
+import com.swyp.firsttodo.data.repository.NotificationRepository
+import com.swyp.firsttodo.data.repository.UserRepository
+import timber.log.Timber
+import javax.inject.Inject
+
+class LogoutUseCase
+    @Inject
+    constructor(
+        private val userRepository: UserRepository,
+        private val notificationRepository: NotificationRepository,
+        private val notificationTokenProvider: NotificationTokenProvider,
+    ) {
+        suspend operator fun invoke(): Result<Unit> {
+            val result = userRepository.logout()
+
+            result.onSuccess {
+                notificationTokenProvider.getToken()?.let { token ->
+                    notificationRepository.deleteNotificationToken(token)
+                        .onFailure { t ->
+                            Timber.e(t, "Logout success but notification token delete failed.")
+                        }
+                }
+            }
+
+            return result
+        }
+    }
