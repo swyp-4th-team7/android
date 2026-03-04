@@ -14,17 +14,12 @@ class LogoutUseCase
         private val notificationTokenProvider: NotificationTokenProvider,
     ) {
         suspend operator fun invoke(): Result<Unit> {
-            val result = userRepository.logout()
-
-            result.onSuccess {
-                notificationTokenProvider.getToken()?.let { token ->
-                    notificationRepository.deleteNotificationToken(token)
-                        .onFailure { t ->
-                            Timber.e(t, "Logout success but notification token delete failed.")
-                        }
-                }
+            notificationTokenProvider.getToken()?.let { token ->
+                notificationRepository.deleteNotificationToken(token)
+                    .onFailure { t ->
+                        Timber.e(t, "Notification token delete failed.")
+                    }
             }
-
-            return result
+            return userRepository.logout()
         }
     }
