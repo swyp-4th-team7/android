@@ -20,7 +20,7 @@ class LoginUseCase
         ): Result<Boolean> {
             val loginResult = authRepository.socialLogin(socialType, token)
 
-            loginResult.onSuccess {
+            if (loginResult.isSuccess) {
                 notificationTokenProvider.getToken()?.let { notificationToken ->
                     notificationRepository.saveNotificationToken(notificationToken)
                         .onFailure { t ->
