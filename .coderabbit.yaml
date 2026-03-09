@@ -31,24 +31,25 @@ reviews:
 
               ## 2. 아키텍처 패턴 — UDF 기반 MVVM
 
-              본 프로젝트는 **UDF(단방향 데이터 흐름) 기반 MVVM** 패턴을 사용해.
-              Google 권장 아키텍처(UI Layer → Domain Layer ← Data Layer)의 의존성 방향을 철저히 준수해야 해.
+              본 프로젝트는 **Google 권장 아키텍처**와 **UDF(단방향 데이터 흐름) 기반 MVVM** 패턴을 사용해.
+              레이어 구성은 `UI Layer → Data Layer` 를 기본으로 하며, 비즈니스 로직이 복잡한 경우 `Domain Layer`를 선택적으로 추가해.
+              의존성 방향은 `UI Layer → (Domain Layer →) Data Layer` 를 준수해야 해.
 
               ### 2-1. 패키지 구조
               feature 하위 패키지는 반드시 다음 구조를 따라야 해:
-              ```
+```
               feature/
                 ㄴ component/
                 ㄴ navigation/
                 ㄴ ${Feature}Contract.kt
                 ㄴ ${Feature}Screen.kt
                 ㄴ ${Feature}ViewModel.kt
-              ```
+```
 
               ### 2-2. Contract (`${Feature}Contract.kt`)
               - `UiState`는 반드시 `data class` + `val` 프로퍼티로 구성되어야 해.
               - ViewModel에서 **비동기로 로드하는 데이터**는 반드시 `Async<T>`로 래핑하고, 초기값은 `Async.Init`이어야 해.
-              ```kotlin
+```kotlin
                 sealed interface Async<out T> {
                     data object Empty : Async<Nothing>
                     data class Loading<out T>(val data: T?) : Async<T>
@@ -56,7 +57,7 @@ reviews:
                     data class Failure(val message: String) : Async<Nothing>
                     data object Init : Async<Nothing>
                 }
-              ```
+```
               - `UiEffect`는 `sealed interface`로 정의하며, 네이밍 규칙은 다음을 따라야 해:
                 - 모달: `Show{이름(optional)_타입}` (e.g. `ShowEditDialog`, `ShowBottomSheet`)
                 - 특정 화면 이동: `NavigateTo{화면}`
@@ -67,7 +68,7 @@ reviews:
               ### 2-3. ViewModel
               - 모든 ViewModel은 반드시 `BaseViewModel<S : UiState, E : UiEffect>`를 상속받아야 해.
               - `BaseViewModel`의 구조:
-              ```kotlin
+```kotlin
                 abstract class BaseViewModel<S : UiState, E : UiEffect>(
                     initialState: S,
                 ) : ViewModel() {
@@ -87,7 +88,7 @@ reviews:
                         }
                     }
                 }
-              ```
+```
               - `UiState` 업데이트는 반드시 `updateState { copy(...) }` 패턴을 사용해야 해. 직접 `MutableStateFlow`의 value를 수정하는 것을 지적해줘.
               - `UiEffect` 발송은 반드시 `sendEffect()`를 사용해야 해.
               - `@HiltViewModel` 및 생성자 `@Inject` 어노테이션이 올바르게 적용되어 있는지 확인해줘.
@@ -103,7 +104,7 @@ reviews:
               - Screen이 Route 없이 직접 ViewModel을 참조하거나, Screen 컴포저블 내부에서 Flow를 직접 수집하면 지적해줘.
               - `uiState`는 반드시 `collectAsStateWithLifecycle()`로 수집해야 해. `collectAsState()` 사용을 지적해줘.
               - **SideEffect 처리**는 반드시 아래 `HandleSideEffects` 함수를 사용해야 해. 직접 `LaunchedEffect`로 Flow를 수집하는 방식을 지적해줘.
-              ```kotlin
+```kotlin
                 @Composable
                 fun <T> HandleSideEffects(
                     sideEffectFlow: Flow<T>,
@@ -119,7 +120,7 @@ reviews:
                         }
                     }
                 }
-              ```
+```
 
               ### 2-5. Navigation (`navigation/` 패키지)
               - `navigation/` 패키지에는 해당 feature의 화면에 대한 navigation 로직만 작성해야 해.
@@ -131,26 +132,38 @@ reviews:
 
               ---
 
-              ## 3. Clean Architecture — 계층 간 의존성
+              ## 3. Google 권장 아키텍처 — 레이어 간 의존성
 
-              - **의존성 방향**: `UI Layer → Domain Layer ← Data Layer` 방향을 반드시 준수해야 해.
-              - **Domain 순수성**: `domain` 패키지는 `android.*`, `R` 클래스 등 안드로이드 의존성을 절대 가져서는 안 돼. 순수 Kotlin 코드인지 엄격히 확인해줘.
-              - **DTO 노출 금지**: Data 레이어의 DTO(`@Entity`, `@SerializedName` 등)가 UI 또는 Domain 레이어로 직접 노출되면 안 돼. 반드시 Mapper를 통해 변환해야 해.
+              본 프로젝트는 Google 권장 아키텍처를 따르며, 레이어 구성은 다음과 같아.
+
+              ### 3-1. 레이어 구성
+              - **UI Layer**: 화면 렌더링 및 사용자 이벤트 처리를 담당해. ViewModel을 통해 Data Layer 또는 Domain Layer에 접근해.
+              - **Domain Layer (선택)**: 비즈니스 로직이 복잡하거나 여러 Data Source를 조합해야 할 때만 도입해. 도입 시 순수 Kotlin 코드로만 구성되어야 하며, `android.*`나 `R` 클래스 등 안드로이드 의존성을 가져서는 안 돼.
+              - **Data Layer**: 앱의 데이터를 생성·저장·변경하는 역할을 담당해. Repository 패턴을 통해 데이터 소스(네트워크, 로컬 DB 등)를 추상화해야 해.
+
+              ### 3-2. 의존성 방향 규칙
+              - 의존성 방향: `UI Layer → (Domain Layer →) Data Layer`
+              - UI Layer가 Data Layer를 직접 참조하는 것은, Domain Layer가 없는 경우에만 허용해.
+              - Data Layer의 DTO(`@Entity`, `@SerializedName` 등)가 UI Layer 또는 Domain Layer로 직접 노출되면 안 돼. 반드시 Mapper를 통해 변환해야 해.
+
+              ### 3-3. Domain Layer 도입 시 추가 규칙
+              Domain Layer를 사용하는 경우 아래 규칙을 추가로 확인해줘.
               - **UseCase 규칙**: UseCase는 단일 책임(SRP)만 수행해야 하며, 클래스 이름은 동사로 시작해야 해 (예: `FetchUserUseCase`).
               - **Repository 분리**: Repository는 Domain의 Interface와 Data의 구현체(`Impl`)로 분리되어 있는지 확인해줘.
+              - **Domain 순수성**: `domain` 패키지 내 코드는 순수 Kotlin으로만 작성되어야 해. 안드로이드 의존성이 포함되면 지적해줘.
 
               ---
 
               ## 4. Data Layer — 데이터 흐름 및 SafeApiCall
 
               데이터 흐름은 반드시 다음 방향을 따라야 해:
-              ```
+```
               Service (BaseResponse<T>)
                 👆
               DataSource (BaseResponse<T>)
                 👆
               Repository (Result<T>)
-              ```
+```
 
               ### 4-1. 각 계층 역할
               - **Service**: API 호출 로직 추상화만 담당해.
