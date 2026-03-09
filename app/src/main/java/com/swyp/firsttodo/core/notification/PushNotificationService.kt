@@ -44,7 +44,6 @@ class PushNotificationService : FirebaseMessagingService() {
         if (isLoggedIn) {
             serviceScope.launch {
                 notificationRepository.saveNotificationToken(token)
-                    .onSuccess { Timber.d("FCM token saved: $token") }
                     .onFailure { Timber.e(it, "Failed to save FCM token") }
             }
         }
