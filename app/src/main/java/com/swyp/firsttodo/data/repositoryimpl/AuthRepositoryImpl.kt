@@ -3,10 +3,10 @@ package com.swyp.firsttodo.data.repositoryimpl
 import com.swyp.firsttodo.core.auth.manager.AuthManager
 import com.swyp.firsttodo.core.common.util.suspendRunCatching
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
-import com.swyp.firsttodo.data.model.type.SocialType
 import com.swyp.firsttodo.data.remote.datasource.AuthDataSource
 import com.swyp.firsttodo.data.remote.dto.request.auth.SocialLoginRequestDto
 import com.swyp.firsttodo.data.repository.AuthRepository
+import com.swyp.firsttodo.domain.model.SocialType
 import javax.inject.Inject
 
 class AuthRepositoryImpl

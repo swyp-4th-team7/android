@@ -1,8 +1,10 @@
 package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.repository.AuthRepository
+import com.swyp.firsttodo.data.repository.NotificationRepository
 import com.swyp.firsttodo.data.repository.UserRepository
 import com.swyp.firsttodo.data.repositoryimpl.AuthRepositoryImpl
+import com.swyp.firsttodo.data.repositoryimpl.NotificationRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.UserRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -19,5 +21,11 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bidnsUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+    abstract fun bindsUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsNotificationRepository(
+        notificationRepositoryImpl: NotificationRepositoryImpl,
+    ): NotificationRepository
 }

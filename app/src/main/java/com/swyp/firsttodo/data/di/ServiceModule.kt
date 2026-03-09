@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.remote.service.AuthService
+import com.swyp.firsttodo.data.remote.service.NotificationService
 import com.swyp.firsttodo.data.remote.service.UserService
 import dagger.Module
 import dagger.Provides
@@ -23,4 +24,10 @@ object ServiceModule {
     fun provideUserService(
         @WithToken retrofit: Retrofit,
     ): UserService = retrofit.create(UserService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(
+        @WithToken retrofit: Retrofit,
+    ): NotificationService = retrofit.create(NotificationService::class.java)
 }

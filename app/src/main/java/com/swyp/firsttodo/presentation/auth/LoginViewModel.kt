@@ -3,9 +3,9 @@ package com.swyp.firsttodo.presentation.auth
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
-import com.swyp.firsttodo.data.model.type.SocialType
-import com.swyp.firsttodo.data.repository.AuthRepository
-import com.swyp.firsttodo.data.repository.UserRepository
+import com.swyp.firsttodo.domain.model.SocialType
+import com.swyp.firsttodo.domain.usecase.auth.LoginUseCase
+import com.swyp.firsttodo.domain.usecase.user.LogoutUseCase
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,8 +16,8 @@ import javax.inject.Inject
 class LoginViewModel
     @Inject
     constructor(
-        private val authRepository: AuthRepository,
-        private val userRepository: UserRepository,
+        private val loginUseCase: LoginUseCase,
+        private val logoutUseCase: LogoutUseCase,
     ) :
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
         fun onGoogleLoginClick() {
@@ -59,7 +59,7 @@ class LoginViewModel
             updateState { copy(loginState = Async.Loading()) }
 
             viewModelScope.launch {
-                authRepository.socialLogin(
+                loginUseCase(
                     socialType = type,
                     token = token,
                 ).onSuccess {
@@ -75,7 +75,7 @@ class LoginViewModel
 
         fun onLogoutClick() {
             viewModelScope.launch {
-                userRepository.logout()
+                logoutUseCase()
                     .onSuccess {
                         sendEffect(LoginSideEffect.ShowToast("로그아웃 성공!"))
                     }.onFailure {

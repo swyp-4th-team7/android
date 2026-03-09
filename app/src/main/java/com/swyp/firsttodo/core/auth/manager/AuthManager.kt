@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,12 +35,14 @@ class AuthManager
                     !tokenDataSource.getRefreshToken().isNullOrBlank()
 
             _isLoggedIn.update { hasTokens }
+            Timber.d("🔓 Login Status = $hasTokens")
         }
 
         suspend fun logout() {
             tokenDataSource.clearTokens()
             _isLoggedIn.update { false }
             _sideEffect.trySend(AuthSideEffect.NavigateToLogin)
+            Timber.d("🔓 Logout")
         }
 
         suspend fun onLoginSuccess(
@@ -48,5 +51,6 @@ class AuthManager
         ) {
             tokenDataSource.saveTokens(accessToken, refreshToken)
             _isLoggedIn.update { true }
+            Timber.d("🔓 Login")
         }
     }
