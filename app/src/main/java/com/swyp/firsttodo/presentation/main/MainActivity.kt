@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
             ) {
                 Timber.d("User accept notification permission")
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // TODO: 권한 허용 재요청 (UX 고도화)
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }

@@ -1,9 +1,9 @@
 package com.swyp.firsttodo.domain.usecase.auth
 
 import com.swyp.firsttodo.core.notification.NotificationTokenProvider
-import com.swyp.firsttodo.data.model.type.SocialType
 import com.swyp.firsttodo.data.repository.AuthRepository
 import com.swyp.firsttodo.data.repository.NotificationRepository
+import com.swyp.firsttodo.domain.model.SocialType
 import timber.log.Timber
 import javax.inject.Inject
 

@@ -3,7 +3,7 @@ package com.swyp.firsttodo.presentation.auth
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
-import com.swyp.firsttodo.data.model.type.SocialType
+import com.swyp.firsttodo.domain.model.SocialType
 import com.swyp.firsttodo.domain.usecase.auth.LoginUseCase
 import com.swyp.firsttodo.domain.usecase.user.LogoutUseCase
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLoginResult
