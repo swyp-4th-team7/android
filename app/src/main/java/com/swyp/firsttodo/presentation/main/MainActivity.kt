@@ -10,10 +10,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.swyp.firsttodo.core.designsystem.theme.HeabomTheme
+import com.swyp.firsttodo.presentation.main.navigation.rememberHeabomNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import kotlin.getValue
@@ -31,11 +31,11 @@ class MainActivity : ComponentActivity() {
         checkGooglePlayServices()
 
         setContent {
-            val navController = rememberNavController()
+            val mainNavigator = rememberHeabomNavigator()
 
             HeabomTheme {
                 MainScreen(
-                    navController = navController,
+                    navigator = mainNavigator,
                 )
             }
         }
