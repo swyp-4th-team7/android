@@ -37,19 +37,19 @@ reviews:
 
               ### 2-1. 패키지 구조
               feature 하위 패키지는 반드시 다음 구조를 따라야 해:
-```
+              ```
               feature/
                 ㄴ component/
                 ㄴ navigation/
                 ㄴ ${Feature}Contract.kt
                 ㄴ ${Feature}Screen.kt
                 ㄴ ${Feature}ViewModel.kt
-```
+              ```
 
               ### 2-2. Contract (`${Feature}Contract.kt`)
               - `UiState`는 반드시 `data class` + `val` 프로퍼티로 구성되어야 해.
               - ViewModel에서 **비동기로 로드하는 데이터**는 반드시 `Async<T>`로 래핑하고, 초기값은 `Async.Init`이어야 해.
-```kotlin
+              ```
                 sealed interface Async<out T> {
                     data object Empty : Async<Nothing>
                     data class Loading<out T>(val data: T?) : Async<T>
@@ -57,7 +57,7 @@ reviews:
                     data class Failure(val message: String) : Async<Nothing>
                     data object Init : Async<Nothing>
                 }
-```
+              ```
               - `UiEffect`는 `sealed interface`로 정의하며, 네이밍 규칙은 다음을 따라야 해:
                 - 모달: `Show{이름(optional)_타입}` (e.g. `ShowEditDialog`, `ShowBottomSheet`)
                 - 특정 화면 이동: `NavigateTo{화면}`
@@ -68,7 +68,7 @@ reviews:
               ### 2-3. ViewModel
               - 모든 ViewModel은 반드시 `BaseViewModel<S : UiState, E : UiEffect>`를 상속받아야 해.
               - `BaseViewModel`의 구조:
-```kotlin
+              ```
                 abstract class BaseViewModel<S : UiState, E : UiEffect>(
                     initialState: S,
                 ) : ViewModel() {
@@ -88,7 +88,7 @@ reviews:
                         }
                     }
                 }
-```
+              ```
               - `UiState` 업데이트는 반드시 `updateState { copy(...) }` 패턴을 사용해야 해. 직접 `MutableStateFlow`의 value를 수정하는 것을 지적해줘.
               - `UiEffect` 발송은 반드시 `sendEffect()`를 사용해야 해.
               - `@HiltViewModel` 및 생성자 `@Inject` 어노테이션이 올바르게 적용되어 있는지 확인해줘.
@@ -104,7 +104,7 @@ reviews:
               - Screen이 Route 없이 직접 ViewModel을 참조하거나, Screen 컴포저블 내부에서 Flow를 직접 수집하면 지적해줘.
               - `uiState`는 반드시 `collectAsStateWithLifecycle()`로 수집해야 해. `collectAsState()` 사용을 지적해줘.
               - **SideEffect 처리**는 반드시 아래 `HandleSideEffects` 함수를 사용해야 해. 직접 `LaunchedEffect`로 Flow를 수집하는 방식을 지적해줘.
-```kotlin
+              ```
                 @Composable
                 fun <T> HandleSideEffects(
                     sideEffectFlow: Flow<T>,
@@ -120,7 +120,7 @@ reviews:
                         }
                     }
                 }
-```
+              ```
 
               ### 2-5. Navigation (`navigation/` 패키지)
               - `navigation/` 패키지에는 해당 feature의 화면에 대한 navigation 로직만 작성해야 해.
@@ -157,13 +157,13 @@ reviews:
               ## 4. Data Layer — 데이터 흐름 및 SafeApiCall
 
               데이터 흐름은 반드시 다음 방향을 따라야 해:
-```
+              ```
               Service (BaseResponse<T>)
                 👆
               DataSource (BaseResponse<T>)
                 👆
               Repository (Result<T>)
-```
+              ```
 
               ### 4-1. 각 계층 역할
               - **Service**: API 호출 로직 추상화만 담당해.
