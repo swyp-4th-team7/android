@@ -50,7 +50,7 @@ data class HeabomTypography(
     val placeholder: TextStyle,
     val caption: TextStyle,
     val helperText: TextStyle,
-    val buttonNavbar: TextStyle,
+    val bottomNavbar: TextStyle,
 )
 
 val defaultHeabomTypography = HeabomTypography(
@@ -68,7 +68,7 @@ val defaultHeabomTypography = HeabomTypography(
     placeholder = MediumStyle.copy(fontSize = 14.sp),
     caption = BoldStyle.copy(fontSize = 12.sp),
     helperText = MediumStyle.copy(fontSize = 12.sp),
-    buttonNavbar = SemiBoldStyle.copy(fontSize = 12.sp),
+    bottomNavbar = SemiBoldStyle.copy(fontSize = 12.sp),
 )
 
 val LocalHeabomTypographyProvider = staticCompositionLocalOf { defaultHeabomTypography }
