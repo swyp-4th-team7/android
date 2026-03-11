@@ -30,6 +30,18 @@ private val Yellow400 = Color(0xFFFEC84B)
 private val Yellow500 = Color(0xFFFDB022)
 private val Yellow600 = Color(0xFFF79009)
 
+// Primary.Orange
+private val Orange25 = Color(0xFFFFF6F2)
+private val Orange50 = Color(0xFFFFF2EC)
+private val Orange100 = Color(0xFFFFEAE0)
+private val Orange200 = Color(0xFFFFD9C9)
+private val Orange300 = Color(0xFFFFB39B)
+private val Orange400 = Color(0xFFFF8153)
+private val Orange500 = Color(0xFFFF6A3A)
+private val Orange600 = Color(0xFFD94920)
+private val Orange700 = Color(0xFFB73A19)
+private val Orange800 = Color(0xFF7D240C)
+
 // Secondary.Green
 private val Green25 = Color(0xFFFAFDF7)
 private val Green50 = Color(0xFFF1F9E8)
@@ -73,6 +85,17 @@ data class HeabomColors(
     val yellow400: Color,
     val yellow500: Color,
     val yellow600: Color,
+    // Primary.Orange
+    val orange25: Color,
+    val orange50: Color,
+    val orange100: Color,
+    val orange200: Color,
+    val orange300: Color,
+    val orange400: Color,
+    val orange500: Color,
+    val orange600: Color,
+    val orange700: Color,
+    val orange800: Color,
     // Secondary.Green
     val green25: Color,
     val green50: Color,
@@ -115,6 +138,17 @@ val defaultHeabomColors = HeabomColors(
     yellow400 = Yellow400,
     yellow500 = Yellow500,
     yellow600 = Yellow600,
+    // Primary.Orange
+    orange25 = Orange25,
+    orange50 = Orange50,
+    orange100 = Orange100,
+    orange200 = Orange200,
+    orange300 = Orange300,
+    orange400 = Orange400,
+    orange500 = Orange500,
+    orange600 = Orange600,
+    orange700 = Orange700,
+    orange800 = Orange800,
     // Secondary.Green
     green25 = Green25,
     green50 = Green50,
