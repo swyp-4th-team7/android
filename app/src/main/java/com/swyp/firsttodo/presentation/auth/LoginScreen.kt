@@ -19,7 +19,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.common.extension.toast
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
-import com.swyp.firsttodo.core.designsystem.theme.FirstTodoTheme
+import com.swyp.firsttodo.core.designsystem.theme.HeabomTheme
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLauncher
 import kotlinx.coroutines.launch
 
@@ -96,7 +96,7 @@ fun LoginScreen(
 @Preview
 @Composable
 private fun LoginScreenPreview() {
-    FirstTodoTheme {
+    HeabomTheme {
         LoginScreen(
             uiState = LoginUiState(),
             onGoogleLoginClick = {},
