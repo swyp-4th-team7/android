@@ -47,7 +47,7 @@ class MainNavigator(
 }
 
 @Composable
-fun rememberHeabomNavigator(navController: NavHostController = rememberNavController()): MainNavigator =
+fun rememberHaebomNavigator(navController: NavHostController = rememberNavController()): MainNavigator =
     remember(navController) {
         MainNavigator(navController)
     }

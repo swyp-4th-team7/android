@@ -27,7 +27,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.swyp.firsttodo.core.designsystem.theme.HeabomTheme
+import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
 fun MainBottomBar(
@@ -65,7 +65,7 @@ private fun BottomBarItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colors = HeabomTheme.colors
+    val colors = HaebomTheme.colors
     val (itemColor, iconRes) = remember(selected, colors) {
         when (selected) {
             true -> colors.orange500 to tab.selectedIconRes
@@ -96,7 +96,7 @@ private fun BottomBarItem(
         Text(
             text = tab.label,
             color = itemColor,
-            style = HeabomTheme.typo.bottomNavbar,
+            style = HaebomTheme.typo.bottomNavbar,
         )
     }
 }
@@ -104,7 +104,7 @@ private fun BottomBarItem(
 @Preview(showBackground = true, widthDp = 360)
 @Composable
 private fun MainBottomBarPreview() {
-    HeabomTheme {
+    HaebomTheme {
         MainBottomBar(
             visible = true,
             currentTab = MainTab.TODO,

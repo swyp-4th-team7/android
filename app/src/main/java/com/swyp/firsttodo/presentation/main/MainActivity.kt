@@ -12,8 +12,8 @@ import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
-import com.swyp.firsttodo.core.designsystem.theme.HeabomTheme
-import com.swyp.firsttodo.presentation.main.navigation.rememberHeabomNavigator
+import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
+import com.swyp.firsttodo.presentation.main.navigation.rememberHaebomNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import kotlin.getValue
@@ -31,9 +31,9 @@ class MainActivity : ComponentActivity() {
         checkGooglePlayServices()
 
         setContent {
-            val mainNavigator = rememberHeabomNavigator()
+            val mainNavigator = rememberHaebomNavigator()
 
-            HeabomTheme {
+            HaebomTheme {
                 MainScreen(
                     navigator = mainNavigator,
                 )

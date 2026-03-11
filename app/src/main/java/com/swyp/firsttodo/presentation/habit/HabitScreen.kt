@@ -12,7 +12,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.common.extension.toast
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
-import com.swyp.firsttodo.core.designsystem.theme.HeabomTheme
+import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
 fun HabitRoute(
@@ -46,7 +46,7 @@ fun HabitScreen(
         Text(
             text = "HABIT",
             modifier = Modifier,
-            style = HeabomTheme.typo.description,
+            style = HaebomTheme.typo.description,
         )
     }
 }

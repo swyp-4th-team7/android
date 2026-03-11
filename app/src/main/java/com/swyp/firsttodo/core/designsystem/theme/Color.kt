@@ -61,7 +61,7 @@ private val SemanticGreen = Color(0xFF65DB73)
 private val SemanticBlue = Color(0xFF4C85F2)
 
 @Immutable
-data class HeabomColors(
+data class HaebomColors(
     // Base
     val white: Color,
     val black: Color,
@@ -114,7 +114,7 @@ data class HeabomColors(
     val semanticBlue: Color,
 )
 
-val defaultHeabomColors = HeabomColors(
+val defaultHaebomColors = HaebomColors(
     // Base
     white = White,
     black = Black,
@@ -167,4 +167,4 @@ val defaultHeabomColors = HeabomColors(
     semanticBlue = SemanticBlue,
 )
 
-val LocalHeabomColorsProvider = staticCompositionLocalOf { defaultHeabomColors }
+val LocalHaebomColorsProvider = staticCompositionLocalOf { defaultHaebomColors }
