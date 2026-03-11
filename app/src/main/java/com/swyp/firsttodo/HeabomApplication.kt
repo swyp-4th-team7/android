@@ -6,7 +6,7 @@ import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
 @HiltAndroidApp
-class Application : Application() {
+class HeabomApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         setTimber()
