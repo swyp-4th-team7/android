@@ -1,34 +1,74 @@
 package com.swyp.firsttodo.core.designsystem.theme
 
-import androidx.compose.material3.Typography
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.swyp.firsttodo.R
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
+private val HeabomBaseTextStyle = TextStyle(
+    platformStyle = PlatformTextStyle(
+        includeFontPadding = false,
     ),
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+    lineHeightStyle = LineHeightStyle(
+        alignment = LineHeightStyle.Alignment.Center,
+        trim = LineHeightStyle.Trim.None,
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-     */
+    lineHeight = 1.45.em,
+    letterSpacing = 0.02.em,
 )
+
+private val SuiteExtraBold = FontFamily(Font(R.font.suite_extrabold))
+private val SuiteBold = FontFamily(Font(R.font.suite_bold))
+private val SuiteSemiBold = FontFamily(Font(R.font.suite_semibold))
+private val SuiteMedium = FontFamily(Font(R.font.suite_medium))
+
+private val ExtraBoldStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteExtraBold, fontWeight = FontWeight.ExtraBold)
+private val BoldStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteBold, fontWeight = FontWeight.Bold)
+private val SemiBoldStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteSemiBold, fontWeight = FontWeight.SemiBold)
+private val MediumStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteMedium, fontWeight = FontWeight.Medium)
+
+@Immutable
+data class HeabomTypography(
+    // Title
+    val week: TextStyle,
+    val hero: TextStyle,
+    val screen: TextStyle,
+    val card: TextStyle,
+    // Body
+    val subtitle: TextStyle,
+    val description: TextStyle,
+    // Elements
+    val dDay: TextStyle,
+    val button: TextStyle,
+    val placeholder: TextStyle,
+    val caption: TextStyle,
+    val helperText: TextStyle,
+    val buttonNavbar: TextStyle,
+)
+
+val defaultHeabomTypography = HeabomTypography(
+    // Title
+    week = BoldStyle.copy(fontSize = 24.sp, letterSpacing = 0.em),
+    hero = BoldStyle.copy(fontSize = 22.sp, letterSpacing = 0.em),
+    screen = BoldStyle.copy(fontSize = 20.sp),
+    card = BoldStyle.copy(fontSize = 18.sp),
+    // Body
+    subtitle = MediumStyle.copy(fontSize = 16.sp),
+    description = MediumStyle.copy(fontSize = 14.sp),
+    // Elements
+    dDay = ExtraBoldStyle.copy(fontSize = 16.sp, letterSpacing = 0.em),
+    button = BoldStyle.copy(fontSize = 16.sp),
+    placeholder = MediumStyle.copy(fontSize = 14.sp),
+    caption = BoldStyle.copy(fontSize = 12.sp),
+    helperText = MediumStyle.copy(fontSize = 12.sp),
+    buttonNavbar = SemiBoldStyle.copy(fontSize = 12.sp),
+)
+
+val LocalHeabomTypographyProvider = staticCompositionLocalOf { defaultHeabomTypography }
