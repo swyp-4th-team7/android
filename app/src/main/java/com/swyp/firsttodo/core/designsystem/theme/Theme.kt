@@ -10,7 +10,7 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private fun heabomLightColorScheme(colors: HeabomColors) =
+private fun heabomLightColorScheme(colors: HaebomColors) =
     lightColorScheme(
         primary = colors.yellow500,
         onPrimary = colors.white,
@@ -36,37 +36,37 @@ private fun heabomLightColorScheme(colors: HeabomColors) =
         outlineVariant = colors.gray100,
     )
 
-object HeabomTheme {
-    val colors: HeabomColors
+object HaebomTheme {
+    val colors: HaebomColors
         @Composable
         @ReadOnlyComposable
-        get() = LocalHeabomColorsProvider.current
+        get() = LocalHaebomColorsProvider.current
 
-    val typo: HeabomTypography
+    val typo: HaebomTypography
         @Composable
         @ReadOnlyComposable
-        get() = LocalHeabomTypographyProvider.current
+        get() = LocalHaebomTypographyProvider.current
 }
 
 @Composable
-private fun ProvideHeabomColorsAndTypography(
-    colors: HeabomColors,
-    typo: HeabomTypography,
+private fun ProvideHaebomColorsAndTypography(
+    colors: HaebomColors,
+    typo: HaebomTypography,
     content: @Composable () -> Unit,
 ) {
     CompositionLocalProvider(
-        LocalHeabomColorsProvider provides colors,
-        LocalHeabomTypographyProvider provides typo,
+        LocalHaebomColorsProvider provides colors,
+        LocalHaebomTypographyProvider provides typo,
         content = content,
     )
 }
 
 @Composable
-fun HeabomTheme(content: @Composable () -> Unit) {
-    val colors = defaultHeabomColors
-    val typo = defaultHeabomTypography
+fun HaebomTheme(content: @Composable () -> Unit) {
+    val colors = defaultHaebomColors
+    val typo = defaultHaebomTypography
 
-    ProvideHeabomColorsAndTypography(
+    ProvideHaebomColorsAndTypography(
         colors = colors,
         typo = typo,
     ) {

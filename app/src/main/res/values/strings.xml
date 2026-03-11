@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">해봄</string>
+
+    <!-- NavBottomBar -->
+    <string name="bottom_nav_todo">할 일</string>
+    <string name="bottom_nav_habbit">습관</string>
+    <string name="bottom_nav_reward">보상</string>
+    <string name="bottom_nav_growth">성장</string>
 </resources>

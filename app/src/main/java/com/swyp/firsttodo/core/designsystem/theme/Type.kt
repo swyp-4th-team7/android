@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 
-private val HeabomBaseTextStyle = TextStyle(
+private val HaebomBaseTextStyle = TextStyle(
     platformStyle = PlatformTextStyle(
         includeFontPadding = false,
     ),
@@ -29,13 +29,13 @@ private val SuiteBold = FontFamily(Font(R.font.suite_bold))
 private val SuiteSemiBold = FontFamily(Font(R.font.suite_semibold))
 private val SuiteMedium = FontFamily(Font(R.font.suite_medium))
 
-private val ExtraBoldStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteExtraBold, fontWeight = FontWeight.ExtraBold)
-private val BoldStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteBold, fontWeight = FontWeight.Bold)
-private val SemiBoldStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteSemiBold, fontWeight = FontWeight.SemiBold)
-private val MediumStyle = HeabomBaseTextStyle.copy(fontFamily = SuiteMedium, fontWeight = FontWeight.Medium)
+private val ExtraBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteExtraBold, fontWeight = FontWeight.ExtraBold)
+private val BoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteBold, fontWeight = FontWeight.Bold)
+private val SemiBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteSemiBold, fontWeight = FontWeight.SemiBold)
+private val MediumStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteMedium, fontWeight = FontWeight.Medium)
 
 @Immutable
-data class HeabomTypography(
+data class HaebomTypography(
     // Title
     val week: TextStyle,
     val hero: TextStyle,
@@ -50,10 +50,10 @@ data class HeabomTypography(
     val placeholder: TextStyle,
     val caption: TextStyle,
     val helperText: TextStyle,
-    val buttonNavbar: TextStyle,
+    val bottomNavbar: TextStyle,
 )
 
-val defaultHeabomTypography = HeabomTypography(
+val defaultHaebomTypography = HaebomTypography(
     // Title
     week = BoldStyle.copy(fontSize = 24.sp, letterSpacing = 0.em),
     hero = BoldStyle.copy(fontSize = 22.sp, letterSpacing = 0.em),
@@ -68,7 +68,7 @@ val defaultHeabomTypography = HeabomTypography(
     placeholder = MediumStyle.copy(fontSize = 14.sp),
     caption = BoldStyle.copy(fontSize = 12.sp),
     helperText = MediumStyle.copy(fontSize = 12.sp),
-    buttonNavbar = SemiBoldStyle.copy(fontSize = 12.sp),
+    bottomNavbar = SemiBoldStyle.copy(fontSize = 12.sp),
 )
 
-val LocalHeabomTypographyProvider = staticCompositionLocalOf { defaultHeabomTypography }
+val LocalHaebomTypographyProvider = staticCompositionLocalOf { defaultHaebomTypography }
