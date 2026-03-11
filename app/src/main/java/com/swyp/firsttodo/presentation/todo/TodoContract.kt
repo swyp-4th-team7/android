@@ -5,7 +5,7 @@ import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 
 @Immutable
-data class TodoUistate(
+data class TodoUiState(
     val data: String = "",
 ) : UiState
 

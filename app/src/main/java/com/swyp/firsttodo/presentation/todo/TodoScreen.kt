@@ -36,7 +36,7 @@ fun TodoRoute(
 
 @Composable
 fun TodoScreen(
-    uiState: TodoUistate,
+    uiState: TodoUiState,
     modifier: Modifier = Modifier,
 ) {
     Box(

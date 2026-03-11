@@ -7,4 +7,4 @@ import javax.inject.Inject
 @HiltViewModel
 class TodoViewModel
     @Inject
-    constructor() : BaseViewModel<TodoUistate, TodoSideEffect>(TodoUistate())
+    constructor() : BaseViewModel<TodoUiState, TodoSideEffect>(TodoUiState())
