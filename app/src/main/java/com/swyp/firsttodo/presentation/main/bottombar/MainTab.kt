@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.main.bottombar
 
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.growth.navigation.GrowthRoute
@@ -11,31 +12,31 @@ import com.swyp.firsttodo.presentation.todo.navigation.TodoRoute
 enum class MainTab(
     @param:DrawableRes val selectedIconRes: Int,
     @param:DrawableRes val defaultIconRes: Int,
-    val label: String,
+    @param:StringRes val label: Int,
     val route: Route,
 ) {
     TODO(
         selectedIconRes = R.drawable.ic_todo_selected,
         defaultIconRes = R.drawable.ic_todo_default,
-        label = "할 일",
+        label = R.string.bottom_nav_todo,
         route = TodoRoute.Todo,
     ),
     HABIT(
         selectedIconRes = R.drawable.ic_habit_selected,
         defaultIconRes = R.drawable.ic_habit_default,
-        label = "습관",
+        label = R.string.bottom_nav_habbit,
         route = HabitRoute.Habit,
     ),
     REWARD(
         selectedIconRes = R.drawable.ic_reward_selected,
         defaultIconRes = R.drawable.ic_reward_default,
-        label = "보상",
+        label = R.string.bottom_nav_reward,
         route = RewardRoute.Reward,
     ),
     GROWTH(
         selectedIconRes = R.drawable.ic_growth_selected,
         defaultIconRes = R.drawable.ic_growth_default,
-        label = "성장",
+        label = R.string.bottom_nav_growth,
         route = GrowthRoute.Growth,
     ),
 }

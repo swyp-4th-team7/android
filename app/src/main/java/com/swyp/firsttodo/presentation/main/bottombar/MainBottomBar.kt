@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
@@ -94,7 +95,7 @@ private fun BottomBarItem(
         )
 
         Text(
-            text = tab.label,
+            text = stringResource(tab.label),
             color = itemColor,
             style = HaebomTheme.typo.bottomNavbar,
         )
