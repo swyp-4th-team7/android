@@ -168,3 +168,22 @@ val defaultHaebomColors = HaebomColors(
 )
 
 val LocalHaebomColorsProvider = staticCompositionLocalOf { defaultHaebomColors }
+
+// Label
+enum class LabelColor(
+    val background: Color,
+    val text: Color,
+) {
+    RED(background = Color(0xFFFFE5E5), text = Color(0xFFE32529)),
+    PINK(background = Color(0xFFFFEAF7), text = Color(0xFFD81A60)),
+    PURPLE(background = Color(0xFFF8ECFF), text = Color(0xFF8E24AA)),
+    BLUE(background = Color(0xFFDFE9FF), text = Color(0xFF3949AB)),
+    SKY_BLUE(background = Color(0xFFCCEFFF), text = Color(0xFF0A579B)),
+    MINT(background = Color(0xFFCBF7F7), text = Color(0xFF0D5C51)),
+    EMERALD(background = Color(0xFFCFF8CE), text = Color(0xFF128E14)),
+    LIME(background = Color(0xFFE2FCC7), text = Color(0xFF34681E)),
+    YELLOW(background = Color(0xFFFFFAC3), text = Color(0xFFD4430F)),
+    ORANGE(background = Color(0xFFFFECC4), text = Color(0xFFB53600)),
+    BROWN(background = Color(0xFFF9EBE5), text = Color(0xFF70423A)),
+    GRAY(background = Color(0xFFE2EBF0), text = Color(0xFF36474F)),
+}

@@ -41,6 +41,7 @@ data class HaebomTypography(
     val hero: TextStyle,
     val screen: TextStyle,
     val card: TextStyle,
+    val section: TextStyle,
     // Body
     val subtitle: TextStyle,
     val description: TextStyle,
@@ -59,6 +60,7 @@ val defaultHaebomTypography = HaebomTypography(
     hero = BoldStyle.copy(fontSize = 22.sp, letterSpacing = 0.em),
     screen = BoldStyle.copy(fontSize = 20.sp),
     card = BoldStyle.copy(fontSize = 18.sp),
+    section = BoldStyle.copy(fontSize = 16.sp, letterSpacing = 0.em),
     // Body
     subtitle = MediumStyle.copy(fontSize = 16.sp),
     description = MediumStyle.copy(fontSize = 14.sp),
