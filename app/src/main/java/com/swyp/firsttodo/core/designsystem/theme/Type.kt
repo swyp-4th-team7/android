@@ -29,10 +29,10 @@ private val SuiteBold = FontFamily(Font(R.font.suite_bold))
 private val SuiteSemiBold = FontFamily(Font(R.font.suite_semibold))
 private val SuiteMedium = FontFamily(Font(R.font.suite_medium))
 
-private val ExtraBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteExtraBold, fontWeight = FontWeight.ExtraBold)
-private val BoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteBold, fontWeight = FontWeight.Bold)
-private val SemiBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteSemiBold, fontWeight = FontWeight.SemiBold)
-private val MediumStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteMedium, fontWeight = FontWeight.Medium)
+val ExtraBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteExtraBold, fontWeight = FontWeight.ExtraBold)
+val BoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteBold, fontWeight = FontWeight.Bold)
+val SemiBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteSemiBold, fontWeight = FontWeight.SemiBold)
+val MediumStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteMedium, fontWeight = FontWeight.Medium)
 
 @Immutable
 data class HaebomTypography(

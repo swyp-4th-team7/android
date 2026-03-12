@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.todo.component
+package com.swyp.firsttodo.presentation.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
-fun TodoCardLayout(
+fun HaebomCardLayout(
     title: String,
     onPlusClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -68,9 +68,9 @@ fun TodoCardLayout(
 
 @Preview(showBackground = true)
 @Composable
-private fun TodoCardLayoutPreview() {
+private fun HaebomCardLayoutPreview() {
     HaebomTheme {
-        TodoCardLayout(
+        HaebomCardLayout(
             title = "오늘의 할 일",
             onPlusClick = {},
             modifier = Modifier
