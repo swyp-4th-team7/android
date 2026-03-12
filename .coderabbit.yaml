@@ -24,7 +24,6 @@ reviews:
               - **스마트한 계산**: 비용이 높은 계산 로직은 `remember`나 `derivedStateOf`로 감싸져 있는지 확인해줘.
               - **안정성(Stability)**: `List`나 일반 클래스를 State로 사용할 때 `@Immutable` 또는 `@Stable` 어노테이션 사용을 제안해줘.
               - **Modifier 규칙**: `Modifier`는 항상 컴포저블 함수의 첫 번째 선택적 파라미터로 외부에서 주입받아야 해.
-              - **리소스 사용**: 하드코딩된 색상·크기·문자열 대신 `Theme`, `Dimens`, `strings.xml` 리소스를 사용하는지 확인해줘.
               - **접근성 예외**: `Icon`이나 `Image` 컴포저블의 `contentDescription`이 `null`인 경우는 장식용 이미지로 간주하고 지적하지 마.
 
               ---
