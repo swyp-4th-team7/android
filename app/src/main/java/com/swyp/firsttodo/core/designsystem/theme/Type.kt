@@ -33,6 +33,7 @@ val ExtraBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteExtraBold, fontW
 val BoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteBold, fontWeight = FontWeight.Bold)
 val SemiBoldStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteSemiBold, fontWeight = FontWeight.SemiBold)
 val MediumStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteMedium, fontWeight = FontWeight.Medium)
+val RegularStyle = HaebomBaseTextStyle.copy(fontFamily = SuiteMedium, fontWeight = FontWeight.Normal)
 
 @Immutable
 data class HaebomTypography(

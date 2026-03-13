@@ -26,8 +26,8 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 @Composable
 fun HaebomCardLayout(
     title: String,
-    onPlusClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onPlusClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     Column(
@@ -47,19 +47,22 @@ fun HaebomCardLayout(
         ) {
             Text(
                 text = title,
+                modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
                 color = HaebomTheme.colors.black,
                 style = HaebomTheme.typo.section,
             )
 
-            Icon(
-                painter = painterResource(R.drawable.ic_plus),
-                contentDescription = null,
-                modifier = Modifier
-                    .minimumInteractiveComponentSize()
-                    .size(24.dp)
-                    .noRippleClickable(onPlusClick),
-                tint = Color(0xFF79716B),
-            )
+            if (onPlusClick != null) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .minimumInteractiveComponentSize()
+                        .size(24.dp)
+                        .noRippleClickable(onPlusClick),
+                    tint = Color(0xFF79716B),
+                )
+            }
         }
 
         content()

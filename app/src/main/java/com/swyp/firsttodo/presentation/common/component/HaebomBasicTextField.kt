@@ -47,7 +47,7 @@ fun HaebomBasicTextField(
         state = state,
         modifier = modifier
             .background(
-                color = HaebomTheme.colors.gray200,
+                color = HaebomTheme.colors.gray50,
                 shape = RoundedCornerShape(4.dp),
             )
             .padding(horizontal = 16.dp, vertical = 14.dp),
