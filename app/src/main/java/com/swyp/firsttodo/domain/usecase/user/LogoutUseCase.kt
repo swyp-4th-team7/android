@@ -1,8 +1,8 @@
 package com.swyp.firsttodo.domain.usecase.user
 
 import com.swyp.firsttodo.core.notification.NotificationTokenProvider
-import com.swyp.firsttodo.data.repository.NotificationRepository
-import com.swyp.firsttodo.data.repository.UserRepository
+import com.swyp.firsttodo.domain.repository.NotificationRepository
+import com.swyp.firsttodo.domain.repository.UserRepository
 import timber.log.Timber
 import javax.inject.Inject
 

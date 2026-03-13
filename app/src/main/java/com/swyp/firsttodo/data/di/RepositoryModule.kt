@@ -1,11 +1,11 @@
 package com.swyp.firsttodo.data.di
 
-import com.swyp.firsttodo.data.repository.AuthRepository
-import com.swyp.firsttodo.data.repository.NotificationRepository
-import com.swyp.firsttodo.data.repository.UserRepository
 import com.swyp.firsttodo.data.repositoryimpl.AuthRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.NotificationRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.UserRepositoryImpl
+import com.swyp.firsttodo.domain.repository.AuthRepository
+import com.swyp.firsttodo.domain.repository.NotificationRepository
+import com.swyp.firsttodo.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

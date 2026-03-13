@@ -2,7 +2,7 @@ package com.swyp.firsttodo.domain.usecase.notification
 
 import com.swyp.firsttodo.core.auth.manager.AuthManager
 import com.swyp.firsttodo.core.notification.NotificationTokenProvider
-import com.swyp.firsttodo.data.repository.NotificationRepository
+import com.swyp.firsttodo.domain.repository.NotificationRepository
 import timber.log.Timber
 import javax.inject.Inject
 

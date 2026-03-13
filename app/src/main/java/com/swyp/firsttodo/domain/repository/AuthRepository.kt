@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.data.repository
+package com.swyp.firsttodo.domain.repository
 
 import com.swyp.firsttodo.domain.model.SocialType
 

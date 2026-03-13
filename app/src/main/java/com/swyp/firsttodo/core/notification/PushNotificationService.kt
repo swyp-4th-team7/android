@@ -10,7 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.auth.manager.AuthManager
-import com.swyp.firsttodo.data.repository.NotificationRepository
+import com.swyp.firsttodo.domain.repository.NotificationRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
