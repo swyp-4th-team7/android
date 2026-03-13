@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.onboarding.component
+package com.swyp.firsttodo.presentation.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -21,7 +21,7 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
-fun OnboardingTopBar(
+fun HaebomTopBar(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -66,9 +66,9 @@ fun OnboardingTopBar(
 
 @Preview
 @Composable
-private fun OnboardingTopBarPreview() {
+private fun HaebomTopBarPreview() {
     HaebomTheme {
-        OnboardingTopBar(
+        HaebomTopBar(
             title = "역할 선택",
             onBackClick = {},
         )

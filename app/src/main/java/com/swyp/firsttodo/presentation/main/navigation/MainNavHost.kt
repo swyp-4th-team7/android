@@ -14,6 +14,7 @@ import com.swyp.firsttodo.presentation.habit.navigation.habitNavGraph
 import com.swyp.firsttodo.presentation.reward.navigation.rewardNavGraph
 import com.swyp.firsttodo.presentation.todo.navigation.TodoRoute
 import com.swyp.firsttodo.presentation.todo.navigation.todoNavGraph
+import com.swyp.firsttodo.presentation.webview.navigation.webViewNavGraph
 
 @Composable
 fun MainNavHost(
@@ -46,6 +47,10 @@ fun MainNavHost(
             navController = navController,
         )
         growthNavGraph(
+            paddingValues = paddingValues,
+            navController = navController,
+        )
+        webViewNavGraph(
             paddingValues = paddingValues,
             navController = navController,
         )
