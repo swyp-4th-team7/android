@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
@@ -112,7 +111,7 @@ fun TodoBottomSheet(
                         .padding(top = 12.dp, bottom = 4.dp)
                         .size(32.dp, 4.dp)
                         .background(
-                            color = Color(0xFF79747E),
+                            color = colors.bottomSheet,
                             shape = CircleShape,
                         ),
                 )
