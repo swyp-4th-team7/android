@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component
+package com.swyp.firsttodo.core.designsystem.component
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background

@@ -1,0 +1,32 @@
+package com.swyp.firsttodo.presentation.common.component.task
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
+import com.swyp.firsttodo.core.designsystem.theme.SemiBoldStyle
+
+@Composable
+fun TaskInputSection(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = title,
+            color = HaebomTheme.colors.black,
+            style = SemiBoldStyle.copy(fontSize = 18.sp),
+        )
+
+        content()
+    }
+}
