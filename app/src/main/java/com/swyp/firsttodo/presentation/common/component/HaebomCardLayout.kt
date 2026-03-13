@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.todo.component
+package com.swyp.firsttodo.presentation.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +24,10 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
-fun TodoCardLayout(
+fun HaebomCardLayout(
     title: String,
-    onPlusClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onPlusClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     Column(
@@ -47,19 +47,22 @@ fun TodoCardLayout(
         ) {
             Text(
                 text = title,
+                modifier = Modifier.padding(top = 16.dp, bottom = 12.dp),
                 color = HaebomTheme.colors.black,
                 style = HaebomTheme.typo.section,
             )
 
-            Icon(
-                painter = painterResource(R.drawable.ic_plus),
-                contentDescription = null,
-                modifier = Modifier
-                    .minimumInteractiveComponentSize()
-                    .size(24.dp)
-                    .noRippleClickable(onPlusClick),
-                tint = Color(0xFF79716B),
-            )
+            if (onPlusClick != null) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .minimumInteractiveComponentSize()
+                        .size(24.dp)
+                        .noRippleClickable(onPlusClick),
+                    tint = Color(0xFF79716B),
+                )
+            }
         }
 
         content()
@@ -68,9 +71,9 @@ fun TodoCardLayout(
 
 @Preview(showBackground = true)
 @Composable
-private fun TodoCardLayoutPreview() {
+private fun HaebomCardLayoutPreview() {
     HaebomTheme {
-        TodoCardLayout(
+        HaebomCardLayout(
             title = "오늘의 할 일",
             onPlusClick = {},
             modifier = Modifier

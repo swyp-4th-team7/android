@@ -1,13 +1,12 @@
-package com.swyp.firsttodo.presentation.todo.component
+package com.swyp.firsttodo.presentation.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,31 +20,27 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
-fun TodoCheck(
+fun HaebomCheck(
     onClick: () -> Unit,
     checked: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
-            .padding(horizontal = 12.dp, vertical = 16.dp)
+            .noRippleClickable(onClick)
             .background(
                 color = HaebomTheme.colors.white,
                 shape = RoundedCornerShape(4.dp),
             )
-            .noRippleClickable(onClick),
+            .size(width = 48.dp, height = 56.dp),
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+            imageVector = ImageVector.vectorResource(
+                if (checked) R.drawable.ic_check_filled else R.drawable.ic_check_unfilled,
+            ),
             contentDescription = null,
-            modifier = Modifier
-                .size(16.dp)
-                .padding(4.dp)
-                .background(
-                    color = if (checked) HaebomTheme.colors.orange400 else Color(0xFFE5E5E5),
-                    shape = CircleShape,
-                ),
-            tint = HaebomTheme.colors.white,
+            tint = Color.Unspecified,
         )
     }
 }
@@ -54,13 +49,13 @@ private class CheckedPreviewProvider : PreviewParameterProvider<Boolean> {
     override val values = sequenceOf(true, false)
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun TodoCheckPreview(
+private fun HaebomCheckPreview(
     @PreviewParameter(CheckedPreviewProvider::class) checked: Boolean,
 ) {
     HaebomTheme {
-        TodoCheck(
+        HaebomCheck(
             onClick = {},
             checked = checked,
         )

@@ -20,7 +20,7 @@ private val Gray600 = Color(0xFF44403C)
 private val Gray700 = Color(0xFF292524)
 private val Gray800 = Color(0xFF171412)
 
-// Primary.Yellow
+// Secondary.Yellow
 private val Yellow25 = Color(0xFFFFFCF5)
 private val Yellow50 = Color(0xFFFFFAEB)
 private val Yellow100 = Color(0xFFFFF5D9)
@@ -60,6 +60,9 @@ private val SemanticRed = Color(0xFFE7534B)
 private val SemanticGreen = Color(0xFF65DB73)
 private val SemanticBlue = Color(0xFF4C85F2)
 
+// Etc
+private val bottomSheet = Color(0xFF79747E)
+
 @Immutable
 data class HaebomColors(
     // Base
@@ -76,7 +79,7 @@ data class HaebomColors(
     val gray600: Color,
     val gray700: Color,
     val gray800: Color,
-    // Primary.Yellow
+    // Secondary.Yellow
     val yellow25: Color,
     val yellow50: Color,
     val yellow100: Color,
@@ -112,6 +115,8 @@ data class HaebomColors(
     val semanticRed: Color,
     val semanticGreen: Color,
     val semanticBlue: Color,
+    // Etc
+    val bottomSheet: Color,
 )
 
 val defaultHaebomColors = HaebomColors(
@@ -129,7 +134,7 @@ val defaultHaebomColors = HaebomColors(
     gray600 = Gray600,
     gray700 = Gray700,
     gray800 = Gray800,
-    // Primary.Yellow
+    // Secondary.Yellow
     yellow25 = Yellow25,
     yellow50 = Yellow50,
     yellow100 = Yellow100,
@@ -165,6 +170,8 @@ val defaultHaebomColors = HaebomColors(
     semanticRed = SemanticRed,
     semanticGreen = SemanticGreen,
     semanticBlue = SemanticBlue,
+    // Etc
+    bottomSheet = bottomSheet,
 )
 
 val LocalHaebomColorsProvider = staticCompositionLocalOf { defaultHaebomColors }
