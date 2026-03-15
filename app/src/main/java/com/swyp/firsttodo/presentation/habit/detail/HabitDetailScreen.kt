@@ -1,16 +1,25 @@
 package com.swyp.firsttodo.presentation.habit.detail
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -39,9 +48,18 @@ fun HabitDetailRoute(
     val context = LocalContext.current
     val isBtnEnabled by viewModel.isBtnEnabled.collectAsStateWithLifecycle()
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    BackHandler {
+        viewModel.onBackClick()
+    }
+
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            is HabitDetailSideEffect.PopBackStack -> popBackStack()
+            is HabitDetailSideEffect.PopBackStack -> {
+                keyboardController?.hide()
+                popBackStack()
+            }
             is HabitDetailSideEffect.ShowToast -> context.toast(effect.message)
         }
     }
@@ -69,6 +87,9 @@ fun HabitDetailScreen(
     onDurationClick: (HabitDuration) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -91,6 +112,7 @@ fun HabitDetailScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .verticalScroll(scrollState)
                 .padding(innerPadding)
                 .padding(horizontal = screenWidthDp(16.dp)),
         ) {
@@ -108,6 +130,12 @@ fun HabitDetailScreen(
                     fieldState = titleFieldState,
                     placeholder = "습관을 작성해주세요. (최대 12자)",
                     modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Next,
+                    ),
+                    onKeyboardAction = KeyboardActionHandler {
+                        focusManager.moveFocus(FocusDirection.Next)
+                    },
                     maxCount = 12,
                 )
             }
@@ -131,8 +159,11 @@ fun HabitDetailScreen(
             ) {
                 TaskTextField(
                     fieldState = rewardFieldState,
-                    placeholder = "",
+                    placeholder = "받고 싶은 보상을 적어주세요.",
                     modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                    ),
                 )
             }
         }
