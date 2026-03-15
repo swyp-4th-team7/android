@@ -184,8 +184,14 @@ private fun ListItem(
 
                 if (showPopup) {
                     TaskEditPopup(
-                        onEditClick = onEditClick,
-                        onDeleteClick = onDeleteClick,
+                        onEditClick = {
+                            onEditClick()
+                            showPopup = false
+                        },
+                        onDeleteClick = {
+                            onDeleteClick()
+                            showPopup = false
+                        },
                         onDismiss = { showPopup = false },
                         offset = DpOffset(4.dp, 0.dp),
                     )

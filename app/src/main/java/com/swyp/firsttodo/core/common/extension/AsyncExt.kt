@@ -8,6 +8,6 @@ inline fun <T> Async<T>.onSuccess(block: (T) -> Unit) {
     }
 }
 
-fun <T> Async<T>.getSuccessDataOrNull(): T? {
-    return (this as? Async.Success)?.data
+fun <T> Async<T>.getDataOrNull(): T? {
+    return (this as? Async.Success)?.data ?: (this as? Async.Loading)?.data
 }
