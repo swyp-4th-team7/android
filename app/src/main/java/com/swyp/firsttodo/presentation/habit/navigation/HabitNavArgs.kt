@@ -33,7 +33,11 @@ val HabitNavArgsNavType = object : NavType<HabitNavArgs?>(isNullableAllowed = tr
         key: String,
     ): HabitNavArgs? = bundle.getString(key)?.let { Json.decodeFromString(it) }
 
-    override fun parseValue(value: String): HabitNavArgs = Json.decodeFromString(Uri.decode(value))
+    override fun parseValue(value: String): HabitNavArgs? {
+        val decoded = Uri.decode(value)
+        if (decoded == "null") return null
+        return Json.decodeFromString(decoded)
+    }
 
     override fun serializeAsValue(value: HabitNavArgs?): String =
         if (value == null) "null" else Uri.encode(Json.encodeToString(HabitNavArgs.serializer(), value))
