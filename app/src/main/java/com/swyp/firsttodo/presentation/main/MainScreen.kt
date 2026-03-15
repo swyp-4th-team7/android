@@ -27,7 +27,7 @@ fun MainScreen(
         when (effect) {
             AuthSideEffect.NavigateToLogin -> {
                 context.toast("로그인이 만료되었어요. 다시 로그인 해주세요.")
-                navigator.navController.navigateToLogin()
+                navigator.navController.navigateToLogin(isSessionExpired = true)
             }
         }
     }

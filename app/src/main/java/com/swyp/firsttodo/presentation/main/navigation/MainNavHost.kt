@@ -33,6 +33,7 @@ fun MainNavHost(
         popExitTransition = { slideOutHorizontally { it } },
     ) {
         authNavGraph(
+            navController = navigator.navController,
             navigateToTodo = navigator::navigateToTodo,
             navigateToOnboarding = navigator::navigateToOnboarding,
             paddingValues = paddingValues,

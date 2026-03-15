@@ -33,7 +33,7 @@ class MainViewModel
                 if (!state.isInitialized) return@map null
 
                 val dest = when {
-                    !state.isLoggedIn -> AuthRoute.Login
+                    !state.isLoggedIn -> AuthRoute.Login()
                     state.isLoggedIn && state.userType != null && state.isProfileCompleted -> TodoRoute.Todo
                     else -> OnboardingRoute.Onboarding
                 }
