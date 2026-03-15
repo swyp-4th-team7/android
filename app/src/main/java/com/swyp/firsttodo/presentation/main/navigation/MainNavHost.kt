@@ -6,25 +6,26 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.auth.navigation.authNavGraph
 import com.swyp.firsttodo.presentation.growth.navigation.growthNavGraph
 import com.swyp.firsttodo.presentation.habit.navigation.habitNavGraph
+import com.swyp.firsttodo.presentation.onboarding.navigation.onboardingNavGraph
 import com.swyp.firsttodo.presentation.reward.navigation.rewardNavGraph
-import com.swyp.firsttodo.presentation.todo.navigation.TodoRoute
 import com.swyp.firsttodo.presentation.todo.navigation.todoNavGraph
 import com.swyp.firsttodo.presentation.webview.navigation.webViewNavGraph
 
 @Composable
 fun MainNavHost(
-    navController: NavHostController,
+    navigator: MainNavigator,
     paddingValues: PaddingValues,
+    startDestination: Route,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
-        navController = navController,
-        startDestination = TodoRoute.Todo,
+        navController = navigator.navController,
+        startDestination = startDestination,
         modifier = modifier.fillMaxSize(),
         enterTransition = { slideInHorizontally { it } },
         exitTransition = { slideOutHorizontally { -it / 3 } },
@@ -32,27 +33,32 @@ fun MainNavHost(
         popExitTransition = { slideOutHorizontally { it } },
     ) {
         authNavGraph(
-            navController = navController,
+            navigateToTodo = navigator::navigateToTodo,
+            navigateToOnboarding = navigator::navigateToOnboarding,
+            paddingValues = paddingValues,
+        )
+        onboardingNavGraph(
+            navController = navigator.navController,
         )
         todoNavGraph(
             paddingValues = paddingValues,
-            navController = navController,
+            navController = navigator.navController,
         )
         habitNavGraph(
             paddingValues = paddingValues,
-            navController = navController,
+            navController = navigator.navController,
         )
         rewardNavGraph(
             paddingValues = paddingValues,
-            navController = navController,
+            navController = navigator.navController,
         )
         growthNavGraph(
             paddingValues = paddingValues,
-            navController = navController,
+            navController = navigator.navController,
         )
         webViewNavGraph(
             paddingValues = paddingValues,
-            navController = navController,
+            navController = navigator.navController,
         )
     }
 }

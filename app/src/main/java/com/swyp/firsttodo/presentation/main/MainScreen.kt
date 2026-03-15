@@ -4,12 +4,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.main.bottombar.MainBottomBar
 import com.swyp.firsttodo.presentation.main.navigation.MainNavHost
 import com.swyp.firsttodo.presentation.main.navigation.MainNavigator
 
 @Composable
-fun MainScreen(navigator: MainNavigator) {
+fun MainScreen(
+    startDestination: Route,
+    navigator: MainNavigator,
+) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
@@ -21,8 +25,9 @@ fun MainScreen(navigator: MainNavigator) {
         },
     ) { innerPadding ->
         MainNavHost(
-            navController = navigator.navController,
+            navigator = navigator,
             paddingValues = innerPadding,
+            startDestination = startDestination,
         )
     }
 }

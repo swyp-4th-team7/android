@@ -12,6 +12,8 @@ data class LoginUiState(
 sealed interface LoginSideEffect : UiEffect {
     data object NavigateToHome : LoginSideEffect
 
+    data object NavigateToOnboarding : LoginSideEffect
+
     data object LaunchGoogleLogin : LoginSideEffect
 
     data class ShowToast(val message: String) : LoginSideEffect

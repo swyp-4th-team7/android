@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.domain.model.SocialType
-import com.swyp.firsttodo.domain.usecase.auth.LoginUseCase
+import com.swyp.firsttodo.domain.usecase.auth.SocialLoginUseCase
 import com.swyp.firsttodo.domain.usecase.user.LogoutUseCase
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class LoginViewModel
     @Inject
     constructor(
-        private val loginUseCase: LoginUseCase,
+        private val loginUseCase: SocialLoginUseCase,
         private val logoutUseCase: LogoutUseCase,
     ) :
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
@@ -62,9 +62,13 @@ class LoginViewModel
                 loginUseCase(
                     socialType = type,
                     token = token,
-                ).onSuccess {
+                ).onSuccess { isProfileComplete ->
                     updateState { copy(loginState = Async.Success(Unit)) }
-                    sendEffect(LoginSideEffect.NavigateToHome)
+                    if (isProfileComplete) {
+                        sendEffect(LoginSideEffect.NavigateToHome)
+                    } else {
+                        sendEffect(LoginSideEffect.NavigateToOnboarding)
+                    }
                 }.onFailure {
                     updateState { copy(loginState = Async.Init) }
                     sendEffect(LoginSideEffect.ShowToast("로그인에 실패했어요. 다시 시도해주세요."))
