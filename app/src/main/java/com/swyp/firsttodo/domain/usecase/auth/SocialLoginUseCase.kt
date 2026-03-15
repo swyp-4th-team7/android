@@ -7,7 +7,7 @@ import com.swyp.firsttodo.domain.repository.NotificationRepository
 import timber.log.Timber
 import javax.inject.Inject
 
-class LoginUseCase
+class SocialLoginUseCase
     @Inject
     constructor(
         private val authRepository: AuthRepository,
@@ -18,17 +18,16 @@ class LoginUseCase
             socialType: SocialType,
             token: String,
         ): Result<Boolean> {
-            val loginResult = authRepository.socialLogin(socialType, token)
+            val response = authRepository.socialLogin(socialType, token)
+                .getOrElse { return Result.failure(it) }
 
-            if (loginResult.isSuccess) {
-                notificationTokenProvider.getToken()?.let { notificationToken ->
-                    notificationRepository.saveNotificationToken(notificationToken)
-                        .onFailure { t ->
-                            Timber.e(t, "Login success but notification token save failed")
-                        }
-                }
+            notificationTokenProvider.getToken()?.let { notificationToken ->
+                notificationRepository.saveNotificationToken(notificationToken)
+                    .onFailure { t ->
+                        Timber.e(t, "Login success but notification token save failed")
+                    }
             }
 
-            return loginResult
+            return Result.success(response.userType != null && response.profileCompleted)
         }
     }

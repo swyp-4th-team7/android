@@ -9,6 +9,8 @@ data class LoginResponseDto(
     val accessToken: String,
     @SerialName("refreshToken")
     val refreshToken: String,
-    @SerialName("isNewUser")
-    val isNewUser: Boolean,
+    @SerialName("userType")
+    val userType: String?,
+    @SerialName("profileCompleted")
+    val profileCompleted: Boolean,
 )
