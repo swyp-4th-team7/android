@@ -25,7 +25,7 @@ sealed interface HabitRoute : Route {
 }
 
 fun NavController.navigateToHabitDetail(habit: Habit?) {
-    navigate(HabitRoute.HabitDetail(habit?.toNavArgs() ?: null))
+    navigate(HabitRoute.HabitDetail(habit?.toNavArgs()))
 }
 
 fun NavGraphBuilder.habitNavGraph(
@@ -48,8 +48,7 @@ fun NavGraphBuilder.habitNavGraph(
         typeMap = mapOf(typeOf<HabitNavArgs?>() to HabitNavArgsNavType),
     ) {
         HabitDetailRoute(
-            onPopBackStack = navController::popBackStack,
-            modifier = Modifier.padding(paddingValues),
+            popBackStack = navController::popBackStack,
         )
     }
 }
