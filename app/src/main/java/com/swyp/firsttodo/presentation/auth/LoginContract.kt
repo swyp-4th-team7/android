@@ -10,7 +10,11 @@ data class LoginUiState(
 ) : UiState
 
 sealed interface LoginSideEffect : UiEffect {
+    data object PopBackStack : LoginSideEffect
+
     data object NavigateToHome : LoginSideEffect
+
+    data object NavigateToOnboarding : LoginSideEffect
 
     data object LaunchGoogleLogin : LoginSideEffect
 

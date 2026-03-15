@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.auth
 
 import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -25,7 +26,9 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginRoute(
-    onNavigateToHome: () -> Unit,
+    onPopBackStack: () -> Unit,
+    onNavigateToTodo: () -> Unit,
+    onNavigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -42,7 +45,9 @@ fun LoginRoute(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            LoginSideEffect.NavigateToHome -> context.toast("로그인 성공!")
+            LoginSideEffect.PopBackStack -> onPopBackStack()
+
+            LoginSideEffect.NavigateToHome -> onNavigateToTodo()
 
             LoginSideEffect.LaunchGoogleLogin -> {
                 scope.launch {
@@ -52,7 +57,13 @@ fun LoginRoute(
             }
 
             is LoginSideEffect.ShowToast -> context.toast(effect.message)
+
+            LoginSideEffect.NavigateToOnboarding -> onNavigateToOnboarding()
         }
+    }
+
+    BackHandler {
+        viewModel.onBack()
     }
 
     LoginScreen(

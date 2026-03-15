@@ -1,7 +1,7 @@
 package com.swyp.firsttodo.core.auth.network
 
-import com.swyp.firsttodo.core.auth.datasource.TokenDataSource
-import com.swyp.firsttodo.core.auth.manager.AuthManager
+import com.swyp.firsttodo.core.auth.datasource.SessionDataSource
+import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.remote.datasource.AuthDataSource
 import kotlinx.coroutines.runBlocking
@@ -16,9 +16,9 @@ import javax.inject.Inject
 class TokenAuthenticator
     @Inject
     constructor(
-        private val authManager: AuthManager,
+        private val sessionManager: SessionManager,
         private val apiResponseHandler: ApiResponseHandler,
-        private val tokenDataSource: TokenDataSource,
+        private val sessionDataSource: SessionDataSource,
         private val authDataSource: AuthDataSource,
     ) : Authenticator {
         @Synchronized
@@ -40,7 +40,7 @@ class TokenAuthenticator
 
             // 먼저 발생한 요청이 이미 토큰 갱신 완료했다면 리이슈 하지 않음
             val requestToken = response.request.header(AUTHORIZATION)
-            val storedToken = runBlocking { tokenDataSource.getAccessToken() } ?: return null
+            val storedToken = runBlocking { sessionDataSource.getAccessToken() } ?: abortWithLogout()
 
             if (requestToken != "$BEARER $storedToken") {
                 return response.request.newBuilder()
@@ -48,7 +48,7 @@ class TokenAuthenticator
                     .build()
             }
 
-            val refreshToken = runBlocking { tokenDataSource.getRefreshToken() }
+            val refreshToken = runBlocking { sessionDataSource.getRefreshToken() }
 
             if (refreshToken.isNullOrBlank()) {
                 Timber.w("Cannot find refreshToken.")
@@ -67,7 +67,7 @@ class TokenAuthenticator
             }
 
             runBlocking {
-                tokenDataSource.saveTokens(newTokens.accessToken, newTokens.refreshToken)
+                sessionDataSource.saveTokens(newTokens.accessToken, newTokens.refreshToken)
             }
 
             return response.request.newBuilder()
@@ -76,7 +76,7 @@ class TokenAuthenticator
         }
 
         private fun abortWithLogout(): Nothing? {
-            runBlocking { authManager.logout() }
+            runBlocking { sessionManager.clearSession() }
             return null
         }
 

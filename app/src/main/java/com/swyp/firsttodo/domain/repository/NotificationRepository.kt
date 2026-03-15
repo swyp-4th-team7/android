@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.data.repository
+package com.swyp.firsttodo.domain.repository
 
 interface NotificationRepository {
     suspend fun saveNotificationToken(token: String): Result<Unit>

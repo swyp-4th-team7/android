@@ -1,7 +1,7 @@
 package com.swyp.firsttodo.core.di
 
-import com.swyp.firsttodo.core.auth.datasource.TokenDataSource
-import com.swyp.firsttodo.core.auth.datasource.TokenDataSourceImpl
+import com.swyp.firsttodo.core.auth.datasource.SessionDataSource
+import com.swyp.firsttodo.core.auth.datasource.SessionDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,5 +13,5 @@ import javax.inject.Singleton
 abstract class AuthModule {
     @Binds
     @Singleton
-    abstract fun bindsTokenDataSource(tokenDataSourceImpl: TokenDataSourceImpl): TokenDataSource
+    abstract fun bindsSessionDataSource(sessionDataSourceImpl: SessionDataSourceImpl): SessionDataSource
 }

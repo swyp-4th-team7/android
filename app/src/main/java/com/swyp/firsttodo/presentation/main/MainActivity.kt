@@ -10,6 +10,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -23,20 +25,28 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        viewModel // ViewModel 생성 트리거 (init 블록에서 앱 초기화 수행)
+        splashScreen.setKeepOnScreenCondition {
+            viewModel.startDestination.value == null
+        }
+
         askNotificationPermission()
         checkGooglePlayServices()
 
         setContent {
+            val startDestination = viewModel.startDestination.collectAsStateWithLifecycle()
             val mainNavigator = rememberHaebomNavigator()
 
             HaebomTheme {
-                MainScreen(
-                    navigator = mainNavigator,
-                )
+                startDestination.value?.let { dest ->
+                    MainScreen(
+                        startDestination = dest,
+                        navigator = mainNavigator,
+                    )
+                }
             }
         }
     }

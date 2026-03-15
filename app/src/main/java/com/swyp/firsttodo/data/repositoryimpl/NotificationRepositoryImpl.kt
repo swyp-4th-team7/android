@@ -3,7 +3,7 @@ package com.swyp.firsttodo.data.repositoryimpl
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.remote.datasource.NotificationDataSource
 import com.swyp.firsttodo.data.remote.dto.request.notification.NotificationRequestDto
-import com.swyp.firsttodo.data.repository.NotificationRepository
+import com.swyp.firsttodo.domain.repository.NotificationRepository
 import javax.inject.Inject
 
 class NotificationRepositoryImpl

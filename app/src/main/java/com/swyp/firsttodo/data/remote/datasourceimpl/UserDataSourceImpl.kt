@@ -11,4 +11,10 @@ class UserDataSourceImpl
         private val userService: UserService,
     ) : UserDataSource {
         override suspend fun deleteLogout(): BaseResponse<Unit> = userService.deleteLogout()
+
+        override suspend fun deleteAccount(): BaseResponse<Unit> = userService.deleteAccount()
+
+        override suspend fun patchProfile(): BaseResponse<Unit> = userService.patchProfile()
+
+        override suspend fun patchTerms(): BaseResponse<Unit> = userService.patchTerms()
     }

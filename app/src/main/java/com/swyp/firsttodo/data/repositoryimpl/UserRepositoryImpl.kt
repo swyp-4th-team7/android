@@ -1,16 +1,16 @@
 package com.swyp.firsttodo.data.repositoryimpl
 
-import com.swyp.firsttodo.core.auth.manager.AuthManager
+import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.common.util.suspendRunCatching
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.remote.datasource.UserDataSource
-import com.swyp.firsttodo.data.repository.UserRepository
+import com.swyp.firsttodo.domain.repository.UserRepository
 import javax.inject.Inject
 
 class UserRepositoryImpl
     @Inject
     constructor(
-        private val authManager: AuthManager,
+        private val sessionManager: SessionManager,
         private val apiResponseHandler: ApiResponseHandler,
         private val userDataSource: UserDataSource,
     ) : UserRepository {
@@ -19,7 +19,7 @@ class UserRepositoryImpl
                 userDataSource.deleteLogout()
             }
 
-            val localResult = suspendRunCatching { authManager.logout() }
+            val localResult = suspendRunCatching { sessionManager.clearSession() }
 
             return if (remoteResult.isSuccess && localResult.isSuccess) {
                 Result.success(Unit)
@@ -29,4 +29,26 @@ class UserRepositoryImpl
                 )
             }
         }
+
+        override suspend fun deleteAccount(): Result<Unit> {
+            val remoteResult = apiResponseHandler.safeApiCall {
+                userDataSource.deleteAccount()
+            }
+
+            val localResult = suspendRunCatching { sessionManager.clearSession() }
+
+            return if (remoteResult.isSuccess && localResult.isSuccess) {
+                Result.success(Unit)
+            } else {
+                Result.failure(
+                    remoteResult.exceptionOrNull() ?: localResult.exceptionOrNull() ?: Exception("Both fail"),
+                )
+            }
+        }
+
+        override suspend fun updateProfile(): Result<Unit> =
+            apiResponseHandler.safeApiCall { userDataSource.patchProfile() }
+
+        override suspend fun updateTerms(): Result<Unit> =
+            apiResponseHandler.safeApiCall { userDataSource.patchTerms() }
     }

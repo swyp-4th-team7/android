@@ -8,6 +8,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.swyp.firsttodo.presentation.main.bottombar.MainTab
+import com.swyp.firsttodo.presentation.onboarding.navigation.OnboardingRoute
 
 class MainNavigator(
     val navController: NavHostController,
@@ -35,6 +36,15 @@ class MainNavigator(
 
     fun navigateToTodo() {
         navController.navigate(MainTab.TODO.route) {
+            popUpTo(0) {
+                inclusive = true
+            }
+            launchSingleTop = true
+        }
+    }
+
+    fun navigateToOnboarding() {
+        navController.navigate(OnboardingRoute.Onboarding) {
             popUpTo(0) {
                 inclusive = true
             }
