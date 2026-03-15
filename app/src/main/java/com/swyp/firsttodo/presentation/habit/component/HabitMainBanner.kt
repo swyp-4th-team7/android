@@ -17,6 +17,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
+import com.swyp.firsttodo.core.common.util.screenHeightDp
+import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.MediumStyle
@@ -29,14 +31,14 @@ fun HabitMainBanner(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(132.dp)
+            .heightIn(screenHeightDp(132.dp))
             .background(Color(0xFFFFFAC9))
-            .padding(horizontal = 16.dp)
-            .padding(top = 20.dp, bottom = 16.dp),
+            .padding(horizontal = screenWidthDp(16.dp))
+            .padding(top = screenHeightDp(28.dp)),
     ) {
         Column(
             modifier = Modifier.align(Alignment.TopStart),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(screenHeightDp(8.dp)),
         ) {
             Text(
                 text = "좋은 습관을 만들어 볼까요?",
@@ -51,19 +53,25 @@ fun HabitMainBanner(
             )
         }
 
-        Text(
-            text = "습관 만들기",
+        Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .noRippleClickable(onButtonClick)
-                .background(
-                    color = HaebomTheme.colors.orange500,
-                    shape = RoundedCornerShape(18.dp),
-                )
-                .padding(horizontal = 18.dp, vertical = 6.dp),
-            color = HaebomTheme.colors.white,
-            style = BoldStyle.copy(fontSize = 14.sp),
-        )
+                .padding(bottom = screenHeightDp(12.dp)),
+            contentAlignment = Alignment.BottomEnd,
+        ) {
+            Text(
+                text = "습관 만들기",
+                modifier = Modifier
+                    .background(
+                        color = HaebomTheme.colors.orange500,
+                        shape = RoundedCornerShape(18.dp),
+                    )
+                    .padding(horizontal = 18.dp, vertical = 6.dp),
+                color = HaebomTheme.colors.white,
+                style = BoldStyle.copy(fontSize = 14.sp),
+            )
+        }
     }
 }
 

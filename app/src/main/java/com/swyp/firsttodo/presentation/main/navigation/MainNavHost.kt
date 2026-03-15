@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.auth.navigation.authNavGraph
 import com.swyp.firsttodo.presentation.growth.navigation.growthNavGraph
+import com.swyp.firsttodo.presentation.habit.navigation.HabitRoute
 import com.swyp.firsttodo.presentation.habit.navigation.habitNavGraph
 import com.swyp.firsttodo.presentation.onboarding.navigation.onboardingNavGraph
 import com.swyp.firsttodo.presentation.reward.navigation.rewardNavGraph
@@ -25,7 +26,8 @@ fun MainNavHost(
 ) {
     NavHost(
         navController = navigator.navController,
-        startDestination = startDestination,
+//        startDestination = startDestination,
+        startDestination = HabitRoute.Habit,
         modifier = modifier.fillMaxSize(),
         enterTransition = { slideInHorizontally { it } },
         exitTransition = { slideOutHorizontally { -it / 3 } },
