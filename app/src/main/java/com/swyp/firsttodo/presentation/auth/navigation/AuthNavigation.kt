@@ -1,6 +1,8 @@
 package com.swyp.firsttodo.presentation.auth.navigation
 
-import androidx.navigation.NavController
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.swyp.firsttodo.core.navigation.Route
@@ -12,10 +14,16 @@ sealed interface AuthRoute : Route {
     data object Login : AuthRoute
 }
 
-fun NavGraphBuilder.authNavGraph(navController: NavController) {
+fun NavGraphBuilder.authNavGraph(
+    navigateToTodo: () -> Unit,
+    navigateToOnboarding: () -> Unit,
+    paddingValues: PaddingValues,
+) {
     composable<AuthRoute.Login> {
         LoginRoute(
-            onNavigateToHome = {},
+            onNavigateToTodo = navigateToTodo,
+            onNavigateToOnboarding = navigateToOnboarding,
+            modifier = Modifier.padding(paddingValues),
         )
     }
 }

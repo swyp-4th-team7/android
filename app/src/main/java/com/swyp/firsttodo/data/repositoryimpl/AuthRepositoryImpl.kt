@@ -1,10 +1,12 @@
 package com.swyp.firsttodo.data.repositoryimpl
 
-import com.swyp.firsttodo.core.auth.manager.AuthManager
+import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.common.util.suspendRunCatching
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.remote.datasource.AuthDataSource
 import com.swyp.firsttodo.data.remote.dto.request.auth.SocialLoginRequestDto
+import com.swyp.firsttodo.domain.model.LoginModel
+import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.SocialType
 import com.swyp.firsttodo.domain.repository.AuthRepository
 import javax.inject.Inject
@@ -12,14 +14,14 @@ import javax.inject.Inject
 class AuthRepositoryImpl
     @Inject
     constructor(
-        private val authManager: AuthManager,
+        private val sessionManager: SessionManager,
         private val apiResponseHandler: ApiResponseHandler,
         private val authDataSource: AuthDataSource,
     ) : AuthRepository {
         override suspend fun socialLogin(
             socialType: SocialType,
             token: String,
-        ): Result<Boolean> {
+        ): Result<LoginModel> {
             val request = SocialLoginRequestDto(
                 socialType = socialType.name,
                 token = token,
@@ -30,8 +32,17 @@ class AuthRepositoryImpl
             }.getOrElse { return Result.failure(it) }
 
             return suspendRunCatching {
-                authManager.onLoginSuccess(response.accessToken, response.refreshToken)
-                response.isNewUser
+                sessionManager.onLoginSuccess(
+                    accessToken = response.accessToken,
+                    refreshToken = response.refreshToken,
+                    userType = response.userType,
+                    profileCompleted = response.profileCompleted,
+                )
+
+                LoginModel(
+                    userType = response.userType?.let { runCatching { Role.valueOf(it) }.getOrNull() },
+                    profileCompleted = response.profileCompleted,
+                )
             }
         }
     }

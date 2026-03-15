@@ -1,6 +1,6 @@
 package com.swyp.firsttodo.core.auth.network
 
-import com.swyp.firsttodo.core.auth.datasource.TokenDataSource
+import com.swyp.firsttodo.core.auth.datasource.SessionDataSource
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -10,10 +10,10 @@ import javax.inject.Inject
 class AuthInterceptor
     @Inject
     constructor(
-        private val tokenDataSource: TokenDataSource,
+        private val sessionDataSource: SessionDataSource,
     ) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-            val accessToken = runBlocking { tokenDataSource.getAccessToken() }
+            val accessToken = runBlocking { sessionDataSource.getAccessToken() }
 
             val newRequest = chain.request().newBuilder().apply {
                 if (!accessToken.isNullOrBlank()) {

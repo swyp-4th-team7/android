@@ -1,6 +1,6 @@
 package com.swyp.firsttodo.data.repositoryimpl
 
-import com.swyp.firsttodo.core.auth.manager.AuthManager
+import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.common.util.suspendRunCatching
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.remote.datasource.UserDataSource
@@ -10,7 +10,7 @@ import javax.inject.Inject
 class UserRepositoryImpl
     @Inject
     constructor(
-        private val authManager: AuthManager,
+        private val sessionManager: SessionManager,
         private val apiResponseHandler: ApiResponseHandler,
         private val userDataSource: UserDataSource,
     ) : UserRepository {
@@ -19,7 +19,7 @@ class UserRepositoryImpl
                 userDataSource.deleteLogout()
             }
 
-            val localResult = suspendRunCatching { authManager.logout() }
+            val localResult = suspendRunCatching { sessionManager.clearSession() }
 
             return if (remoteResult.isSuccess && localResult.isSuccess) {
                 Result.success(Unit)
@@ -35,7 +35,7 @@ class UserRepositoryImpl
                 userDataSource.deleteAccount()
             }
 
-            val localResult = suspendRunCatching { authManager.logout() }
+            val localResult = suspendRunCatching { sessionManager.clearSession() }
 
             return if (remoteResult.isSuccess && localResult.isSuccess) {
                 Result.success(Unit)
