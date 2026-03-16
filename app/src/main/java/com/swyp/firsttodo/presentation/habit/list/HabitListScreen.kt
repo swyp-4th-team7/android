@@ -1,6 +1,5 @@
 package com.swyp.firsttodo.presentation.habit.list
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +22,7 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
+import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.habit.component.HabitList
 import com.swyp.firsttodo.presentation.habit.component.HabitMainBanner
 
@@ -78,10 +78,12 @@ fun HabitListScreen(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(32.dp),
     ) {
+        TopBarArea()
+
         HabitMainBanner(
             onButtonClick = onCreateClick,
+            modifier = Modifier.padding(bottom = 32.dp),
         )
 
         when (uiState.habitsData) {
