@@ -31,7 +31,7 @@ fun HabitListEmpty(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = "습관 만들기를 눌러 습관을 추가하세요!",
+            text = "내 습관 모음집",
             color = HaebomTheme.colors.black,
             style = HaebomTheme.typo.section,
         )
