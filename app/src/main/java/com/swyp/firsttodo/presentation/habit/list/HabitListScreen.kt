@@ -24,6 +24,7 @@ import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.habit.component.HabitList
+import com.swyp.firsttodo.presentation.habit.component.HabitListEmpty
 import com.swyp.firsttodo.presentation.habit.component.HabitMainBanner
 
 @Composable
@@ -84,10 +85,15 @@ fun HabitListScreen(
             onButtonClick = onCreateClick,
         )
 
-        when (uiState.habitsData) {
-            null -> Unit
+        when {
+            uiState.habits is Async.Empty -> HabitListEmpty(
+                modifier = Modifier
+                    .padding(
+                        horizontal = screenWidthDp(16.dp),
+                    ),
+            )
 
-            else -> HabitList(
+            uiState.habitsData != null -> HabitList(
                 onCheckClick = onCheckClick,
                 onEditClick = onEditClick,
                 onDeleteClick = onDeleteClick,
@@ -96,6 +102,8 @@ fun HabitListScreen(
                     .fillMaxWidth()
                     .padding(horizontal = screenWidthDp(16.dp)),
             )
+
+            else -> Unit
         }
     }
 }
