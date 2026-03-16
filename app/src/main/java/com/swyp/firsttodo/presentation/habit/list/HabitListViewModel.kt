@@ -65,7 +65,7 @@ class HabitListViewModel
                     )
                 }
 
-                updateState { copy(habits = Async.Success(newHabits)) }
+                updateState { copy(habits = if (newHabits.isEmpty()) Async.Empty else Async.Success(newHabits)) }
             }
         }
 
