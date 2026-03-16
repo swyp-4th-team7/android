@@ -1,6 +1,8 @@
 package com.swyp.firsttodo.presentation.onboarding.navigation
 
-import androidx.navigation.NavController
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.swyp.firsttodo.core.navigation.Route
@@ -12,10 +14,14 @@ sealed interface OnboardingRoute : Route {
     data object Onboarding : OnboardingRoute
 }
 
-fun NavGraphBuilder.onboardingNavGraph(navController: NavController) {
+fun NavGraphBuilder.onboardingNavGraph(
+    paddingValues: PaddingValues,
+    navigateToTodo: () -> Unit,
+) {
     composable<OnboardingRoute.Onboarding> {
         OnboardingRoute(
-            onNavigateToHome = {},
+            navigateToTodo = navigateToTodo,
+            modifier = Modifier.padding(paddingValues),
         )
     }
 }
