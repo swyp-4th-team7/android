@@ -16,6 +16,8 @@ sealed interface LoginSideEffect : UiEffect {
 
     data object NavigateToOnboarding : LoginSideEffect
 
+    data class NavigateToWebView(val title: String, val url: String) : LoginSideEffect
+
     data object LaunchGoogleLogin : LoginSideEffect
 
     data class ShowToast(val message: String) : LoginSideEffect

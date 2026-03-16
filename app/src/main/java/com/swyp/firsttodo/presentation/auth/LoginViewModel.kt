@@ -7,7 +7,6 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.domain.model.SocialType
 import com.swyp.firsttodo.domain.usecase.auth.SocialLoginUseCase
-import com.swyp.firsttodo.domain.usecase.user.LogoutUseCase
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLoginResult
 import com.swyp.firsttodo.presentation.auth.navigation.AuthRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,8 +19,7 @@ class LoginViewModel
     @Inject
     constructor(
         savedStateHandle: SavedStateHandle,
-        private val loginUseCase: SocialLoginUseCase,
-        private val logoutUseCase: LogoutUseCase,
+        private val socialLoginUseCase: SocialLoginUseCase,
     ) :
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
         val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
@@ -30,6 +28,24 @@ class LoginViewModel
             if (isSessionExpired) return
 
             sendEffect(LoginSideEffect.PopBackStack)
+        }
+
+        fun onTosClick() {
+            sendEffect(
+                LoginSideEffect.NavigateToWebView(
+                    title = "이용약관",
+                    url = "https://www.naver.com/",
+                ),
+            )
+        }
+
+        fun onPrivacyClick() {
+            sendEffect(
+                LoginSideEffect.NavigateToWebView(
+                    title = "개인정보 처리방침",
+                    url = "https://www.google.com/",
+                ),
+            )
         }
 
         fun onGoogleLoginClick() {
@@ -71,7 +87,7 @@ class LoginViewModel
             updateState { copy(loginState = Async.Loading()) }
 
             viewModelScope.launch {
-                loginUseCase(
+                socialLoginUseCase(
                     socialType = type,
                     token = token,
                 ).onSuccess { isProfileComplete ->
@@ -87,17 +103,6 @@ class LoginViewModel
                     sendEffect(LoginSideEffect.ShowToast("로그인에 실패했어요. 다시 시도해주세요."))
                     Timber.e(it)
                 }
-            }
-        }
-
-        fun onLogoutClick() {
-            viewModelScope.launch {
-                logoutUseCase()
-                    .onSuccess {
-                        sendEffect(LoginSideEffect.ShowToast("로그아웃 성공!"))
-                    }.onFailure {
-                        sendEffect(LoginSideEffect.ShowToast("로그아웃 실패.."))
-                    }
             }
         }
     }
