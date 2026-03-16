@@ -38,6 +38,7 @@ fun OnboardingRoute(
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val bottomBtnEnabled by viewModel.bottomBtnEnabled.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as ComponentActivity
 
@@ -55,7 +56,7 @@ fun OnboardingRoute(
 
     OnboardingScreen(
         uiState = uiState,
-        bottomBtnEnabled = viewModel.bottomBtnEnabled(),
+        bottomBtnEnabled = bottomBtnEnabled,
         nickNameFieldState = viewModel.nickNameFieldState,
         onBackClick = viewModel::onBack,
         onBottomBtnClick = viewModel::onBottomBtnClick,

@@ -1,39 +1,52 @@
 package com.swyp.firsttodo.presentation.onboarding
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
-import com.swyp.firsttodo.domain.repository.UserRepository
+import com.swyp.firsttodo.domain.throwble.ProfileError
+import com.swyp.firsttodo.domain.usecase.user.SaveOnboardingProfile
+import com.swyp.firsttodo.presentation.common.message.ErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingViewModel
     @Inject
     constructor(
-        private val userRepository: UserRepository,
+        private val saveOnboardingProfile: SaveOnboardingProfile,
     ) : BaseViewModel<OnboardingUiState, OnboardingSideEffect>(OnboardingUiState()) {
         val nickNameFieldState = TextFieldState()
 
         private var lastBackPressTime = 0L
 
+        private val validNicknameRegex = Regex("^[가-힣]{1,12}$")
+
+        private fun isValidNickname(nickname: String) = validNicknameRegex.matches(nickname)
+
+        val bottomBtnEnabled: StateFlow<Boolean> = combine(
+            snapshotFlow { nickNameFieldState.text.toString() },
+            uiState,
+        ) { nickname, state ->
+            when (state.currentStep) {
+                OnboardingStep.ROLE_SELECT -> state.selectedRole != null
+                OnboardingStep.PROFILE -> isValidNickname(nickname)
+                OnboardingStep.DONE -> false
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
         fun onBack() {
             when (uiState.value.currentStep) {
-                OnboardingStep.ROLE_SELECT -> {
-                    val now = System.currentTimeMillis()
-
-                    if (now - lastBackPressTime < 2000L) {
-                        sendEffect(OnboardingSideEffect.FinishApp)
-                    } else {
-                        lastBackPressTime = now
-                        sendEffect(OnboardingSideEffect.ShowToast("한 번 더 '뒤로가기' 누르면 앱이 종료돼요."))
-                    }
-                }
-
+                OnboardingStep.ROLE_SELECT -> handleDoubleBackPressToExit()
                 OnboardingStep.PROFILE -> updateState { copy(currentStep = OnboardingStep.ROLE_SELECT) }
-
                 OnboardingStep.DONE -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
             }
         }
@@ -41,31 +54,61 @@ class OnboardingViewModel
         fun onBottomBtnClick() {
             when (uiState.value.currentStep) {
                 OnboardingStep.ROLE_SELECT -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
-                OnboardingStep.PROFILE -> updateState {
-                    copy(currentStep = OnboardingStep.DONE)
-                }
-
-                OnboardingStep.DONE -> Unit
+                OnboardingStep.PROFILE -> saveProfile()
+                OnboardingStep.DONE -> sendEffect(OnboardingSideEffect.NavigateToTodo)
             }
-        }
-
-        fun bottomBtnEnabled(): Boolean {
-            return true
         }
 
         fun onRoleClick(role: Role) {
             updateState { copy(selectedRole = role) }
         }
 
-        fun saveInfo() {
+        private fun saveProfile() {
             val role = uiState.value.selectedRole ?: return
+            val nickname = nickNameFieldState.text.toString()
+            if (!isValidNickname(nickname)) return
 
             viewModelScope.launch {
-                userRepository.updateProfile(
-                    nickname = nickNameFieldState.toString(),
-                    userType = role.request,
-                ).onSuccess {
-                }
+                saveOnboardingProfile(nickname, role)
+                    .onSuccess { updateState { copy(currentStep = OnboardingStep.DONE) } }
+                    .onFailure { throwable ->
+                        Timber.e(throwable, "save onboarding profile error")
+
+                        val message = when (throwable) {
+                            is ProfileError -> {
+                                when (throwable) {
+                                    is ProfileError.NicknameEmpty -> "닉네임은 필수로 입력해주세요."
+                                    is ProfileError.NicknameLength -> "닉네임은 1자 이상 12자 이하로 입력해주세요."
+                                    is ProfileError.NicknameSymbols -> "닉네임은 한글로만 입력해주세요."
+                                    is ProfileError.RoleEmpty -> "역할은 필수로 선택해주세요."
+                                    is ProfileError.Undefined -> throwable.message ?: "프로필 저장에 실패했어요."
+                                }
+                            }
+
+                            is ApiError.NetworkConnection -> {
+                                ErrorMessage.NETWORK_ERROR
+                            }
+
+                            is ApiError.ServerError -> {
+                                ErrorMessage.SERVER_ERROR
+                            }
+
+                            else -> {
+                                "프로필 저장에 실패했어요."
+                            }
+                        }
+                        sendEffect(OnboardingSideEffect.ShowToast(message))
+                    }
+            }
+        }
+
+        private fun handleDoubleBackPressToExit() {
+            val now = System.currentTimeMillis()
+            if (now - lastBackPressTime < 2000L) {
+                sendEffect(OnboardingSideEffect.FinishApp)
+            } else {
+                lastBackPressTime = now
+                sendEffect(OnboardingSideEffect.ShowToast("한 번 더 '뒤로가기' 누르면 앱이 종료돼요."))
             }
         }
     }
