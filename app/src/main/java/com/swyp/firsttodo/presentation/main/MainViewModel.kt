@@ -11,10 +11,13 @@ import com.swyp.firsttodo.presentation.onboarding.navigation.OnboardingRoute
 import com.swyp.firsttodo.presentation.todo.navigation.TodoRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,6 +29,9 @@ class MainViewModel
         private val sessionManager: SessionManager,
         private val saveNotificationTokenUseCase: SaveNotificationTokenUseCase,
     ) : ViewModel() {
+        private val _showDrawer = MutableStateFlow(false)
+        val showDrawer: StateFlow<Boolean> = _showDrawer.asStateFlow()
+
         val sideEffect: Flow<AuthSideEffect> = sessionManager.sideEffect
 
         val startDestination: StateFlow<Route?> = sessionManager.sessionState
@@ -54,5 +60,16 @@ class MainViewModel
                 Timber.d("Session init complete → ${sessionManager.sessionState.value}")
                 saveNotificationTokenUseCase()
             }
+        }
+
+        fun onMenuClick() {
+            _showDrawer.update { true }
+        }
+
+        fun onDrawerDismiss() {
+            _showDrawer.update { false }
+        }
+
+        fun onAlarmClick() {
         }
     }
