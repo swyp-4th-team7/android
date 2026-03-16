@@ -7,7 +7,7 @@ import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.remote.datasource.UserDataSource
 import com.swyp.firsttodo.data.remote.dto.request.user.ProfileRequestDto
 import com.swyp.firsttodo.domain.repository.UserRepository
-import com.swyp.firsttodo.domain.throwble.ProfileError
+import com.swyp.firsttodo.domain.throwable.ProfileError
 import javax.inject.Inject
 
 class UserRepositoryImpl

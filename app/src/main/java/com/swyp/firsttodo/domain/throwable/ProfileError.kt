@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.domain.throwble
+package com.swyp.firsttodo.domain.throwable
 
 sealed class ProfileError(
     override val message: String?,
