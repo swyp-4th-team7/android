@@ -15,7 +15,7 @@ interface UserService {
 
     @PATCH("/api/v1/users/me")
     suspend fun patchProfile(
-        @Body reqeust: ProfileRequestDto,
+        @Body request: ProfileRequestDto,
     ): BaseResponse<Unit>
 
     @PATCH("/api/v1/users/me/terms")
