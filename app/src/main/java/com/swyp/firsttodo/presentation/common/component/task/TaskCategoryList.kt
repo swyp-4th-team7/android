@@ -3,6 +3,7 @@ package com.swyp.firsttodo.presentation.common.component.task
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ fun <T> TaskCategoryList(
                 label = getDisplayName(category),
                 onClick = { onCategoryClick(category) },
                 selected = category == selectedCategory,
+                modifier = Modifier.widthIn(64.dp),
             )
         }
     }

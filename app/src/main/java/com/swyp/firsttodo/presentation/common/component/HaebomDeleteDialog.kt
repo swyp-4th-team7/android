@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,13 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
+import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicDialog
-import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
 
 @Composable
 fun HaebomDeleteDialog(
@@ -44,35 +43,37 @@ fun HaebomDeleteDialog(
     ) {
         Column(
             modifier = Modifier
-                .padding(horizontal = screenWidthDp(24.dp))
-                .padding(top = 24.dp, bottom = 12.dp),
+                .padding(horizontal = screenWidthDp(20.dp))
+                .padding(top = screenHeightDp(32.dp), bottom = screenHeightDp(20.dp)),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
                 text = title,
                 color = colors.black,
-                style = BoldStyle.copy(fontSize = 18.sp),
+                style = HaebomTheme.typo.card,
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.heightForScreenPercentage(8.dp))
 
             Text(
                 text = description,
                 color = colors.gray400,
-                style = RegularStyle.copy(fontSize = 14.sp),
+                style = HaebomTheme.typo.description,
             )
 
-            Spacer(Modifier.height(22.dp))
+            Spacer(Modifier.heightForScreenPercentage(16.dp))
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(screenWidthDp(16.dp)),
             ) {
                 DialogButton(
                     text = cancelBtnLabel,
                     textColor = colors.gray200,
                     backgroundColor = colors.gray50,
                     onClick = onCancel,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(40.dp),
                 )
 
                 DialogButton(
@@ -80,7 +81,9 @@ fun HaebomDeleteDialog(
                     textColor = colors.white,
                     backgroundColor = colors.orange500,
                     onClick = onConfirm,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(40.dp),
                 )
             }
         }
@@ -103,11 +106,11 @@ private fun DialogButton(
                 color = backgroundColor,
                 shape = RoundedCornerShape(4.dp),
             )
-            .minimumInteractiveComponentSize()
-            .padding(10.dp),
+            .padding(8.dp)
+            .wrapContentHeight(Alignment.CenterVertically),
         color = textColor,
         textAlign = TextAlign.Center,
-        style = BoldStyle.copy(fontSize = 14.sp),
+        style = HaebomTheme.typo.buttonM,
     )
 }
 

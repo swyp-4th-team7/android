@@ -42,6 +42,7 @@ import com.swyp.firsttodo.core.designsystem.theme.MediumStyle
 fun TaskEditPopup(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onDismiss: () -> Unit,
     offset: DpOffset,
     modifier: Modifier = Modifier,
 ) {
@@ -75,6 +76,7 @@ fun TaskEditPopup(
     Popup(
         popupPositionProvider = popupPositionProvider,
         properties = popupProperties,
+        onDismissRequest = onDismiss,
     ) {
         PopupContent(
             onEditClick = onEditClick,
