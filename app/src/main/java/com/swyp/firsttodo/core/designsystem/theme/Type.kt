@@ -55,6 +55,7 @@ data class HaebomTypography(
     val helperText: TextStyle,
     val bottomNavbar: TextStyle,
     val buttonM: TextStyle,
+    val buttonL: TextStyle,
 )
 
 val defaultHaebomTypography = HaebomTypography(
@@ -75,6 +76,7 @@ val defaultHaebomTypography = HaebomTypography(
     helperText = MediumStyle.copy(fontSize = 12.sp),
     bottomNavbar = SemiBoldStyle.copy(fontSize = 12.sp),
     buttonM = BoldStyle.copy(fontSize = 14.sp),
+    buttonL = BoldStyle.copy(fontSize = 16.sp),
 )
 
 val LocalHaebomTypographyProvider = staticCompositionLocalOf { defaultHaebomTypography }
