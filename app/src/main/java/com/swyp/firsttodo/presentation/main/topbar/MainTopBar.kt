@@ -37,8 +37,6 @@ fun MainTopBar(
         visible = visible,
         enter = fadeIn(animationSpec = tween(300)),
         exit = fadeOut(animationSpec = tween(300)),
-//        enter = fadeIn(animationSpec = tween(300)) + slideIn(animationSpec = tween(300)) { IntOffset(0, -it.height) },
-//        exit = fadeOut(animationSpec = tween(300)) + slideOut(animationSpec = tween(300)) { IntOffset(0, -it.height) },
     ) {
         Row(
             modifier = modifier
