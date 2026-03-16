@@ -1,6 +1,8 @@
 package com.swyp.firsttodo.data.remote.service
 
 import com.swyp.firsttodo.core.network.model.BaseResponse
+import com.swyp.firsttodo.data.remote.dto.request.user.ProfileRequestDto
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.PATCH
 
@@ -12,7 +14,9 @@ interface UserService {
     suspend fun deleteAccount(): BaseResponse<Unit>
 
     @PATCH("/api/v1/users/me")
-    suspend fun patchProfile(): BaseResponse<Unit>
+    suspend fun patchProfile(
+        @Body reqeust: ProfileRequestDto,
+    ): BaseResponse<Unit>
 
     @PATCH("/api/v1/users/me/terms")
     suspend fun patchTerms(): BaseResponse<Unit>

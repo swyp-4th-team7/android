@@ -4,6 +4,7 @@ import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.common.util.suspendRunCatching
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.remote.datasource.UserDataSource
+import com.swyp.firsttodo.data.remote.dto.request.user.ProfileRequestDto
 import com.swyp.firsttodo.domain.repository.UserRepository
 import javax.inject.Inject
 
@@ -46,8 +47,13 @@ class UserRepositoryImpl
             }
         }
 
-        override suspend fun updateProfile(): Result<Unit> =
-            apiResponseHandler.safeApiCall { userDataSource.patchProfile() }
+        override suspend fun updateProfile(
+            nickname: String,
+            userType: String,
+        ): Result<Unit> =
+            apiResponseHandler.safeApiCall {
+                userDataSource.patchProfile(ProfileRequestDto(nickname, userType))
+            }
 
         override suspend fun updateTerms(): Result<Unit> =
             apiResponseHandler.safeApiCall { userDataSource.patchTerms() }

@@ -5,7 +5,10 @@ interface UserRepository {
 
     suspend fun deleteAccount(): Result<Unit>
 
-    suspend fun updateProfile(): Result<Unit>
+    suspend fun updateProfile(
+        nickname: String,
+        userType: String,
+    ): Result<Unit>
 
     suspend fun updateTerms(): Result<Unit>
 }

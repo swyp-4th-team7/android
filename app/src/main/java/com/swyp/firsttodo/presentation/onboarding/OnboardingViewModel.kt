@@ -1,10 +1,12 @@
 package com.swyp.firsttodo.presentation.onboarding
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,7 +41,10 @@ class OnboardingViewModel
         fun onBottomBtnClick() {
             when (uiState.value.currentStep) {
                 OnboardingStep.ROLE_SELECT -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
-                OnboardingStep.PROFILE -> updateState { copy(currentStep = OnboardingStep.DONE) }
+                OnboardingStep.PROFILE -> updateState {
+                    copy(currentStep = OnboardingStep.DONE)
+                }
+
                 OnboardingStep.DONE -> Unit
             }
         }
@@ -50,5 +55,17 @@ class OnboardingViewModel
 
         fun onRoleClick(role: Role) {
             updateState { copy(selectedRole = role) }
+        }
+
+        fun saveInfo() {
+            val role = uiState.value.selectedRole ?: return
+
+            viewModelScope.launch {
+                userRepository.updateProfile(
+                    nickname = nickNameFieldState.toString(),
+                    userType = role.request,
+                ).onSuccess {
+                }
+            }
         }
     }
