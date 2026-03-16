@@ -41,13 +41,6 @@ fun MainScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = {
-            MainTopBar(
-                visible = navigator.shouldShowBottomBar(),
-                onMenuClick = viewModel::onMenuClick,
-                onAlarmClick = viewModel::onAlarmClick,
-            )
-        },
         bottomBar = {
             MainBottomBar(
                 visible = navigator.shouldShowBottomBar(),
@@ -63,6 +56,12 @@ fun MainScreen(
                 navigator = navigator,
                 paddingValues = innerPadding,
                 startDestination = startDestination,
+            )
+
+            MainTopBar(
+                visible = navigator.shouldShowBottomBar(),
+                onMenuClick = viewModel::onMenuClick,
+                onAlarmClick = viewModel::onAlarmClick,
             )
 
             MainDrawer(
