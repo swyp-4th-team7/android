@@ -33,7 +33,7 @@ class LoginViewModel
         fun onTosClick() {
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
-                    title = "개인정보 처리방침",
+                    title = "이용약관",
                     url = "https://www.naver.com/",
                 ),
             )
@@ -42,7 +42,7 @@ class LoginViewModel
         fun onPrivacyClick() {
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
-                    title = "이용약관",
+                    title = "개인정보 처리방침",
                     url = "https://www.google.com/",
                 ),
             )
