@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +42,6 @@ import com.swyp.firsttodo.presentation.common.component.HaebomTag
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
 import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
 import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
-import kotlinx.coroutines.launch
 
 enum class ScheduleBottomSheetType(
     val title: String,
@@ -90,6 +90,13 @@ fun ScheduleBottomSheet(
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(loadingStatus) {
+        if (loadingStatus is Async.Success) {
+            sheetState.hide()
+            onDismiss()
+        }
+    }
 
     HaebomBasicBottomSheet(
         onDismiss = onDismiss,
@@ -183,16 +190,7 @@ fun ScheduleBottomSheet(
 
             HaebomLargeButton(
                 text = sheetType.btnText,
-                onClick = {
-                    scope.launch {
-                        onBtnClick()
-
-                        if (loadingStatus is Async.Success) {
-                            onDismiss()
-                            sheetState.hide()
-                        }
-                    }
-                },
+                onClick = onBtnClick,
                 enabled = btnEnabled && loadingStatus is Async.Init,
                 modifier = Modifier.fillMaxWidth(),
             )
