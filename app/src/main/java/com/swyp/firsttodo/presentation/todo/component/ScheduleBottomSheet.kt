@@ -187,7 +187,7 @@ fun ScheduleBottomSheet(
             HaebomLargeButton(
                 text = sheetType.btnText,
                 onClick = onBtnClick,
-                enabled = btnEnabled && loadingStatus is Async.Init,
+                enabled = btnEnabled && loadingStatus !is Async.Loading,
                 modifier = Modifier.fillMaxWidth(),
             )
         }

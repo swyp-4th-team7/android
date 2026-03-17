@@ -23,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -94,7 +93,6 @@ fun TodoBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(loadingStatus) {
@@ -180,7 +178,7 @@ fun TodoBottomSheet(
             HaebomLargeButton(
                 text = sheetType.btnText,
                 onClick = onBtnClick,
-                enabled = btnEnabled && loadingStatus is Async.Init,
+                enabled = btnEnabled && loadingStatus !is Async.Loading,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
