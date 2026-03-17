@@ -97,12 +97,22 @@ class HabitDetailViewModel
 
         private fun validateDuration(): Boolean = uiState.value.duration != null
 
-        private fun validateAllField(): Boolean = validateTitle() && validateReward() && validateDuration()
+        private fun validateAllField(): Boolean {
+            return when (screenType) {
+                HabitDetailScreenType.CHILD -> validateTitle() && validateReward() && validateDuration()
+                HabitDetailScreenType.PARENT -> validateTitle() && validateDuration()
+            }
+        }
 
-        private fun isChanged(): Boolean =
-            titleState.text.toString() != initialHabit?.title ||
-                rewardState.text.toString() != initialHabit.reward ||
-                uiState.value.duration != initialHabit.duration
+        private fun isChanged(): Boolean {
+            val titleChanged = titleState.text.toString() != initialHabit?.title
+            val durationChanged = uiState.value.duration != initialHabit?.duration
+            val rewardChanged = when (screenType) {
+                HabitDetailScreenType.CHILD -> rewardState.text.toString() != initialHabit?.reward
+                HabitDetailScreenType.PARENT -> false
+            }
+            return titleChanged || durationChanged || rewardChanged
+        }
 
         fun onBtnClick() {
             when (uiState.value.screenState) {
