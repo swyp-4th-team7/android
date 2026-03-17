@@ -36,9 +36,11 @@ import com.swyp.firsttodo.presentation.common.component.HaebomLabel
 import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
 data class ScheduleUiModel(
+    val scheduleId: Long,
     val dDay: Int,
     val title: String,
     val date: String,
+    val rawDate: String,
     val category: ScheduleCategory,
     val isUrgent: Boolean,
 )
@@ -48,7 +50,7 @@ fun ScheduleList(
     schedules: Async<List<ScheduleUiModel>>,
     onPlusClick: () -> Unit,
     onEditClick: (ScheduleUiModel) -> Unit,
-    onDeleteCick: (ScheduleUiModel) -> Unit,
+    onDeleteClick: (ScheduleUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TodoCard(
@@ -65,7 +67,7 @@ fun ScheduleList(
                     ScheduleItem(
                         schedule = schedule,
                         onEditClick = { onEditClick(schedule) },
-                        onDeleteCick = { onDeleteCick(schedule) },
+                        onDeleteClick = { onDeleteClick(schedule) },
                     )
                 }
 
@@ -83,7 +85,7 @@ fun ScheduleList(
 private fun ScheduleItem(
     schedule: ScheduleUiModel,
     onEditClick: () -> Unit,
-    onDeleteCick: () -> Unit,
+    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showPopup by remember { mutableStateOf(false) }
@@ -155,8 +157,14 @@ private fun ScheduleItem(
 
         if (showPopup) {
             TaskEditPopup(
-                onEditClick = onEditClick,
-                onDeleteClick = onDeleteCick,
+                onEditClick = {
+                    onEditClick()
+                    showPopup = false
+                },
+                onDeleteClick = {
+                    onDeleteClick()
+                    showPopup = false
+                },
                 onDismiss = { showPopup = false },
             )
         }
@@ -168,24 +176,30 @@ private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<
         Async.Success(
             listOf(
                 ScheduleUiModel(
+                    scheduleId = 1L,
                     dDay = 5,
                     title = "수학 수행평가",
                     date = "2026.03.22.일요일",
                     category = ScheduleChildCategory.PERFORMANCE_EVALUATION,
+                    rawDate = "",
                     isUrgent = true,
                 ),
                 ScheduleUiModel(
+                    scheduleId = 2L,
                     dDay = 20,
                     title = "1학기 기말고사",
                     date = "2026.04.06.월요일",
                     category = ScheduleChildCategory.FINAL_EXAM,
+                    rawDate = "",
                     isUrgent = false,
                 ),
                 ScheduleUiModel(
+                    scheduleId = 3L,
                     dDay = 28,
                     title = "과학 탐구 과학 탐구 대회 과학 탐구 대회 대회 과학 탐구 대회",
                     date = "2026.04.14.화요일",
                     category = ScheduleChildCategory.CONTEST,
+                    rawDate = "",
                     isUrgent = false,
                 ),
             ),
@@ -204,7 +218,7 @@ private fun ScheduleListPreview(
             schedules = schedules,
             onPlusClick = {},
             onEditClick = {},
-            onDeleteCick = {},
+            onDeleteClick = {},
         )
     }
 }

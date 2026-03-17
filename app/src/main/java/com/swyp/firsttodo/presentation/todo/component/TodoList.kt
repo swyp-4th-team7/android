@@ -2,6 +2,7 @@ package com.swyp.firsttodo.presentation.todo.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -15,7 +16,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +37,7 @@ import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.TodoCategory
 import com.swyp.firsttodo.domain.model.TodoChildCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
+import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
 data class TodayTodoUiModel(
     val todoId: Long,
@@ -46,7 +51,9 @@ data class TodayTodoUiModel(
 fun TodoList(
     todos: Async<List<TodayTodoUiModel>>,
     onPlusClick: () -> Unit,
-    onCheckClick: (Long) -> Unit,
+    onCheckClick: (TodayTodoUiModel) -> Unit,
+    onEditClick: (TodayTodoUiModel) -> Unit,
+    onDeleteClick: (TodayTodoUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     TodoCard(
@@ -62,7 +69,9 @@ fun TodoList(
                 is Async.Success -> todos.data.forEach { todo ->
                     TodoItem(
                         todo = todo,
-                        onCheckClick = { onCheckClick(todo.todoId) },
+                        onCheckClick = { onCheckClick(todo) },
+                        onEditClick = { onEditClick(todo) },
+                        onDeleteClick = { onDeleteClick(todo) },
                     )
                 }
 
@@ -80,9 +89,13 @@ fun TodoList(
 private fun TodoItem(
     todo: TodayTodoUiModel,
     onCheckClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val (iconRes, textColor, backgroundColor) = remember(todo.completed) {
+    var showPopup by remember { mutableStateOf(false) }
+
+    val (iconRes, labelTextColor, labelBgColor) = remember(todo.completed) {
         if (todo.completed) {
             Triple(R.drawable.ic_check_filled, todo.labelColor.completedText, todo.labelColor.completedBackground)
         } else {
@@ -112,30 +125,47 @@ private fun TodoItem(
             tint = Color.Unspecified,
         )
 
-        Row(
-            modifier = Modifier
-                .background(
-                    color = HaebomTheme.colors.white,
-                    shape = RoundedCornerShape(4.dp),
-                )
-                .padding(horizontal = 8.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = todo.title,
+        Box {
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(end = 4.dp),
-                color = HaebomTheme.colors.gray700,
-                style = HaebomTheme.typo.description,
-            )
+                    .noRippleClickable({ showPopup = true })
+                    .background(
+                        color = HaebomTheme.colors.white,
+                        shape = RoundedCornerShape(4.dp),
+                    )
+                    .padding(horizontal = 8.dp, vertical = 14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = todo.title,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 4.dp),
+                    color = if (todo.completed) HaebomTheme.colors.gray200 else HaebomTheme.colors.gray700,
+                    style = HaebomTheme.typo.description,
+                )
 
-            HaebomLabel(
-                textColor = textColor,
-                backgroundColor = backgroundColor,
-                text = todo.category.displayName,
-            )
+                HaebomLabel(
+                    textColor = labelTextColor,
+                    backgroundColor = labelBgColor,
+                    text = todo.category.displayName,
+                )
+            }
+
+            if (showPopup) {
+                TaskEditPopup(
+                    onEditClick = {
+                        onEditClick()
+                        showPopup = false
+                    },
+                    onDeleteClick = {
+                        onDeleteClick()
+                        showPopup = false
+                    },
+                    onDismiss = { showPopup = false },
+                )
+            }
         }
     }
 }
@@ -196,6 +226,8 @@ private fun TodoListPreview(
             todos = todos,
             onPlusClick = {},
             onCheckClick = {},
+            onEditClick = {},
+            onDeleteClick = {},
         )
     }
 }

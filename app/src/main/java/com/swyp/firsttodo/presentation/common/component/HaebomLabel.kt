@@ -3,7 +3,6 @@ package com.swyp.firsttodo.presentation.common.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -29,7 +28,6 @@ fun HaebomLabel(
     Text(
         text = text,
         modifier = modifier
-            .widthIn(60.dp)
             .heightIn(20.dp)
             .background(
                 color = backgroundColor,

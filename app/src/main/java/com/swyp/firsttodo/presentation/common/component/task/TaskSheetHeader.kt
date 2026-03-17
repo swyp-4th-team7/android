@@ -64,7 +64,7 @@ fun TaskSheetHeader(
                 modifier = Modifier
                     .noRippleClickable(onDismiss)
                     .padding(all = 12.dp),
-                tint = colors.gray400,
+                tint = colors.black,
             )
         }
 

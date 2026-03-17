@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
+import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
@@ -29,7 +31,7 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
 fun TodoBanner(
-    remainTodo: Int,
+    remainTodo: Async<Int>,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -38,6 +40,13 @@ fun TodoBanner(
             .heightForScreenPercentage(132.dp)
             .background(Color(0xFFFFFAC9)),
     ) {
+        val text = remember(remainTodo) {
+            when (remainTodo) {
+                is Async.Success -> "남은 할 일 : ${remainTodo.data}개"
+                else -> ""
+            }
+        }
+
         Icon(
             imageVector = ImageVector.vectorResource(R.drawable.ic_fighting_bubble),
             contentDescription = null,
@@ -53,7 +62,7 @@ fun TodoBanner(
                 .padding(start = screenWidthDp(24.dp), bottom = screenHeightDp(24.dp)),
         ) {
             Text(
-                text = "남은 할 일 : ${remainTodo}일",
+                text = text,
                 modifier = Modifier
                     .widthIn(screenWidthDp(112.dp))
                     .heightIn(screenHeightDp(24.dp))
@@ -71,14 +80,14 @@ fun TodoBanner(
     }
 }
 
-private class TodoBannerPreviewProvider : PreviewParameterProvider<Int> {
-    override val values = sequenceOf(3, 9999999)
+private class TodoBannerPreviewProvider : PreviewParameterProvider<Async<Int>> {
+    override val values = sequenceOf(Async.Success(3), Async.Success(9999999), Async.Init)
 }
 
 @Preview(widthDp = 360)
 @Composable
 private fun TodoBannerPreview(
-    @PreviewParameter(TodoBannerPreviewProvider::class) remainTodo: Int,
+    @PreviewParameter(TodoBannerPreviewProvider::class) remainTodo: Async<Int>,
 ) {
     HaebomTheme {
         TodoBanner(
