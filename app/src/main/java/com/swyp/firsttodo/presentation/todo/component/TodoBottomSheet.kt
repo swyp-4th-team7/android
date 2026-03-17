@@ -194,7 +194,7 @@ fun LabelColorChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val (backgroundColor, lineColor) = remember(selected) {
+    val (backgroundColor, lineColor) = remember(selected, labelColor) {
         when (selected) {
             true -> labelColor.background to labelColor.text
             false -> labelColor.completedBackground to labelColor.completedText
