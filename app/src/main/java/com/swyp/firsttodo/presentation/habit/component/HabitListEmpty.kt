@@ -45,7 +45,7 @@ fun HabitListEmpty(modifier: Modifier = Modifier) {
                     shape = RoundedCornerShape(4.dp),
                 )
                 .heightIn(56.dp)
-                .padding(vertical = 16.dp)
+                .padding(all = 16.dp)
                 .wrapContentHeight(Alignment.CenterVertically),
             color = HaebomTheme.colors.gray400,
             textAlign = TextAlign.Center,

@@ -1,10 +1,13 @@
 package com.swyp.firsttodo.presentation.habit.list
 
 import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.presentation.habit.component.HabitListType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,7 +16,23 @@ import javax.inject.Inject
 @HiltViewModel
 class HabitListViewModel
     @Inject
-    constructor() : BaseViewModel<HabitListUiState, HabitListSideEffect>(HabitListUiState()) {
+    constructor(
+        sessionManager: SessionManager,
+    ) : BaseViewModel<HabitListUiState, HabitListSideEffect>(HabitListUiState()) {
+        private val role: Role = when (sessionManager.sessionState.value.userType) {
+            Role.PARENT.request -> Role.PARENT
+            else -> Role.CHILD
+        }
+
+        val listType = when (role) {
+            Role.PARENT -> HabitListType.PARENT
+            Role.CHILD -> HabitListType.CHILD
+        }
+
+        init {
+            getHabits()
+        }
+
         fun getHabits() {
             updateState { copy(habits = Async.Loading((this.habits as? Async.Success)?.data)) }
 
