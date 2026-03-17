@@ -52,7 +52,7 @@ private class HaebomLabelPreviewProvider : PreviewParameterProvider<HaebomLabelP
     override val values = sequenceOf(
         HaebomLabelParam(LabelColor.BLUE, "공부"),
         HaebomLabelParam(LabelColor.LIME, "집안일"),
-        HaebomLabelParam(LabelColor.RED, "수행평가"),
+        HaebomLabelParam(LabelColor.PINK, "수행평가"),
     )
 }
 
