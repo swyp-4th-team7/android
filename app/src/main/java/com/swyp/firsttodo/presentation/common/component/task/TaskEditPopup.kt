@@ -2,7 +2,6 @@ package com.swyp.firsttodo.presentation.common.component.task
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,8 +42,8 @@ fun TaskEditPopup(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
-    offset: DpOffset,
     modifier: Modifier = Modifier,
+    offset: DpOffset = DpOffset(8.dp, 8.dp),
 ) {
     val density = LocalDensity.current
 
@@ -60,8 +59,8 @@ fun TaskEditPopup(
                 popupContentSize: IntSize,
             ): IntOffset {
                 return IntOffset(
-                    x = anchorBounds.right - popupContentSize.width + xOffset,
-                    y = anchorBounds.bottom + yOffset,
+                    x = anchorBounds.right - popupContentSize.width - xOffset,
+                    y = anchorBounds.top + yOffset,
                 )
             }
         }
@@ -100,18 +99,13 @@ private fun PopupContent(
                 shape = RoundedCornerShape(8.dp),
                 shadow = Shadow(
                     radius = 6.dp,
-                    color = colors.black.copy(alpha = 0.22f),
+                    color = colors.black.copy(alpha = 0.4f),
                     offset = DpOffset(0.dp, 1.dp),
                     spread = 0.dp,
                 ),
             )
             .background(
                 color = colors.white,
-                shape = RoundedCornerShape(8.dp),
-            )
-            .border(
-                width = 0.5.dp,
-                color = colors.gray300,
                 shape = RoundedCornerShape(8.dp),
             ),
     ) {

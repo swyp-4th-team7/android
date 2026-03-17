@@ -53,7 +53,6 @@ fun ProfileView(
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
             ),
-            maxCount = 12,
         )
     }
 }

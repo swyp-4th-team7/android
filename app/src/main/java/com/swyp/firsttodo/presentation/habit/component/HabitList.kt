@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
@@ -132,70 +131,69 @@ private fun ListItem(
             )
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .noRippleClickable({ showPopup = true })
-                .background(
-                    color = HaebomTheme.colors.white,
-                    shape = RoundedCornerShape(4.dp),
-                ),
-        ) {
-            Column(
+        Box {
+            Row(
                 modifier = Modifier
-                    .padding(all = 8.dp)
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                    .fillMaxWidth()
+                    .noRippleClickable({ showPopup = true })
+                    .background(
+                        color = HaebomTheme.colors.white,
+                        shape = RoundedCornerShape(4.dp),
+                    ),
             ) {
-                Text(
-                    text = habit.title,
-                    color = HaebomTheme.colors.black,
-                    style = HaebomTheme.typo.description,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                Column(
+                    modifier = Modifier
+                        .padding(all = 8.dp)
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "보상 :",
-                        color = HaebomTheme.colors.gray400,
-                        style = HaebomTheme.typo.helperText,
-                    )
-
-                    Text(
-                        text = habit.reward,
-                        color = HaebomTheme.colors.gray400,
-                        style = HaebomTheme.typo.helperText,
+                        text = habit.title,
+                        color = HaebomTheme.colors.black,
+                        style = HaebomTheme.typo.description,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                }
-            }
 
-            Box {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text(
+                            text = "보상 :",
+                            color = HaebomTheme.colors.gray400,
+                            style = HaebomTheme.typo.helperText,
+                        )
+
+                        Text(
+                            text = habit.reward,
+                            color = HaebomTheme.colors.gray400,
+                            style = HaebomTheme.typo.helperText,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+
                 Icon(
                     imageVector = ImageVector.vectorResource(durationIconRes),
                     contentDescription = null,
                     modifier = Modifier.padding(end = 8.dp),
                     tint = Color.Unspecified,
                 )
+            }
 
-                if (showPopup) {
-                    TaskEditPopup(
-                        onEditClick = {
-                            onEditClick()
-                            showPopup = false
-                        },
-                        onDeleteClick = {
-                            onDeleteClick()
-                            showPopup = false
-                        },
-                        onDismiss = { showPopup = false },
-                        offset = DpOffset(4.dp, 0.dp),
-                    )
-                }
+            if (showPopup) {
+                TaskEditPopup(
+                    onEditClick = {
+                        onEditClick()
+                        showPopup = false
+                    },
+                    onDeleteClick = {
+                        onDeleteClick()
+                        showPopup = false
+                    },
+                    onDismiss = { showPopup = false },
+                )
             }
         }
     }

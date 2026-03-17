@@ -136,7 +136,6 @@ fun HabitDetailScreen(
                     onKeyboardAction = KeyboardActionHandler {
                         focusManager.moveFocus(FocusDirection.Next)
                     },
-                    maxCount = 12,
                 )
             }
 

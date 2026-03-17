@@ -9,6 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -18,7 +20,8 @@ import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 
 @Composable
 fun HaebomLabel(
-    labelColor: LabelColor,
+    textColor: Color,
+    backgroundColor: Color,
     text: String,
     modifier: Modifier = Modifier,
 ) {
@@ -27,12 +30,13 @@ fun HaebomLabel(
         modifier = modifier
             .heightIn(20.dp)
             .background(
-                color = labelColor.background,
+                color = backgroundColor,
                 shape = RoundedCornerShape(4.dp),
             )
             .padding(horizontal = 8.dp)
             .wrapContentHeight(Alignment.CenterVertically),
-        color = labelColor.text,
+        color = textColor,
+        textAlign = TextAlign.Center,
         style = HaebomTheme.typo.caption,
     )
 }
@@ -46,7 +50,7 @@ private class HaebomLabelPreviewProvider : PreviewParameterProvider<HaebomLabelP
     override val values = sequenceOf(
         HaebomLabelParam(LabelColor.BLUE, "공부"),
         HaebomLabelParam(LabelColor.LIME, "집안일"),
-        HaebomLabelParam(LabelColor.RED, "수행평가"),
+        HaebomLabelParam(LabelColor.PINK, "수행평가"),
     )
 }
 
@@ -57,7 +61,8 @@ private fun HaebomLabelPreview(
 ) {
     HaebomTheme {
         HaebomLabel(
-            labelColor = param.labelColor,
+            textColor = param.labelColor.text,
+            backgroundColor = param.labelColor.background,
             text = param.text,
         )
     }

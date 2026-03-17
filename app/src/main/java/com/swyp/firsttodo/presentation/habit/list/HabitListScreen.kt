@@ -21,6 +21,7 @@ import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
 import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.habit.component.HabitList
@@ -50,8 +51,7 @@ fun HabitListRoute(
 
     if (uiState.showDeleteDialog) {
         HaebomDeleteDialog(
-            title = "선택한 할 일을 삭제할까요?",
-            description = "입력한 할 일이 사라져요!",
+            dialogType = DeleteDialogType.HABIT,
             onConfirm = viewModel::onDeleteConfirm,
             onCancel = viewModel::onDeleteCancel,
             onDismiss = viewModel::onDeleteCancel,

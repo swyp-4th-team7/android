@@ -2,10 +2,10 @@ package com.swyp.firsttodo.domain.model
 
 enum class ScheduleCategory(
     val displayName: String,
-    val api: String,
+    val request: String,
 ) {
-    FINAL_EXAM("기말고사", "FINAL_EXAM"),
-    MIDTERM_EXAM("중간고사", "MIDTERM_EXAM"),
-    PERFORMANCE_EVALUATION("수행평가", "PERFORMANCE_EVALUATION"),
-    CONTEST("대회", "CONTEST"),
+    SCHOOL_EXAM("학교시험", "SCHOOL_EXAM"),
+    ACADEMY_EXAM("학원시험", "ACADEMY_EXAM"),
+    OUT_EXAM("외부시험", "PERFORMANCE_EVALUATION"),
+    CONTEST("대회·경시", "CONTEST"),
 }

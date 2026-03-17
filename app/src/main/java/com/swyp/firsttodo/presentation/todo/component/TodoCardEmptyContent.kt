@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,10 +17,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
 
 @Composable
 fun TodoCardEmptyContent(
@@ -29,11 +28,12 @@ fun TodoCardEmptyContent(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .heightIn(56.dp)
             .background(
                 color = HaebomTheme.colors.white,
                 shape = RoundedCornerShape(4.dp),
             )
-            .padding(horizontal = 16.dp, vertical = 15.dp)
+            .padding(all = 16.dp)
             .wrapContentWidth(Alignment.CenterHorizontally),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Top,
@@ -41,7 +41,7 @@ fun TodoCardEmptyContent(
         Text(
             text = text,
             color = HaebomTheme.colors.gray400,
-            style = RegularStyle.copy(fontSize = 16.sp),
+            style = HaebomTheme.typo.subtitle,
         )
 
         Icon(

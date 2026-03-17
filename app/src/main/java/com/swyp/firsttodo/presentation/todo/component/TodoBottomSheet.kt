@@ -1,55 +1,91 @@
 package com.swyp.firsttodo.presentation.todo.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.InputTransformation
-import androidx.compose.foundation.text.input.OutputTransformation
-import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.delete
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.swyp.firsttodo.core.common.extension.widthForScreenPercentage
+import com.swyp.firsttodo.R
+import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
-import com.swyp.firsttodo.core.designsystem.component.HaebomBasicTextField
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
+import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.TodoCategory
+import com.swyp.firsttodo.domain.model.TodoChildCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
 import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
 import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
-import kotlinx.coroutines.launch
+
+enum class TodoBottomSheetType(
+    val title: String,
+    val description: String,
+    val btnText: String,
+) {
+    CHILD_CREATE(
+        title = "추가 할 일 작성 하기",
+        description = "해야 할 일을 추가하고 하나씩 완료해보세요.",
+        btnText = "추가하기",
+    ),
+    CHILD_EDIT(
+        title = "할 일 수정하기",
+        description = "할 일 정보를 수정하고 업데이트하세요.",
+        btnText = "수정하기",
+    ),
+    PARENT_CREATE(
+        title = "추가 할 일 작성",
+        description = "해야 할 일을 추가하고 하나씩 완료해보세요.",
+        btnText = "추가하기",
+    ),
+    PARENT_EDIT(
+        title = "할 일 수정",
+        description = "할 일 정보를 수정하고 업데이트하세요.",
+        btnText = "수정하기",
+    ),
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TodoBottomSheet(
-    title: String,
-    description: String,
-    btnText: String,
+    sheetType: TodoBottomSheetType,
     btnEnabled: Boolean,
+    loadingStatus: Async<Unit>,
+    categories: List<TodoCategory>,
     selectedCategory: TodoCategory?,
-    todoFieldState: TextFieldState,
-    dateFieldState: TextFieldState,
+    selectedLabelColor: LabelColor?,
+    titleFieldState: TextFieldState,
+    onLabelColorClick: (LabelColor) -> Unit,
     onBtnClick: () -> Unit,
     onCategoryClick: (TodoCategory) -> Unit,
     onDismiss: () -> Unit,
@@ -57,8 +93,14 @@ fun TodoBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(loadingStatus) {
+        if (loadingStatus is Async.Success) {
+            sheetState.hide()
+            onDismiss()
+        }
+    }
 
     HaebomBasicBottomSheet(
         onDismiss = onDismiss,
@@ -68,63 +110,75 @@ fun TodoBottomSheet(
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .padding(bottom = 26.dp)
+                .padding(bottom = 20.dp)
                 .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             TaskSheetHeader(
-                title = title,
-                description = description,
+                title = sheetType.title,
+                description = sheetType.description,
                 onDismiss = onDismiss,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 28.dp),
             )
 
             TaskInputSection(
                 title = "할 일",
             ) {
                 TaskTextField(
-                    fieldState = todoFieldState,
-                    placeholder = "할 일을 입력해주세요. (최대 12자)",
-                    modifier = Modifier.fillMaxWidth(),
+                    fieldState = titleFieldState,
+                    placeholder = "할 일을 입력해 주세요.",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
                     ),
                     onKeyboardAction = { focusManager.moveFocus(FocusDirection.Next) },
-                    maxCount = 12,
-                )
-            }
-
-            TaskInputSection(
-                title = "날짜",
-            ) {
-                DateTextField(
-                    fieldState = dateFieldState,
                 )
             }
 
             TaskInputSection(
                 title = "카테고리",
             ) {
-                TaskCategoryList(
-                    categories = TodoCategory.entries,
-                    selectedCategory = selectedCategory,
-                    onCategoryClick = onCategoryClick,
-                    getDisplayName = { it.displayName },
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                Column(
+                    modifier = Modifier.padding(bottom = 40.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    TaskCategoryList(
+                        categories = categories,
+                        selectedCategory = selectedCategory,
+                        onCategoryClick = onCategoryClick,
+                        getDisplayName = { it.displayName },
+                    )
+                }
+            }
+
+            TaskInputSection(
+                title = "색상 선택",
+            ) {
+                @OptIn(ExperimentalLayoutApi::class)
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 40.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    LabelColor.entries.forEach { labelColor ->
+                        LabelColorChip(
+                            labelColor = labelColor,
+                            selected = selectedLabelColor == labelColor,
+                            onClick = { onLabelColorClick(labelColor) },
+                        )
+                    }
+                }
             }
 
             HaebomLargeButton(
-                text = btnText,
-                onClick = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            onBtnClick()
-                            onDismiss()
-                        }
-                    }
-                },
-                enabled = btnEnabled,
+                text = sheetType.btnText,
+                onClick = onBtnClick,
+                enabled = btnEnabled && loadingStatus !is Async.Loading,
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -132,47 +186,66 @@ fun TodoBottomSheet(
 }
 
 @Composable
-private fun DateTextField(
-    fieldState: TextFieldState,
+fun LabelColorChip(
+    labelColor: LabelColor,
+    selected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    HaebomBasicTextField(
-        state = fieldState,
-        placeholder = "년/월/일",
-        modifier = modifier.widthForScreenPercentage(262.dp),
-        inputTransformation = InputTransformation {
-            if (length > 8) delete(8, length)
-            val digits = asCharSequence().filter { it.isDigit() }.toString()
-            if (digits != asCharSequence().toString()) replace(0, length, digits)
-        },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done,
-        ),
-        lineLimits = TextFieldLineLimits.SingleLine,
-        outputTransformation = OutputTransformation {
-            if (length >= 5) replace(4, 4, "/")
-            if (length >= 8) replace(7, 7, "/")
-        },
-    )
+    val (backgroundColor, lineColor) = remember(selected, labelColor) {
+        when (selected) {
+            true -> labelColor.background to labelColor.text
+            false -> labelColor.completedBackground to labelColor.completedText
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .noRippleClickable(onClick)
+            .padding(all = 4.dp),
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_check),
+            contentDescription = null,
+            modifier = Modifier
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(3.33.dp),
+                )
+                .border(
+                    width = 1.25.dp,
+                    color = lineColor,
+                    shape = RoundedCornerShape(3.33.dp),
+                )
+                .padding(all = 10.dp),
+            tint = lineColor,
+        )
+    }
+}
+
+private class TodoBottomSheetPreviewProvider : PreviewParameterProvider<TodoBottomSheetType> {
+    override val values = sequenceOf(*TodoBottomSheetType.entries.toTypedArray())
 }
 
 @Preview
 @Composable
-private fun TodoBottomSheetPreview() {
+private fun TodoBottomSheetPreview(
+    @PreviewParameter(TodoBottomSheetPreviewProvider::class) sheetType: TodoBottomSheetType,
+) {
     var selectedCategory by remember { mutableStateOf<TodoCategory?>(null) }
-    val todoFieldState = rememberTextFieldState()
-    val dateFieldState = rememberTextFieldState()
+    var selectedLabelColor by remember { mutableStateOf<LabelColor?>(null) }
+    val titleFieldState = rememberTextFieldState()
 
     HaebomTheme {
         TodoBottomSheet(
-            title = "다가오는 일정 추가",
-            description = "잊지 말아야 할 일정이나 약속을 등록해 보세요.",
-            btnText = "추가하기",
-            btnEnabled = true,
+            sheetType = sheetType,
+            btnEnabled = titleFieldState.text.isNotBlank() && selectedCategory != null && selectedLabelColor != null,
+            loadingStatus = Async.Init,
+            categories = TodoChildCategory.entries,
             selectedCategory = selectedCategory,
-            todoFieldState = todoFieldState,
-            dateFieldState = dateFieldState,
+            selectedLabelColor = selectedLabelColor,
+            titleFieldState = titleFieldState,
+            onLabelColorClick = { selectedLabelColor = it },
             onBtnClick = {},
             onCategoryClick = { selectedCategory = it },
             onDismiss = {},
