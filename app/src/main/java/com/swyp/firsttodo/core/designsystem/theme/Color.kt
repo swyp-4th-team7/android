@@ -63,6 +63,10 @@ private val SemanticBlue = Color(0xFF4C85F2)
 // Etc
 private val bottomSheet = Color(0xFF79747E)
 
+// Label colors
+private val LabelRedBackground = Color(0xFFFFE5E5)
+private val LabelRedText = Color(0xFFE32529)
+
 @Immutable
 data class HaebomColors(
     // Base
@@ -117,6 +121,9 @@ data class HaebomColors(
     val semanticBlue: Color,
     // Etc
     val bottomSheet: Color,
+    // Label
+    val labelRedBackground: Color,
+    val labelRedText: Color,
 )
 
 val defaultHaebomColors = HaebomColors(
@@ -172,14 +179,14 @@ val defaultHaebomColors = HaebomColors(
     semanticBlue = SemanticBlue,
     // Etc
     bottomSheet = bottomSheet,
+    // Label
+    labelRedBackground = LabelRedBackground,
+    labelRedText = LabelRedText,
 )
 
 val LocalHaebomColorsProvider = staticCompositionLocalOf { defaultHaebomColors }
 
 // Label colors
-private val LabelRedBackground = Color(0xFFFFE5E5)
-private val LabelRedText = Color(0xFFE32529)
-
 private val LabelPinkBackground = Color(0xFFFFEAF7)
 private val LabelPinkText = Color(0xFFD81A60)
 private val LabelPinkCompletedBackground = Color(0xFFFFF5FB)
@@ -204,12 +211,6 @@ private val LabelMintBackground = Color(0xFFCBF7F7)
 private val LabelMintText = Color(0xFF0D5C51)
 private val LabelMintCompletedBackground = Color(0xFFE5FBFB)
 private val LabelMintCompletedText = Color(0xFF86ADA8)
-
-private val LabelEmeraldBackground = Color(0xFFCFF8CE)
-private val LabelEmeraldText = Color(0xFF128E14)
-private val LabelEmeraldCompletedBackground = Color(0xFFE7FBE7)
-private val LabelEmeraldCompletedText = Color(0xFF88C789)
-
 private val LabelLimeBackground = Color(0xFFE2FCC7)
 private val LabelLimeText = Color(0xFF34681E)
 private val LabelLimeCompletedBackground = Color(0xFFF1FDE3)
@@ -241,12 +242,6 @@ enum class LabelColor(
     val completedBackground: Color,
     val completedText: Color,
 ) {
-    RED(
-        background = LabelRedBackground,
-        text = LabelRedText,
-        completedBackground = LabelRedBackground,
-        completedText = LabelRedText,
-    ),
     PINK(
         background = LabelPinkBackground,
         text = LabelPinkText,
@@ -276,12 +271,6 @@ enum class LabelColor(
         text = LabelMintText,
         completedBackground = LabelMintCompletedBackground,
         completedText = LabelMintCompletedText,
-    ),
-    EMERALD(
-        background = LabelEmeraldBackground,
-        text = LabelEmeraldText,
-        completedBackground = LabelEmeraldCompletedBackground,
-        completedText = LabelEmeraldCompletedText,
     ),
     LIME(
         background = LabelLimeBackground,
