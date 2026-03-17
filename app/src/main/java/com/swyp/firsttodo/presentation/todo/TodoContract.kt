@@ -6,8 +6,6 @@ import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.domain.model.ScheduleChildCategory
-import com.swyp.firsttodo.domain.model.ScheduleParentCategory
 import com.swyp.firsttodo.domain.model.TodoCategory
 import com.swyp.firsttodo.domain.model.TodoChildCategory
 import com.swyp.firsttodo.domain.model.TodoParentCategory
@@ -69,13 +67,6 @@ data class TodoUiState(
         TodoBottomSheetType.CHILD_EDIT -> TodoChildCategory.entries
         TodoBottomSheetType.PARENT_CREATE -> TodoParentCategory.entries
         TodoBottomSheetType.PARENT_EDIT -> TodoParentCategory.entries
-    }
-
-    val scheduleCategories: List<ScheduleCategory> = when (scheduleBottomSheetType) {
-        ScheduleBottomSheetType.CHILD_CREATE -> ScheduleChildCategory.entries
-        ScheduleBottomSheetType.CHILD_EDIT -> ScheduleChildCategory.entries
-        ScheduleBottomSheetType.PARENT_CREATE -> ScheduleParentCategory.entries
-        ScheduleBottomSheetType.PARENT_EDIT -> ScheduleParentCategory.entries
     }
 
     val showDeleteDialog = delRequestedId != null

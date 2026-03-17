@@ -22,7 +22,7 @@ import com.swyp.firsttodo.core.common.extension.toast
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
-import com.swyp.firsttodo.domain.model.ScheduleChildCategory
+import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.domain.model.TodoChildCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
@@ -80,7 +80,6 @@ fun TodoRoute(
             sheetType = uiState.scheduleBottomSheetType,
             btnEnabled = uiState.editingSchedule.isBtnEnabled,
             loadingStatus = uiState.scheduleBottomSheetState,
-            categories = uiState.scheduleCategories,
             selectedCategory = uiState.editingSchedule.category,
             titleFieldState = viewModel.scheduleTitleFieldState,
             dateFieldState = viewModel.scheduleDateFieldState,
@@ -236,7 +235,7 @@ private val previewSchedules = listOf(
         title = "기말고사",
         date = "2026.03.20.금요일",
         rawDate = "20260320",
-        category = ScheduleChildCategory.FINAL_EXAM,
+        category = ScheduleCategory.SCHOOL_EXAM,
         isUrgent = true,
     ),
     ScheduleUiModel(
@@ -245,7 +244,7 @@ private val previewSchedules = listOf(
         title = "영어 말하기 대회",
         date = "2026.03.31.화요일",
         rawDate = "20260331",
-        category = ScheduleChildCategory.CONTEST,
+        category = ScheduleCategory.SCHOOL_EXAM,
         isUrgent = false,
     ),
 )

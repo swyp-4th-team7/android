@@ -11,7 +11,6 @@ import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.domain.model.ScheduleChildCategory
 import com.swyp.firsttodo.domain.model.TodoCategory
 import com.swyp.firsttodo.domain.model.TodoChildCategory
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
@@ -101,7 +100,7 @@ class TodoViewModel
                         title = "영어 자기소개 외워서 말하기",
                         date = "2026.03.12.일요일",
                         rawDate = "20260312",
-                        category = ScheduleChildCategory.CONTEST,
+                        category = ScheduleCategory.SCHOOL_EXAM,
                         isUrgent = false,
                     ),
                     ScheduleUiModel(
@@ -110,7 +109,7 @@ class TodoViewModel
                         title = "영어 자기소개 외워서 말하기",
                         date = "2026.03.12.일요일",
                         rawDate = "20260312",
-                        category = ScheduleChildCategory.FINAL_EXAM,
+                        category = ScheduleCategory.CONTEST,
                         isUrgent = true,
                     ),
                 )
