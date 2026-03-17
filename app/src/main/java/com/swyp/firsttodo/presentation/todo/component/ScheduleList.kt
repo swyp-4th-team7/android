@@ -31,7 +31,6 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.domain.model.ScheduleChildCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
 import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
@@ -180,7 +179,7 @@ private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<
                     dDay = 5,
                     title = "수학 수행평가",
                     date = "2026.03.22.일요일",
-                    category = ScheduleChildCategory.PERFORMANCE_EVALUATION,
+                    category = ScheduleCategory.SCHOOL_EXAM,
                     rawDate = "",
                     isUrgent = true,
                 ),
@@ -189,7 +188,7 @@ private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<
                     dDay = 20,
                     title = "1학기 기말고사",
                     date = "2026.04.06.월요일",
-                    category = ScheduleChildCategory.FINAL_EXAM,
+                    category = ScheduleCategory.SCHOOL_EXAM,
                     rawDate = "",
                     isUrgent = false,
                 ),
@@ -198,7 +197,7 @@ private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<
                     dDay = 28,
                     title = "과학 탐구 과학 탐구 대회 과학 탐구 대회 대회 과학 탐구 대회",
                     date = "2026.04.14.화요일",
-                    category = ScheduleChildCategory.CONTEST,
+                    category = ScheduleCategory.SCHOOL_EXAM,
                     rawDate = "",
                     isUrgent = false,
                 ),
