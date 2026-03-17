@@ -5,6 +5,11 @@ import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 
+enum class HabitDetailScreenType {
+    CHILD,
+    PARENT,
+}
+
 enum class HabitDetailScreenState {
     IDLE,
     CREATE,
