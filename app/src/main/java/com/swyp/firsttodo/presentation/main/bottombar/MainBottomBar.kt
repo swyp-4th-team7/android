@@ -22,11 +22,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.dropShadow
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -47,7 +51,16 @@ fun MainBottomBar(
             modifier = modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .selectableGroup(),
+                .selectableGroup()
+                .dropShadow(
+                    shape = RectangleShape,
+                    shadow = Shadow(
+                        radius = 6.dp,
+                        color = HaebomTheme.colors.black.copy(alpha = 0.08f),
+                        offset = DpOffset(0.dp, (-4).dp),
+                        spread = 0.dp,
+                    ),
+                ),
         ) {
             MainTab.entries.forEach { tab ->
                 BottomBarItem(
