@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.ScheduleCategory
+import com.swyp.firsttodo.domain.model.ScheduleChildCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
 import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
@@ -147,8 +147,8 @@ private fun ScheduleItem(
             }
 
             HaebomLabel(
-                textColor = LabelColor.RED.text,
-                backgroundColor = LabelColor.RED.background,
+                textColor = HaebomTheme.colors.labelRedText,
+                backgroundColor = HaebomTheme.colors.labelRedBackground,
                 text = schedule.category.displayName,
             )
         }
@@ -171,21 +171,21 @@ private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<
                     dDay = 5,
                     title = "수학 수행평가",
                     date = "2026.03.22.일요일",
-                    category = ScheduleCategory.PERFORMANCE_EVALUATION,
+                    category = ScheduleChildCategory.PERFORMANCE_EVALUATION,
                     isUrgent = true,
                 ),
                 ScheduleUiModel(
                     dDay = 20,
                     title = "1학기 기말고사",
                     date = "2026.04.06.월요일",
-                    category = ScheduleCategory.FINAL_EXAM,
+                    category = ScheduleChildCategory.FINAL_EXAM,
                     isUrgent = false,
                 ),
                 ScheduleUiModel(
                     dDay = 28,
                     title = "과학 탐구 과학 탐구 대회 과학 탐구 대회 대회 과학 탐구 대회",
                     date = "2026.04.14.화요일",
-                    category = ScheduleCategory.CONTEST,
+                    category = ScheduleChildCategory.CONTEST,
                     isUrgent = false,
                 ),
             ),

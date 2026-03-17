@@ -31,6 +31,7 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.TodoCategory
+import com.swyp.firsttodo.domain.model.TodoChildCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
 
 data class TodayTodoUiModel(
@@ -157,20 +158,26 @@ private class TodoListPreviewProvider : PreviewParameterProvider<Async<List<Toda
     override val values = sequenceOf(
         Async.Success(
             listOf(
-                previewTodo(1L, "수학 숙제 풀기", completed = false, TodoCategory.HOMEWORK, LabelColor.BLUE),
+                previewTodo(1L, "수학 숙제 풀기", completed = false, TodoChildCategory.CREATIVE_ACTIVITY, LabelColor.BLUE),
                 previewTodo(
                     2L,
                     "30분 조깅하고 스트레칭까지 빠짐없이 하기",
                     completed = false,
-                    TodoCategory.EXERCISE,
-                    LabelColor.EMERALD,
+                    TodoChildCategory.CREATIVE_ACTIVITY,
+                    LabelColor.PINK,
                 ),
-                previewTodo(3L, "방 청소 및 책상 정리", completed = true, TodoCategory.CLEANING, LabelColor.ORANGE),
+                previewTodo(
+                    3L,
+                    "방 청소 및 책상 정리",
+                    completed = true,
+                    TodoChildCategory.CREATIVE_ACTIVITY,
+                    LabelColor.ORANGE,
+                ),
                 previewTodo(
                     4L,
                     "오늘 읽을 책 30페이지 독서하기 오늘 읽을 책 30페이지 독서하기",
                     completed = true,
-                    TodoCategory.READING,
+                    TodoChildCategory.CREATIVE_ACTIVITY,
                     LabelColor.PURPLE,
                 ),
             ),
