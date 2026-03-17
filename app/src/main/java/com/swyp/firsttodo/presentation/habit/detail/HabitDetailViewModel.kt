@@ -5,7 +5,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgs
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgsNavType
@@ -24,7 +26,18 @@ class HabitDetailViewModel
     @Inject
     constructor(
         savedStateHandle: SavedStateHandle,
+        sessionManager: SessionManager,
     ) : BaseViewModel<HabitDetailUiState, HabitDetailSideEffect>(HabitDetailUiState()) {
+        private val role: Role = when (sessionManager.sessionState.value.userType) {
+            Role.PARENT.request -> Role.PARENT
+            else -> Role.CHILD
+        }
+
+        val screenType = when (role) {
+            Role.PARENT -> HabitDetailScreenType.PARENT
+            Role.CHILD -> HabitDetailScreenType.CHILD
+        }
+
         private val initialHabit = savedStateHandle
             .toRoute<HabitRoute.HabitDetail>(typeMap = mapOf(typeOf<HabitNavArgs?>() to HabitNavArgsNavType))
             .habitNavArgs?.toHabit()
@@ -84,12 +97,22 @@ class HabitDetailViewModel
 
         private fun validateDuration(): Boolean = uiState.value.duration != null
 
-        private fun validateAllField(): Boolean = validateTitle() && validateReward() && validateDuration()
+        private fun validateAllField(): Boolean {
+            return when (screenType) {
+                HabitDetailScreenType.CHILD -> validateTitle() && validateReward() && validateDuration()
+                HabitDetailScreenType.PARENT -> validateTitle() && validateDuration()
+            }
+        }
 
-        private fun isChanged(): Boolean =
-            titleState.text.toString() != initialHabit?.title ||
-                rewardState.text.toString() != initialHabit.reward ||
-                uiState.value.duration != initialHabit.duration
+        private fun isChanged(): Boolean {
+            val titleChanged = titleState.text.toString() != initialHabit?.title
+            val durationChanged = uiState.value.duration != initialHabit?.duration
+            val rewardChanged = when (screenType) {
+                HabitDetailScreenType.CHILD -> rewardState.text.toString() != initialHabit?.reward
+                HabitDetailScreenType.PARENT -> false
+            }
+            return titleChanged || durationChanged || rewardChanged
+        }
 
         fun onBtnClick() {
             when (uiState.value.screenState) {

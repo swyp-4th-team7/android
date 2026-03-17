@@ -21,6 +21,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,12 +62,14 @@ fun HabitDetailRoute(
                 keyboardController?.hide()
                 popBackStack()
             }
+
             is HabitDetailSideEffect.ShowToast -> context.toast(effect.message)
         }
     }
 
     HabitDetailScreen(
         uiState = uiState,
+        screenType = viewModel.screenType,
         btnEnabled = isBtnEnabled,
         titleFieldState = viewModel.titleState,
         rewardFieldState = viewModel.rewardState,
@@ -79,6 +83,7 @@ fun HabitDetailRoute(
 @Composable
 fun HabitDetailScreen(
     uiState: HabitDetailUiState,
+    screenType: HabitDetailScreenType,
     btnEnabled: Boolean,
     titleFieldState: TextFieldState,
     rewardFieldState: TextFieldState,
@@ -128,7 +133,7 @@ fun HabitDetailScreen(
             ) {
                 TaskTextField(
                     fieldState = titleFieldState,
-                    placeholder = "습관을 작성해주세요. (최대 12자)",
+                    placeholder = "습관을 작성해주세요.",
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         imeAction = ImeAction.Next,
@@ -152,29 +157,40 @@ fun HabitDetailScreen(
                 )
             }
 
-            TaskInputSection(
-                title = "보상 정하기",
-                modifier = Modifier.padding(bottom = 28.dp),
-            ) {
-                TaskTextField(
-                    fieldState = rewardFieldState,
-                    placeholder = "받고 싶은 보상을 적어주세요.",
-                    modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Done,
-                    ),
-                )
+            when (screenType) {
+                HabitDetailScreenType.CHILD -> TaskInputSection(
+                    title = "보상 정하기",
+                    modifier = Modifier.padding(bottom = 28.dp),
+                ) {
+                    TaskTextField(
+                        fieldState = rewardFieldState,
+                        placeholder = "받고 싶은 보상을 적어주세요.",
+                        modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Done,
+                        ),
+                    )
+                }
+
+                HabitDetailScreenType.PARENT -> Unit
             }
         }
     }
 }
 
+private class HabitDetailScreenPreviewProvider : PreviewParameterProvider<HabitDetailScreenType> {
+    override val values = sequenceOf(*HabitDetailScreenType.entries.toTypedArray())
+}
+
 @Preview
 @Composable
-private fun HabitDetailScreenPreview() {
+private fun HabitDetailScreenPreview(
+    @PreviewParameter(HabitDetailScreenPreviewProvider::class) screenType: HabitDetailScreenType,
+) {
     HaebomTheme {
         HabitDetailScreen(
             uiState = HabitDetailUiState(),
+            screenType = screenType,
             btnEnabled = false,
             titleFieldState = rememberTextFieldState(),
             rewardFieldState = rememberTextFieldState(),

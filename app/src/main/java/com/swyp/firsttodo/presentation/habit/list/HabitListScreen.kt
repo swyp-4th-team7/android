@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,6 +25,7 @@ import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.habit.component.HabitList
 import com.swyp.firsttodo.presentation.habit.component.HabitListEmpty
+import com.swyp.firsttodo.presentation.habit.component.HabitListType
 import com.swyp.firsttodo.presentation.habit.component.HabitMainBanner
 
 @Composable
@@ -45,10 +45,6 @@ fun HabitListRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.getHabits()
-    }
-
     if (uiState.showDeleteDialog) {
         HaebomDeleteDialog(
             dialogType = DeleteDialogType.HABIT,
@@ -60,6 +56,7 @@ fun HabitListRoute(
 
     HabitListScreen(
         uiState = uiState,
+        habitListType = viewModel.listType,
         onCreateClick = viewModel::onCreateClick,
         onCheckClick = viewModel::onCheckClick,
         onEditClick = viewModel::onEditClick,
@@ -71,6 +68,7 @@ fun HabitListRoute(
 @Composable
 fun HabitListScreen(
     uiState: HabitListUiState,
+    habitListType: HabitListType,
     onCreateClick: () -> Unit,
     onCheckClick: (Habit) -> Unit,
     onEditClick: (Habit) -> Unit,
@@ -96,6 +94,7 @@ fun HabitListScreen(
             )
 
             uiState.habitsData != null -> HabitList(
+                habitListType = habitListType,
                 onCheckClick = onCheckClick,
                 onEditClick = onEditClick,
                 onDeleteClick = onDeleteClick,
@@ -135,6 +134,7 @@ private fun HabitListScreenPreview(
     HaebomTheme {
         HabitListScreen(
             uiState = uiState,
+            habitListType = HabitListType.CHILD,
             onCreateClick = {},
             onCheckClick = {},
             onEditClick = {},

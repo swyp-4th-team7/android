@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -39,8 +38,14 @@ import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
+enum class HabitListType {
+    CHILD,
+    PARENT,
+}
+
 @Composable
 fun HabitList(
+    habitListType: HabitListType,
     onCheckClick: (Habit) -> Unit,
     onEditClick: (Habit) -> Unit,
     onDeleteClick: (Habit) -> Unit,
@@ -66,6 +71,7 @@ fun HabitList(
 
         items(items = habits, key = { it.habitId }) {
             ListItem(
+                habitListType = habitListType,
                 onCheckClick = { onCheckClick(it) },
                 onEditClick = { onEditClick(it) },
                 onDeleteClick = { onDeleteClick(it) },
@@ -80,6 +86,7 @@ fun HabitList(
 
 @Composable
 private fun ListItem(
+    habitListType: HabitListType,
     onCheckClick: () -> Unit,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
@@ -88,10 +95,12 @@ private fun ListItem(
 ) {
     var showPopup by remember { mutableStateOf(false) }
 
-    val checkIconRes = remember(habit.isCompleted) {
+    val colors = HaebomTheme.colors
+
+    val (checkIconRes, titleColor, rewardColor) = remember(habit.isCompleted) {
         when (habit.isCompleted) {
-            true -> R.drawable.ic_check_filled
-            false -> R.drawable.ic_check_unfilled
+            true -> Triple(R.drawable.ic_check_filled, colors.gray200, colors.gray200)
+            false -> Triple(R.drawable.ic_check_unfilled, colors.black, colors.gray400)
         }
     }
 
@@ -113,10 +122,7 @@ private fun ListItem(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .noRippleClickable(
-                    onClick = onCheckClick,
-                    enabled = !habit.isCompleted,
-                )
+                .noRippleClickable(onCheckClick)
                 .background(
                     color = HaebomTheme.colors.white,
                     shape = RoundedCornerShape(4.dp),
@@ -143,34 +149,35 @@ private fun ListItem(
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(all = 8.dp)
+                        .padding(vertical = if (habitListType == HabitListType.PARENT) 18.dp else 8.dp)
+                        .padding(start = if (habitListType == HabitListType.PARENT) 12.dp else 16.dp, end = 8.dp)
                         .weight(1f),
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
                         text = habit.title,
-                        color = HaebomTheme.colors.black,
+                        color = titleColor,
                         style = HaebomTheme.typo.description,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                     )
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    ) {
-                        Text(
-                            text = "보상 :",
-                            color = HaebomTheme.colors.gray400,
-                            style = HaebomTheme.typo.helperText,
-                        )
+                    when (habitListType) {
+                        HabitListType.CHILD -> Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        ) {
+                            Text(
+                                text = "보상 :",
+                                color = rewardColor,
+                                style = HaebomTheme.typo.helperText,
+                            )
 
-                        Text(
-                            text = habit.reward,
-                            color = HaebomTheme.colors.gray400,
-                            style = HaebomTheme.typo.helperText,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
+                            Text(
+                                text = habit.reward,
+                                color = rewardColor,
+                                style = HaebomTheme.typo.helperText,
+                            )
+                        }
+
+                        HabitListType.PARENT -> Unit
                     }
                 }
 
@@ -199,28 +206,29 @@ private fun ListItem(
     }
 }
 
-private class HabitListPreviewProvider : PreviewParameterProvider<List<Habit>> {
-    override val values = sequenceOf(
-        HabitDuration.entries.mapIndexed { index, duration ->
-            Habit(
-                habitId = index.toLong(),
-                duration = duration,
-                isCompleted = index % 2 == 0,
-                title = if (index % 2 == 0) "하루에 책 10장 읽기" else "하루에 책 10장 읽기 하루에 책 10장 읽기 하루에 책 10장 읽기",
-                reward = if (index % 2 == 0) "가족이랑 놀이공원 가기" else "가족이랑 놀이공원 가기 가족이랑 놀이공원 가기 가족이랑 놀이공원 가기",
-            )
-        },
+private val previewHabits = HabitDuration.entries.mapIndexed { index, duration ->
+    Habit(
+        habitId = index.toLong(),
+        duration = duration,
+        isCompleted = index % 2 == 0,
+        title = if (index % 2 == 0) "하루에 책 10장 읽기" else "하루에 책 10장 읽기 하루에 책 10장 읽기 하루에 책 10장 읽기",
+        reward = if (index % 2 == 0) "가족이랑 놀이공원 가기" else "가족이랑 놀이공원 가기 가족이랑 놀이공원 가기 가족이랑 놀이공원 가기",
     )
+}
+
+private class HabitListPreviewProvider : PreviewParameterProvider<HabitListType> {
+    override val values = sequenceOf(*HabitListType.entries.toTypedArray())
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun HabitListPreview(
-    @PreviewParameter(HabitListPreviewProvider::class) habits: List<Habit>,
+    @PreviewParameter(HabitListPreviewProvider::class) habitListType: HabitListType,
 ) {
     HaebomTheme {
         HabitList(
-            habits = habits,
+            habitListType = habitListType,
+            habits = previewHabits,
             onCheckClick = {},
             onEditClick = {},
             onDeleteClick = {},
