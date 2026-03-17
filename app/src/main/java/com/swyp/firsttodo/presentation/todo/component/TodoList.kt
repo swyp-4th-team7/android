@@ -38,10 +38,7 @@ data class TodayTodoUiModel(
     val title: String,
     val completed: Boolean,
     val category: TodoCategory,
-    val completedTextColor: Color,
-    val uncompletedTextColor: Color,
-    val completedBackgroundColor: Color,
-    val uncompletedBackgroundColor: Color,
+    val labelColor: LabelColor,
 )
 
 @Composable
@@ -85,9 +82,10 @@ private fun TodoItem(
     modifier: Modifier = Modifier,
 ) {
     val (iconRes, textColor, backgroundColor) = remember(todo.completed) {
-        when (todo.completed) {
-            true -> Triple(R.drawable.ic_check_filled, todo.completedTextColor, todo.completedBackgroundColor)
-            false -> Triple(R.drawable.ic_check_unfilled, todo.uncompletedTextColor, todo.uncompletedBackgroundColor)
+        if (todo.completed) {
+            Triple(R.drawable.ic_check_filled, todo.labelColor.completedText, todo.labelColor.completedBackground)
+        } else {
+            Triple(R.drawable.ic_check_unfilled, todo.labelColor.text, todo.labelColor.background)
         }
     }
 
@@ -152,10 +150,7 @@ private fun previewTodo(
     title = title,
     completed = completed,
     category = category,
-    completedTextColor = LabelColor.GRAY.text,
-    uncompletedTextColor = labelColor.text,
-    completedBackgroundColor = LabelColor.GRAY.background,
-    uncompletedBackgroundColor = labelColor.background,
+    labelColor = labelColor,
 )
 
 private class TodoListPreviewProvider : PreviewParameterProvider<Async<List<TodayTodoUiModel>>> {

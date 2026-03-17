@@ -176,21 +176,141 @@ val defaultHaebomColors = HaebomColors(
 
 val LocalHaebomColorsProvider = staticCompositionLocalOf { defaultHaebomColors }
 
-// Label
+// Label colors
+private val LabelRedBackground = Color(0xFFFFE5E5)
+private val LabelRedText = Color(0xFFE32529)
+
+private val LabelPinkBackground = Color(0xFFFFEAF7)
+private val LabelPinkText = Color(0xFFD81A60)
+private val LabelPinkCompletedBackground = Color(0xFFFFF5FB)
+private val LabelPinkCompletedText = Color(0xFFEB8CAF)
+
+private val LabelPurpleBackground = Color(0xFFF8ECFF)
+private val LabelPurpleText = Color(0xFF8E24AA)
+private val LabelPurpleCompletedBackground = Color(0xFFFBF5FF)
+private val LabelPurpleCompletedText = Color(0xFFC791D5)
+
+private val LabelBlueBackground = Color(0xFFDFE9FF)
+private val LabelBlueText = Color(0xFF3949AB)
+private val LabelBlueCompletedBackground = Color(0xFFEFF4FF)
+private val LabelBlueCompletedText = Color(0xFF9CA4D5)
+
+private val LabelSkyBlueBackground = Color(0xFFCCEFFF)
+private val LabelSkyBlueText = Color(0xFF0A579B)
+private val LabelSkyBlueCompletedBackground = Color(0xFFE5F7FF)
+private val LabelSkyBlueCompletedText = Color(0xFF84ABCD)
+
+private val LabelMintBackground = Color(0xFFCBF7F7)
+private val LabelMintText = Color(0xFF0D5C51)
+private val LabelMintCompletedBackground = Color(0xFFE5FBFB)
+private val LabelMintCompletedText = Color(0xFF86ADA8)
+
+private val LabelEmeraldBackground = Color(0xFFCFF8CE)
+private val LabelEmeraldText = Color(0xFF128E14)
+private val LabelEmeraldCompletedBackground = Color(0xFFE7FBE7)
+private val LabelEmeraldCompletedText = Color(0xFF88C789)
+
+private val LabelLimeBackground = Color(0xFFE2FCC7)
+private val LabelLimeText = Color(0xFF34681E)
+private val LabelLimeCompletedBackground = Color(0xFFF1FDE3)
+private val LabelLimeCompletedText = Color(0xFF99B38E)
+
+private val LabelYellowBackground = Color(0xFFFFFAC3)
+private val LabelYellowText = Color(0xFFD4430F)
+private val LabelYellowCompletedBackground = Color(0xFFFFFDE1)
+private val LabelYellowCompletedText = Color(0xFFE9A187)
+
+private val LabelOrangeBackground = Color(0xFFFFECC4)
+private val LabelOrangeText = Color(0xFFB53600)
+private val LabelOrangeCompletedBackground = Color(0xFFFFF5E1)
+private val LabelOrangeCompletedText = Color(0xFFDA9A80)
+
+private val LabelBrownBackground = Color(0xFFF9EBE5)
+private val LabelBrownText = Color(0xFF70423A)
+private val LabelBrownCompletedBackground = Color(0xFFFCF5F2)
+private val LabelBrownCompletedText = Color(0xFFB7A09C)
+
+private val LabelGrayBackground = Color(0xFFE2EBF0)
+private val LabelGrayText = Color(0xFF36474F)
+private val LabelGrayCompletedBackground = Color(0xFFF1F5F7)
+private val LabelGrayCompletedText = Color(0xFF9AA3A7)
+
 enum class LabelColor(
     val background: Color,
     val text: Color,
+    val completedBackground: Color,
+    val completedText: Color,
 ) {
-    RED(background = Color(0xFFFFE5E5), text = Color(0xFFE32529)),
-    PINK(background = Color(0xFFFFEAF7), text = Color(0xFFD81A60)),
-    PURPLE(background = Color(0xFFF8ECFF), text = Color(0xFF8E24AA)),
-    BLUE(background = Color(0xFFDFE9FF), text = Color(0xFF3949AB)),
-    SKY_BLUE(background = Color(0xFFCCEFFF), text = Color(0xFF0A579B)),
-    MINT(background = Color(0xFFCBF7F7), text = Color(0xFF0D5C51)),
-    EMERALD(background = Color(0xFFCFF8CE), text = Color(0xFF128E14)),
-    LIME(background = Color(0xFFE2FCC7), text = Color(0xFF34681E)),
-    YELLOW(background = Color(0xFFFFFAC3), text = Color(0xFFD4430F)),
-    ORANGE(background = Color(0xFFFFECC4), text = Color(0xFFB53600)),
-    BROWN(background = Color(0xFFF9EBE5), text = Color(0xFF70423A)),
-    GRAY(background = Color(0xFFE2EBF0), text = Color(0xFF36474F)),
+    RED(
+        background = LabelRedBackground,
+        text = LabelRedText,
+        completedBackground = LabelRedBackground,
+        completedText = LabelRedText,
+    ),
+    PINK(
+        background = LabelPinkBackground,
+        text = LabelPinkText,
+        completedBackground = LabelPinkCompletedBackground,
+        completedText = LabelPinkCompletedText,
+    ),
+    PURPLE(
+        background = LabelPurpleBackground,
+        text = LabelPurpleText,
+        completedBackground = LabelPurpleCompletedBackground,
+        completedText = LabelPurpleCompletedText,
+    ),
+    BLUE(
+        background = LabelBlueBackground,
+        text = LabelBlueText,
+        completedBackground = LabelBlueCompletedBackground,
+        completedText = LabelBlueCompletedText,
+    ),
+    SKY_BLUE(
+        background = LabelSkyBlueBackground,
+        text = LabelSkyBlueText,
+        completedBackground = LabelSkyBlueCompletedBackground,
+        completedText = LabelSkyBlueCompletedText,
+    ),
+    MINT(
+        background = LabelMintBackground,
+        text = LabelMintText,
+        completedBackground = LabelMintCompletedBackground,
+        completedText = LabelMintCompletedText,
+    ),
+    EMERALD(
+        background = LabelEmeraldBackground,
+        text = LabelEmeraldText,
+        completedBackground = LabelEmeraldCompletedBackground,
+        completedText = LabelEmeraldCompletedText,
+    ),
+    LIME(
+        background = LabelLimeBackground,
+        text = LabelLimeText,
+        completedBackground = LabelLimeCompletedBackground,
+        completedText = LabelLimeCompletedText,
+    ),
+    YELLOW(
+        background = LabelYellowBackground,
+        text = LabelYellowText,
+        completedBackground = LabelYellowCompletedBackground,
+        completedText = LabelYellowCompletedText,
+    ),
+    ORANGE(
+        background = LabelOrangeBackground,
+        text = LabelOrangeText,
+        completedBackground = LabelOrangeCompletedBackground,
+        completedText = LabelOrangeCompletedText,
+    ),
+    BROWN(
+        background = LabelBrownBackground,
+        text = LabelBrownText,
+        completedBackground = LabelBrownCompletedBackground,
+        completedText = LabelBrownCompletedText,
+    ),
+    GRAY(
+        background = LabelGrayBackground,
+        text = LabelGrayText,
+        completedBackground = LabelGrayCompletedBackground,
+        completedText = LabelGrayCompletedText,
+    ),
 }
