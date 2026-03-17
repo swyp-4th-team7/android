@@ -2,6 +2,7 @@ package com.swyp.firsttodo.core.designsystem.component
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +17,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -30,6 +32,8 @@ fun HaebomBasicTextField(
     state: TextFieldState,
     placeholder: String,
     modifier: Modifier = Modifier,
+    backgroundColor: Color = HaebomTheme.colors.gray50,
+    borderColor: Color = HaebomTheme.colors.gray50,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     inputTransformation: InputTransformation? = null,
@@ -47,7 +51,12 @@ fun HaebomBasicTextField(
         state = state,
         modifier = modifier
             .background(
-                color = HaebomTheme.colors.gray50,
+                color = backgroundColor,
+                shape = RoundedCornerShape(4.dp),
+            )
+            .border(
+                width = 1.5.dp,
+                color = borderColor,
                 shape = RoundedCornerShape(4.dp),
             )
             .padding(horizontal = 16.dp, vertical = 14.dp),
