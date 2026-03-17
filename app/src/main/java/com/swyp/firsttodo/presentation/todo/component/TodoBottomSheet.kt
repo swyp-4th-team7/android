@@ -55,7 +55,7 @@ enum class TodoBottomSheetType(
     val btnText: String,
 ) {
     CHILD_CREATE(
-        title = "추가 할 일 작성",
+        title = "추가 할 일 작성 하기",
         description = "해야 할 일을 추가하고 하나씩 완료해보세요.",
         btnText = "추가하기",
     ),
@@ -70,7 +70,7 @@ enum class TodoBottomSheetType(
         btnText = "추가하기",
     ),
     PARENT_EDIT(
-        title = "할 일 수정하기",
+        title = "할 일 수정",
         description = "할 일 정보를 수정하고 업데이트하세요.",
         btnText = "수정하기",
     ),

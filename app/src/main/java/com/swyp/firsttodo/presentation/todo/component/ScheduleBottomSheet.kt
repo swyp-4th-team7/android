@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -36,7 +35,6 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.domain.model.ScheduleChildCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
 import com.swyp.firsttodo.presentation.common.component.HaebomTag
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
@@ -49,7 +47,7 @@ enum class ScheduleBottomSheetType(
     val btnText: String,
 ) {
     CHILD_CREATE(
-        title = "다가오는 일정 추가",
+        title = "다가오는 일정 추가 하기",
         description = "잊지 말아야 할 일정이나 약속을 등록해 보세요.",
         btnText = "추가하기",
     ),
@@ -76,7 +74,6 @@ fun ScheduleBottomSheet(
     sheetType: ScheduleBottomSheetType,
     btnEnabled: Boolean,
     loadingStatus: Async<Unit>,
-    categories: List<ScheduleCategory>,
     selectedCategory: ScheduleCategory?,
     titleFieldState: TextFieldState,
     dateFieldState: TextFieldState,
@@ -88,7 +85,6 @@ fun ScheduleBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(loadingStatus) {
@@ -168,7 +164,7 @@ fun ScheduleBottomSheet(
                     modifier = Modifier.padding(bottom = 40.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    categories.chunked(3).forEach { rowItems ->
+                    ScheduleCategory.entries.chunked(3).forEach { rowItems ->
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(20.dp),
                         ) {
@@ -223,7 +219,6 @@ private fun ScheduleBottomSheetPreview(
             onBtnClick = {},
             onCategoryClick = { selectedCategory = it },
             onDismiss = {},
-            categories = ScheduleChildCategory.entries,
         )
     }
 }
