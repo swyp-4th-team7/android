@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
@@ -181,6 +182,8 @@ private fun PopupContent(
                 color = HaebomTheme.colors.black.copy(alpha = 0.2f),
             ),
     ) {
+        val dividerColor = HaebomTheme.colors.gray50
+
         RewardFilterType.entries.forEachIndexed { index, type ->
             val isFirst = index == 0
             val isLast = index == RewardFilterType.entries.lastIndex
@@ -201,21 +204,29 @@ private fun PopupContent(
                 modifier = Modifier
                     .clickable { onFilterClick(type) }
                     .fillMaxWidth()
-                    .background(backgroundColor, shape = shape)
+                    .background(
+                        color = backgroundColor,
+                        shape = shape,
+                    )
+                    .drawBehind {
+                        if (!isLast) {
+                            val strokeWidth = 0.4.dp.toPx()
+                            val horizontalInset = 4.dp.toPx()
+                            val y = size.height - strokeWidth / 2
+                            drawLine(
+                                color = dividerColor,
+                                start = Offset(horizontalInset, y),
+                                end = Offset(size.width - horizontalInset, y),
+                                strokeWidth = strokeWidth,
+                            )
+                        }
+                    }
                     .padding(all = 16.dp)
                     .wrapContentHeight(Alignment.CenterVertically),
                 color = textColor,
                 textAlign = TextAlign.Center,
                 style = HaebomTheme.typo.bottomNavbar,
             )
-
-            if (!isLast) {
-                HorizontalDivider(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    thickness = 0.4.dp,
-                    color = HaebomTheme.colors.gray50,
-                )
-            }
         }
     }
 }
