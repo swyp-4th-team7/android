@@ -21,5 +21,5 @@ sealed interface MainDrawerSideEffect : UiEffect {
 
     data object NavigateToShare : MainDrawerSideEffect
 
-    data class ShowToast(val message: String) : MainDrawerSideEffect
+    data class ShowSnackbar(val message: String) : MainDrawerSideEffect
 }

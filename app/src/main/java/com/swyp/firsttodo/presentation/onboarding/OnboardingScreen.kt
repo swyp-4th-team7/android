@@ -24,7 +24,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.swyp.firsttodo.core.common.extension.toast
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
@@ -32,6 +31,8 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
 import com.swyp.firsttodo.presentation.common.component.HaebomTopBar
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
+import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 import com.swyp.firsttodo.presentation.onboarding.component.DoneView
 import com.swyp.firsttodo.presentation.onboarding.component.ProfileView
 import com.swyp.firsttodo.presentation.onboarding.component.RoleSelectView
@@ -46,12 +47,13 @@ fun OnboardingRoute(
     val bottomBtnEnabled by viewModel.bottomBtnEnabled.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as ComponentActivity
+    val snackbarHost = LocalSnackbarHostState.current
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             OnboardingSideEffect.NavigateToTodo -> navigateToTodo()
             OnboardingSideEffect.FinishApp -> activity.finish()
-            is OnboardingSideEffect.ShowToast -> context.toast(effect.message)
+            is OnboardingSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
         }
     }
 

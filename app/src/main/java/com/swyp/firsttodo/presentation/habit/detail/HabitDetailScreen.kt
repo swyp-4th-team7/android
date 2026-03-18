@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -26,7 +25,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.swyp.firsttodo.core.common.extension.toast
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
@@ -39,6 +37,8 @@ import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailHeader
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailTopBar
 import com.swyp.firsttodo.presentation.habit.extension.displayName
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
+import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 
 @Composable
 fun HabitDetailRoute(
@@ -47,7 +47,7 @@ fun HabitDetailRoute(
     viewModel: HabitDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val snackbarHost = LocalSnackbarHostState.current
     val isBtnEnabled by viewModel.isBtnEnabled.collectAsStateWithLifecycle()
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -63,7 +63,7 @@ fun HabitDetailRoute(
                 popBackStack()
             }
 
-            is HabitDetailSideEffect.ShowToast -> context.toast(effect.message)
+            is HabitDetailSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
         }
     }
 

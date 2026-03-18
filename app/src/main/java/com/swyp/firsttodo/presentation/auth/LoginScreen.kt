@@ -16,7 +16,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.swyp.firsttodo.core.common.extension.toast
 import com.swyp.firsttodo.core.common.extension.widthForScreenPercentage
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenWidthDp
@@ -25,6 +24,8 @@ import com.swyp.firsttodo.presentation.auth.component.GoogleLoginButton
 import com.swyp.firsttodo.presentation.auth.component.IntroPager
 import com.swyp.firsttodo.presentation.auth.component.LegalLinks
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLauncher
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
+import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -36,6 +37,7 @@ fun LoginRoute(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
+    val snackbarHost = LocalSnackbarHostState.current
     val context = LocalContext.current
     val activity = context as Activity
 
@@ -60,7 +62,7 @@ fun LoginRoute(
 
             is LoginSideEffect.NavigateToWebView -> navigateToWebView(effect.title, effect.url)
 
-            is LoginSideEffect.ShowToast -> context.toast(effect.message)
+            is LoginSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
 
             LoginSideEffect.NavigateToOnboarding -> navigateToOnboarding()
         }

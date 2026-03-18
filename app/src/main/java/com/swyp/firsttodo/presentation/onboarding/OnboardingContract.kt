@@ -37,5 +37,5 @@ sealed interface OnboardingSideEffect : UiEffect {
 
     data object FinishApp : OnboardingSideEffect
 
-    data class ShowToast(val message: String) : OnboardingSideEffect
+    data class ShowSnackbar(val message: String) : OnboardingSideEffect
 }

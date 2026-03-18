@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,12 +29,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
-import com.swyp.firsttodo.core.common.extension.toast
 import com.swyp.firsttodo.core.common.extension.widthForScreenPercentage
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
+import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 
 @Composable
 fun MainDrawer(
@@ -45,13 +45,13 @@ fun MainDrawer(
     viewModel: MainDrawerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val snackbarHost = LocalSnackbarHostState.current
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             MainDrawerSideEffect.Dismiss -> onDismiss()
             MainDrawerSideEffect.NavigateToLogin -> onDismiss()
-            is MainDrawerSideEffect.ShowToast -> context.toast(effect.message)
+            is MainDrawerSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
             MainDrawerSideEffect.NavigateToFamily -> {}
             MainDrawerSideEffect.NavigateToShare -> {}
         }

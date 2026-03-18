@@ -43,5 +43,5 @@ data class HabitDetailUiState(
 sealed interface HabitDetailSideEffect : UiEffect {
     data object PopBackStack : HabitDetailSideEffect
 
-    data class ShowToast(val message: String) : HabitDetailSideEffect
+    data class ShowSnackbar(val message: String) : HabitDetailSideEffect
 }

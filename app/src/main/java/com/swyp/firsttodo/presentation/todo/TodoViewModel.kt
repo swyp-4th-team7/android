@@ -226,7 +226,7 @@ class TodoViewModel
                 else -> deleteSchedule()
             }
             updateState { copy(delRequestedId = null) }
-            sendEffect(TodoSideEffect.ShowToast("삭제되었어요."))
+            sendEffect(TodoSideEffect.ShowSnackbar("삭제되었어요."))
         }
 
         private fun deleteTodo() {

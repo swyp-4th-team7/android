@@ -73,5 +73,5 @@ data class TodoUiState(
 }
 
 sealed interface TodoSideEffect : UiEffect {
-    data class ShowToast(val message: String) : TodoSideEffect
+    data class ShowSnackbar(val message: String) : TodoSideEffect
 }

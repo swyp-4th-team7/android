@@ -10,5 +10,5 @@ data class GrowthUiState(
 ) : UiState
 
 sealed interface GrowthSideEffect : UiEffect {
-    data class ShowToast(val message: String) : GrowthSideEffect
+    data class ShowSnackbar(val message: String) : GrowthSideEffect
 }

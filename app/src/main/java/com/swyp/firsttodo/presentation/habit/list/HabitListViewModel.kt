@@ -107,7 +107,7 @@ class HabitListViewModel
             // TODO: delRequestedId 실제 삭제 로직
             // TODO: 아래 로직은 삭제 성공 시에만
             updateState { copy(delRequestedId = null) }
-            sendEffect(HabitListSideEffect.ShowToast("습관 삭제가 완료되었어요."))
+            sendEffect(HabitListSideEffect.ShowSnackbar("습관 삭제가 완료되었어요."))
             getHabits()
         }
 

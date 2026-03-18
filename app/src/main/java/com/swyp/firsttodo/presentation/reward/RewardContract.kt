@@ -10,5 +10,5 @@ data class RewardUiState(
 ) : UiState
 
 sealed interface RewardSideEffect : UiEffect {
-    data class ShowToast(val message: String) : RewardSideEffect
+    data class ShowSnackbar(val message: String) : RewardSideEffect
 }
