@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 fun <T> HandleSideEffects(
     sideEffectFlow: Flow<T>,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
-    onSideEffect: (T) -> Unit,
+    onSideEffect: suspend (T) -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
