@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +34,6 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val showDrawer by viewModel.showDrawer.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {

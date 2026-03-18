@@ -69,13 +69,13 @@ class LoginViewModel
 
                 is GoogleLoginResult.NoCredential -> {
                     updateState { copy(token = Async.Init) }
-                    sendEffect(LoginSideEffect.ShowToast("구글 계정을 찾을 수 없어요. 다시 시도해주세요."))
+                    sendEffect(LoginSideEffect.ShowSnackbar("구글 계정을 찾을 수 없어요. 다시 시도해주세요."))
                     Timber.w("No Credential")
                 }
 
                 is GoogleLoginResult.Error -> {
                     updateState { copy(token = Async.Init) }
-                    sendEffect(LoginSideEffect.ShowToast("일시적인 오류가 발생했어요. 다시 시도해주세요."))
+                    sendEffect(LoginSideEffect.ShowSnackbar("일시적인 오류가 발생했어요. 다시 시도해주세요."))
                     Timber.e(result.message)
                 }
             }
@@ -100,7 +100,7 @@ class LoginViewModel
                     }
                 }.onFailure {
                     updateState { copy(loginState = Async.Init) }
-                    sendEffect(LoginSideEffect.ShowToast("로그인에 실패했어요. 다시 시도해주세요."))
+                    sendEffect(LoginSideEffect.ShowSnackbar("로그인에 실패했어요. 다시 시도해주세요."))
                     Timber.e(it)
                 }
             }

@@ -119,13 +119,13 @@ class HabitDetailViewModel
                 HabitDetailScreenState.IDLE -> Unit
                 HabitDetailScreenState.CREATE -> {
                     // TODO: CREATE API
-                    sendEffect(HabitDetailSideEffect.ShowToast("습관 생성이 완료되었어요."))
+                    sendEffect(HabitDetailSideEffect.ShowSnackbar("습관 생성이 완료되었어요."))
                     sendEffect(HabitDetailSideEffect.PopBackStack)
                 }
 
                 HabitDetailScreenState.EDIT -> {
                     // TODO: EDIT API
-                    sendEffect(HabitDetailSideEffect.ShowToast("습관 수정이 완료되었어요."))
+                    sendEffect(HabitDetailSideEffect.ShowSnackbar("습관 수정이 완료되었어요."))
                     sendEffect(HabitDetailSideEffect.PopBackStack)
                 }
             }

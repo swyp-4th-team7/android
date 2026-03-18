@@ -18,7 +18,7 @@ data class HabitListUiState(
 }
 
 sealed interface HabitListSideEffect : UiEffect {
-    data class ShowToast(val message: String) : HabitListSideEffect
+    data class ShowSnackbar(val message: String) : HabitListSideEffect
 
     data class NavigateToHabitDetail(val habit: Habit? = null) : HabitListSideEffect
 }

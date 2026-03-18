@@ -20,5 +20,5 @@ sealed interface LoginSideEffect : UiEffect {
 
     data object LaunchGoogleLogin : LoginSideEffect
 
-    data class ShowToast(val message: String) : LoginSideEffect
+    data class ShowSnackbar(val message: String) : LoginSideEffect
 }

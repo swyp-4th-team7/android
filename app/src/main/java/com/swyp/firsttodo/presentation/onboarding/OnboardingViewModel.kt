@@ -97,7 +97,7 @@ class OnboardingViewModel
                                 "프로필 저장에 실패했어요."
                             }
                         }
-                        sendEffect(OnboardingSideEffect.ShowToast(message))
+                        sendEffect(OnboardingSideEffect.ShowSnackbar(message))
                     }
             }
         }
@@ -108,7 +108,7 @@ class OnboardingViewModel
                 sendEffect(OnboardingSideEffect.FinishApp)
             } else {
                 lastBackPressTime = now
-                sendEffect(OnboardingSideEffect.ShowToast("한 번 더 '뒤로가기' 누르면 앱이 종료돼요."))
+                sendEffect(OnboardingSideEffect.ShowSnackbar("한 번 더 '뒤로가기' 누르면 앱이 종료돼요."))
             }
         }
     }
