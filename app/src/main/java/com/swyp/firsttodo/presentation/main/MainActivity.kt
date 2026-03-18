@@ -9,6 +9,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,12 +41,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             val startDestination = viewModel.startDestination.collectAsStateWithLifecycle()
             val mainNavigator = rememberHaebomNavigator()
+            val snackbarHostState = remember { SnackbarHostState() }
 
             HaebomTheme {
                 startDestination.value?.let { dest ->
                     MainScreen(
                         startDestination = dest,
                         navigator = mainNavigator,
+                        snackbarState = snackbarHostState,
                     )
                 }
             }
