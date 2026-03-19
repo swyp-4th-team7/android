@@ -71,7 +71,7 @@ fun RewardMangeEmptyView(
 
 @Preview(showBackground = true)
 @Composable
-private fun RewardMangeEmptyViewPreveiw() {
+private fun RewardMangeEmptyViewPreview() {
     HaebomTheme {
         RewardMangeEmptyView(
             onCreateHabitBtnClick = {},
