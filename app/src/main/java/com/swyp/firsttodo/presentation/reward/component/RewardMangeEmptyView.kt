@@ -45,7 +45,7 @@ fun RewardMangeEmptyView(
         )
 
         Text(
-            text = "아직 습관 보상이 없어요.",
+            text = "습관과 보상을 만들어 볼까요?",
             modifier = Modifier.padding(bottom = screenHeightDp(32.dp)),
             color = HaebomTheme.colors.gray300,
             style = HaebomTheme.typo.description,
