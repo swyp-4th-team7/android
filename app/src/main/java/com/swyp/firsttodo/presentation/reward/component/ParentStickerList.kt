@@ -26,7 +26,7 @@ import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
-data class ParentStickerListUiModel(
+data class ParentStickerUiModel(
     val id: Long,
     val title: String,
     val boardCount: Int,
@@ -36,7 +36,7 @@ data class ParentStickerListUiModel(
 
 @Composable
 fun ParentStickerList(
-    stickers: Async<List<ParentStickerListUiModel>>,
+    stickers: Async<List<ParentStickerUiModel>>,
     onLabelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -44,6 +44,7 @@ fun ParentStickerList(
         Async.Empty -> ParentRewardEmptyView(
             title = "아직 관리할 스티커가 없습니다.",
             description = "자녀의 할 일을 만들어주세요.",
+            modifier = modifier,
         )
 
         else -> {
@@ -147,14 +148,14 @@ fun ParentStickerList(
 }
 
 private val sampleStickers = listOf(
-    ParentStickerListUiModel(
+    ParentStickerUiModel(
         id = 1L,
         title = "수학 공부하기",
         boardCount = 2,
         startDate = "2026.03.17 (화)",
         stickerCount = 15,
     ),
-    ParentStickerListUiModel(
+    ParentStickerUiModel(
         id = 2L,
         title = "영어 단어 외우기",
         boardCount = 1,
@@ -163,8 +164,8 @@ private val sampleStickers = listOf(
     ),
 )
 
-private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<List<ParentStickerListUiModel>>> {
-    override val values: Sequence<Async<List<ParentStickerListUiModel>>> = sequenceOf(
+private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<List<ParentStickerUiModel>>> {
+    override val values: Sequence<Async<List<ParentStickerUiModel>>> = sequenceOf(
         Async.Success(sampleStickers),
         Async.Empty,
         Async.Loading(),
@@ -174,7 +175,7 @@ private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun ParentStickerListPreview(
-    @PreviewParameter(ParentStickerListPreviewProvider::class) stickers: Async<List<ParentStickerListUiModel>>,
+    @PreviewParameter(ParentStickerListPreviewProvider::class) stickers: Async<List<ParentStickerUiModel>>,
 ) {
     HaebomTheme {
         ParentStickerList(

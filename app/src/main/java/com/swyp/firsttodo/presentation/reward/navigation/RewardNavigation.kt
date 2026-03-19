@@ -10,7 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.swyp.firsttodo.core.navigation.Route
-import com.swyp.firsttodo.presentation.reward.RewardRoute
+import com.swyp.firsttodo.presentation.reward.list.RewardListRoute
 import kotlinx.serialization.Serializable
 
 sealed interface RewardRoute : Route {
@@ -28,7 +28,7 @@ fun NavGraphBuilder.rewardNavGraph(
         popEnterTransition = { fadeIn(tween(160)) },
         popExitTransition = { fadeOut(tween(160)) },
     ) {
-        RewardRoute(
+        RewardListRoute(
             modifier = Modifier.padding(paddingValues),
         )
     }

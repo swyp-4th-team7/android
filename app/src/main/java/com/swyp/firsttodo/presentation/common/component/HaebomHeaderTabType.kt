@@ -22,18 +22,11 @@ import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
+import com.swyp.firsttodo.presentation.reward.list.RewardHeaderTabType
 
-sealed interface HaebomHeaderTabType {
+interface HaebomHeaderTabType {
     val index: Int
     val label: String
-}
-
-enum class RewardHeaderTabType(
-    override val index: Int,
-    override val label: String,
-) : HaebomHeaderTabType {
-    STICKER(0, "할 일 스티커"),
-    REWARD(1, "보상 관리"),
 }
 
 enum class GrowthHeaderTabType(

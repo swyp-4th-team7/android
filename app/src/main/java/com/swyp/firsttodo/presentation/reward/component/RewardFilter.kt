@@ -43,32 +43,11 @@ import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.figmaDropShadow
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
+import com.swyp.firsttodo.presentation.reward.list.ChildRewardFilterType
 
-sealed interface RewardFilterType {
+interface RewardFilterType {
     val displayName: String
     val request: String
-}
-
-enum class ChildRewardFilterType(
-    override val displayName: String,
-    override val request: String,
-) : RewardFilterType {
-    ALL(
-        displayName = "전체",
-        request = "ALL",
-    ),
-    WAITING(
-        displayName = "보상 대기중",
-        request = "WAITING",
-    ),
-    ING(
-        displayName = "진행중",
-        request = "ING",
-    ),
-    DONE(
-        displayName = "완료",
-        request = "DONE",
-    ),
 }
 
 @Composable
@@ -85,9 +64,11 @@ fun <T : RewardFilterType> RewardFilter(
         false -> R.drawable.ic_chevron_down_24
     }
 
-    Box {
+    Box(
+        modifier = modifier,
+    ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .noRippleClickable(onClick = { expanded = true })
                 .background(
                     color = HaebomTheme.colors.gray50,
@@ -196,7 +177,7 @@ private fun <T : RewardFilterType> PopupContent(
 
         allFilters.forEachIndexed { index, type ->
             val isFirst = index == 0
-            val isLast = index == ChildRewardFilterType.entries.lastIndex
+            val isLast = index == allFilters.lastIndex
 
             val shape = when {
                 isFirst -> RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
