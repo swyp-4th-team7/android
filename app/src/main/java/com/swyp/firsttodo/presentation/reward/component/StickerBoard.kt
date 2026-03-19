@@ -109,7 +109,7 @@ fun StickerBoard(
                 Image(
                     painter = painterResource(id = R.drawable.img_default_sticker),
                     contentDescription = null,
-                    modifier = modifier
+                    modifier = Modifier
                         .size(92.dp, 96.dp)
                         .padding(bottom = 24.dp),
                 )
