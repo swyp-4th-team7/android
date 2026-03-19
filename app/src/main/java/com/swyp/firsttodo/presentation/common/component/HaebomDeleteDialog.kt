@@ -52,57 +52,72 @@ fun HaebomDeleteDialog(
     confirmBtnLabel: String = "네, 삭제할래요",
     cancelBtnLabel: String = "아니요",
 ) {
-    val colors = HaebomTheme.colors
-
     HaebomBasicDialog(
         onDismiss = onDismiss,
         modifier = modifier.padding(horizontal = screenWidthDp(20.dp)),
     ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = screenWidthDp(20.dp))
-                .padding(top = screenHeightDp(32.dp), bottom = screenHeightDp(20.dp)),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        DialogContent(
+            dialogType = dialogType,
+            onConfirm = onConfirm,
+            onCancel = onCancel,
+            confirmBtnLabel = confirmBtnLabel,
+            cancelBtnLabel = cancelBtnLabel,
+        )
+    }
+}
+
+@Composable
+fun DialogContent(
+    dialogType: DeleteDialogType,
+    onConfirm: () -> Unit,
+    onCancel: () -> Unit,
+    confirmBtnLabel: String = "네, 삭제할래요",
+    cancelBtnLabel: String = "아니요",
+) {
+    Column(
+        modifier = Modifier
+            .padding(all = screenWidthDp(24.dp)),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = dialogType.title,
+            color = HaebomTheme.colors.black,
+            style = HaebomTheme.typo.card,
+        )
+
+        Spacer(Modifier.heightForScreenPercentage(8.dp))
+
+        Text(
+            text = dialogType.description,
+            color = HaebomTheme.colors.gray400,
+            style = HaebomTheme.typo.description,
+        )
+
+        Spacer(Modifier.heightForScreenPercentage(10.dp))
+
+        Row(
+            modifier = Modifier.padding(vertical = screenHeightDp(4.dp)),
+            horizontalArrangement = Arrangement.spacedBy(screenWidthDp(8.dp)),
         ) {
-            Text(
-                text = dialogType.title,
-                color = colors.black,
-                style = HaebomTheme.typo.card,
+            DialogButton(
+                text = cancelBtnLabel,
+                textColor = HaebomTheme.colors.gray200,
+                backgroundColor = HaebomTheme.colors.gray50,
+                onClick = onCancel,
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(40.dp),
             )
 
-            Spacer(Modifier.heightForScreenPercentage(8.dp))
-
-            Text(
-                text = dialogType.description,
-                color = colors.gray400,
-                style = HaebomTheme.typo.description,
+            DialogButton(
+                text = confirmBtnLabel,
+                textColor = HaebomTheme.colors.white,
+                backgroundColor = HaebomTheme.colors.orange500,
+                onClick = onConfirm,
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(40.dp),
             )
-
-            Spacer(Modifier.heightForScreenPercentage(16.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(screenWidthDp(16.dp)),
-            ) {
-                DialogButton(
-                    text = cancelBtnLabel,
-                    textColor = colors.gray200,
-                    backgroundColor = colors.gray50,
-                    onClick = onCancel,
-                    modifier = Modifier
-                        .weight(1f)
-                        .heightIn(40.dp),
-                )
-
-                DialogButton(
-                    text = confirmBtnLabel,
-                    textColor = colors.white,
-                    backgroundColor = colors.orange500,
-                    onClick = onConfirm,
-                    modifier = Modifier
-                        .weight(1f)
-                        .heightIn(40.dp),
-                )
-            }
         }
     }
 }
@@ -123,7 +138,7 @@ private fun DialogButton(
                 color = backgroundColor,
                 shape = RoundedCornerShape(4.dp),
             )
-            .padding(8.dp)
+            .padding(10.dp)
             .wrapContentHeight(Alignment.CenterVertically),
         color = textColor,
         textAlign = TextAlign.Center,
@@ -133,13 +148,12 @@ private fun DialogButton(
 
 @Preview(showBackground = true, widthDp = 360)
 @Composable
-private fun HaebomDeleteDialogPreview() {
+private fun HaebomDeleteDialogContentPreview() {
     HaebomTheme {
-        HaebomDeleteDialog(
+        DialogContent(
             dialogType = DeleteDialogType.TODO,
             onConfirm = {},
             onCancel = {},
-            onDismiss = {},
         )
     }
 }
