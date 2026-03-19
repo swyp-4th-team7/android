@@ -73,7 +73,7 @@ fun <T : HaebomHeaderTabType> HaebomHeaderTab(
                 modifier = Modifier
                     .noRippleClickable({ onTabClick(tab) })
                     .padding(top = 25.dp, bottom = 16.dp),
-                color = HaebomTheme.colors.black,
+                color = if (currentTab == tab) HaebomTheme.colors.black else HaebomTheme.colors.gray400,
                 textAlign = TextAlign.Center,
                 style = HaebomTheme.typo.screen,
             )
