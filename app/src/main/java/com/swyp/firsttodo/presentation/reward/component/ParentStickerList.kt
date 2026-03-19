@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,11 +49,11 @@ fun ParentStickerList(
             when (val data = stickers.getDataOrNull()) {
                 null -> Unit
 
-                else -> LazyColumn(
+                else -> Column(
                     modifier = modifier,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    items(items = data, key = { it.id }) { sticker ->
+                    data.forEach { sticker ->
                         Column(
                             modifier = Modifier
                                 .background(

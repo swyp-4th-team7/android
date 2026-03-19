@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -61,11 +59,11 @@ fun ParentRewardManageList(
             when (val data = rewards.getDataOrNull()) {
                 null -> Unit
 
-                else -> LazyColumn(
+                else -> Column(
                     modifier = modifier,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    items(items = data, key = { it.id }) { reward ->
+                    data.forEach { reward ->
                         Column(
                             modifier = Modifier
                                 .background(
