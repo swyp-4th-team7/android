@@ -41,7 +41,7 @@ inline fun Modifier.noRippleClickable(
 
 fun Modifier.figmaDropShadow(
     shape: Shape,
-    dpOffest: DpOffset,
+    dpOffset: DpOffset,
     blur: Dp,
     spread: Dp,
     color: Color,
@@ -51,7 +51,7 @@ fun Modifier.figmaDropShadow(
         shadow = Shadow(
             radius = blur,
             color = color,
-            offset = dpOffest,
+            offset = dpOffset,
             spread = spread,
         ),
     )

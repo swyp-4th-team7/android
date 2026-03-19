@@ -167,7 +167,7 @@ private fun <T : RewardFilterType> PopupContent(
             .width(IntrinsicSize.Max)
             .figmaDropShadow(
                 shape = RoundedCornerShape(8.dp),
-                dpOffest = DpOffset(0.dp, 0.dp),
+                dpOffset = DpOffset(0.dp, 0.dp),
                 blur = 4.dp,
                 spread = 0.dp,
                 color = HaebomTheme.colors.black.copy(alpha = 0.2f),
