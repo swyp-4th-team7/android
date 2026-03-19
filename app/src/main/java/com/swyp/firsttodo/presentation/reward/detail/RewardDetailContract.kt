@@ -5,7 +5,9 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import kotlinx.serialization.Serializable
 
+@Serializable
 enum class RewardDetailScreenType {
     ACCEPT,
     DELIVER,
