@@ -32,27 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.LabelColor
-
-enum class RewardState(val displayName: String) {
-    ING("진행중"),
-    WAITING("보상 대기중"),
-    DONE("완료"),
-}
-
-val RewardState.textColor: Color
-    @Composable get() = when (this) {
-        RewardState.ING -> LabelColor.SKY_BLUE.text
-        RewardState.WAITING -> LabelColor.MINT.text
-        RewardState.DONE -> HaebomTheme.colors.gray300
-    }
-
-val RewardState.backgroundColor: Color
-    @Composable get() = when (this) {
-        RewardState.ING -> LabelColor.SKY_BLUE.background
-        RewardState.WAITING -> LabelColor.LIME.background
-        RewardState.DONE -> HaebomTheme.colors.gray100
-    }
+import com.swyp.firsttodo.presentation.reward.model.RewardState
+import com.swyp.firsttodo.presentation.reward.model.backgroundColor
+import com.swyp.firsttodo.presentation.reward.model.textColor
 
 data class RewardUiModel(
     val rewardId: Long,

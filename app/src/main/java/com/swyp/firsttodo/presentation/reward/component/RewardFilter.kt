@@ -44,10 +44,15 @@ import com.swyp.firsttodo.core.common.extension.figmaDropShadow
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
-enum class RewardFilterType(
-    val displayName: String,
-    val request: String,
-) {
+sealed interface RewardFilterType {
+    val displayName: String
+    val request: String
+}
+
+enum class ChildRewardFilterType(
+    override val displayName: String,
+    override val request: String,
+) : RewardFilterType {
     ALL(
         displayName = "전체",
         request = "ALL",
@@ -67,9 +72,10 @@ enum class RewardFilterType(
 }
 
 @Composable
-fun RewardFilter(
-    selectedFilterType: RewardFilterType,
-    onFilterClick: (RewardFilterType) -> Unit,
+fun <T : RewardFilterType> RewardFilter(
+    allFilters: List<T>,
+    selectedFilterType: T,
+    onFilterClick: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -106,6 +112,7 @@ fun RewardFilter(
 
         if (expanded) {
             FilterPopup(
+                allFilters = allFilters,
                 selectedFilterType = selectedFilterType,
                 onFilterClick = {
                     onFilterClick(it)
@@ -118,9 +125,10 @@ fun RewardFilter(
 }
 
 @Composable
-private fun FilterPopup(
-    selectedFilterType: RewardFilterType,
-    onFilterClick: (RewardFilterType) -> Unit,
+private fun <T : RewardFilterType> FilterPopup(
+    allFilters: List<T>,
+    selectedFilterType: T,
+    onFilterClick: (T) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -157,6 +165,7 @@ private fun FilterPopup(
         onDismissRequest = onDismiss,
     ) {
         PopupContent(
+            allFilters = allFilters,
             selectedFilterType = selectedFilterType,
             onFilterClick = onFilterClick,
             modifier = modifier,
@@ -165,9 +174,10 @@ private fun FilterPopup(
 }
 
 @Composable
-private fun PopupContent(
-    selectedFilterType: RewardFilterType,
-    onFilterClick: (RewardFilterType) -> Unit,
+private fun <T : RewardFilterType> PopupContent(
+    allFilters: List<T>,
+    selectedFilterType: T,
+    onFilterClick: (T) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -184,9 +194,9 @@ private fun PopupContent(
     ) {
         val dividerColor = HaebomTheme.colors.gray50
 
-        RewardFilterType.entries.forEachIndexed { index, type ->
+        allFilters.forEachIndexed { index, type ->
             val isFirst = index == 0
-            val isLast = index == RewardFilterType.entries.lastIndex
+            val isLast = index == ChildRewardFilterType.entries.lastIndex
 
             val shape = when {
                 isFirst -> RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
@@ -240,7 +250,8 @@ private fun RewardFilterPreview() {
             contentAlignment = Alignment.Center,
         ) {
             RewardFilter(
-                selectedFilterType = RewardFilterType.DONE,
+                allFilters = ChildRewardFilterType.entries,
+                selectedFilterType = ChildRewardFilterType.DONE,
                 onFilterClick = {},
             )
         }
@@ -252,7 +263,8 @@ private fun RewardFilterPreview() {
 private fun PopupContentPreview() {
     HaebomTheme {
         PopupContent(
-            selectedFilterType = RewardFilterType.DONE,
+            allFilters = ChildRewardFilterType.entries,
+            selectedFilterType = ChildRewardFilterType.DONE,
             onFilterClick = {},
         )
     }

@@ -32,7 +32,7 @@ enum class RewardHeaderTabType(
     override val index: Int,
     override val label: String,
 ) : HaebomHeaderTabType {
-    TODO(0, "할 일 스티커"),
+    STICKER(0, "할 일 스티커"),
     REWARD(1, "보상 관리"),
 }
 
@@ -91,7 +91,7 @@ fun <T : HaebomHeaderTabType> HaebomHeaderTab(
 @Preview(showBackground = true, widthDp = 360)
 @Composable
 private fun HaebomHeaderTabPreview() {
-    var currentTab by remember { mutableStateOf(RewardHeaderTabType.TODO) }
+    var currentTab by remember { mutableStateOf(RewardHeaderTabType.STICKER) }
 
     HaebomTheme {
         HaebomHeaderTab(
