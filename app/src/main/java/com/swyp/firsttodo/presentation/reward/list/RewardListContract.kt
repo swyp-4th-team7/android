@@ -78,7 +78,7 @@ data class RewardListUiState(
     val parentRewards: Async<List<ParentRewardUiModel>> = Async.Init,
     // child
     val childCompletedSticker: Async<Int> = Async.Init,
-    val showStickerCompletePopup: Boolean = false,
+    val showStickerCompleteDialog: Boolean = false,
     val childSelectedFilterType: ChildRewardFilterType = ChildRewardFilterType.ALL,
     val childRewards: Async<List<ChildRewardUiModel>> = Async.Init,
 ) : UiState {
@@ -118,7 +118,7 @@ data class RewardListUiState(
 sealed interface RewardListSideEffect : UiEffect {
     data object NavigateToHabit : RewardListSideEffect
 
-    data object NavigateToRewardListDetail : RewardListSideEffect
+    data object NavigateToRewardDetail : RewardListSideEffect
 
     data class ShowSnackbar(val message: String) : RewardListSideEffect
 }

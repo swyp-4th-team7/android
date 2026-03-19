@@ -145,7 +145,7 @@ class RewardListViewModel
         private fun initChildStickerTab() {
             updateState { copy(childCompletedSticker = Async.Loading(this.childCompletedSticker.getDataOrNull())) }
             viewModelScope.launch { delay(500) }
-            updateState { copy(childCompletedSticker = Async.Success(10), showStickerCompletePopup = true) }
+            updateState { copy(childCompletedSticker = Async.Success(10), showStickerCompleteDialog = true) }
         }
 
         private fun initParentRewardTab() {
@@ -274,7 +274,7 @@ class RewardListViewModel
 
         fun onBoardCompleteBtnClick() {
             initStickerTab()
-            updateState { copy(showStickerCompletePopup = false) }
+            updateState { copy(showStickerCompleteDialog = false) }
         }
 
         fun onCreateHabitBtnClick() {

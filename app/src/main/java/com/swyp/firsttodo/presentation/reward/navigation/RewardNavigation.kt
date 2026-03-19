@@ -21,6 +21,7 @@ sealed interface RewardRoute : Route {
 fun NavGraphBuilder.rewardNavGraph(
     paddingValues: PaddingValues,
     navController: NavController,
+    navigateToHabit: () -> Unit,
 ) {
     composable<RewardRoute.Reward>(
         enterTransition = { fadeIn(tween(160)) },
@@ -29,6 +30,8 @@ fun NavGraphBuilder.rewardNavGraph(
         popExitTransition = { fadeOut(tween(160)) },
     ) {
         RewardListRoute(
+            navigateToHabit = navigateToHabit,
+            navigateToRewardDetail = { },
             modifier = Modifier.padding(paddingValues),
         )
     }

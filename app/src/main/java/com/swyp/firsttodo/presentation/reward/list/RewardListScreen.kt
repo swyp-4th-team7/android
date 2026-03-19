@@ -22,10 +22,13 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.presentation.common.component.HaebomHeaderTab
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
+import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 import com.swyp.firsttodo.presentation.reward.component.ChildRewardList
 import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.CompletedStickerHeader
@@ -37,14 +40,33 @@ import com.swyp.firsttodo.presentation.reward.component.RewardFilter
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.component.RewardHeader
 import com.swyp.firsttodo.presentation.reward.component.StickerBoard
+import com.swyp.firsttodo.presentation.reward.component.StickerBoardCompleteDialog
 import com.swyp.firsttodo.presentation.reward.model.RewardState
 
 @Composable
 fun RewardListRoute(
+    navigateToHabit: () -> Unit,
+    navigateToRewardDetail: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RewardListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHost = LocalSnackbarHostState.current
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            RewardListSideEffect.NavigateToHabit -> navigateToHabit()
+            RewardListSideEffect.NavigateToRewardDetail -> navigateToRewardDetail()
+            is RewardListSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
+        }
+    }
+
+    if (uiState.showStickerCompleteDialog) {
+        StickerBoardCompleteDialog(
+            onDismiss = viewModel::onBoardCompleteBtnClick,
+            onCompleteBtnClick = viewModel::onBoardCompleteBtnClick,
+        )
+    }
 
     RewardListScreen(
         uiState = uiState,
@@ -294,5 +316,3 @@ private fun RewardListScreenPreview(
         )
     }
 }
-
-// endregion
