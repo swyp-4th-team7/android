@@ -11,6 +11,7 @@ import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentStickerUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
+import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 import com.swyp.firsttodo.presentation.reward.model.RewardState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -281,6 +282,17 @@ class RewardListViewModel
             sendEffect(RewardListSideEffect.NavigateToHabit)
         }
 
-        fun onRewardLabelClick() {
+        fun onRewardLabelClick(reward: ParentRewardUiModel) {
+            when (reward.rewardState) {
+                RewardState.CONFIRMING -> sendEffect(
+                    RewardListSideEffect.NavigateToRewardDetail(RewardDetailScreenType.ACCEPT),
+                )
+
+                RewardState.WAITING -> sendEffect(
+                    RewardListSideEffect.NavigateToRewardDetail(RewardDetailScreenType.DELIVER),
+                )
+
+                else -> Unit
+            }
         }
     }

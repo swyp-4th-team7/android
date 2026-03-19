@@ -46,7 +46,7 @@ data class ParentRewardUiModel(
 @Composable
 fun ParentRewardManageList(
     rewards: Async<List<ParentRewardUiModel>>,
-    onLabelClick: () -> Unit,
+    onLabelClick: (ParentRewardUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (rewards) {
@@ -140,7 +140,7 @@ fun ParentRewardManageList(
 
                                 Box(
                                     modifier = Modifier
-                                        .noRippleClickable(onLabelClick)
+                                        .noRippleClickable({ onLabelClick(reward) })
                                         .padding(vertical = 8.dp)
                                         .padding(start = 8.dp),
                                 ) {

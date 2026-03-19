@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
-import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 data class ParentStickerUiModel(
@@ -35,7 +34,6 @@ data class ParentStickerUiModel(
 @Composable
 fun ParentStickerList(
     stickers: Async<List<ParentStickerUiModel>>,
-    onLabelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (stickers) {
@@ -118,7 +116,6 @@ fun ParentStickerList(
 
                                 Box(
                                     modifier = Modifier
-                                        .noRippleClickable(onLabelClick)
                                         .padding(vertical = 8.dp)
                                         .padding(start = 8.dp),
                                 ) {
@@ -178,7 +175,6 @@ private fun ParentStickerListPreview(
     HaebomTheme {
         ParentStickerList(
             stickers = stickers,
-            onLabelClick = {},
             modifier = Modifier
                 .fillMaxSize()
                 .padding(all = 16.dp),

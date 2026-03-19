@@ -10,6 +10,7 @@ import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentStickerUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
+import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 
 enum class RewardHeaderTabType(
     override val index: Int,
@@ -118,7 +119,7 @@ data class RewardListUiState(
 sealed interface RewardListSideEffect : UiEffect {
     data object NavigateToHabit : RewardListSideEffect
 
-    data object NavigateToRewardDetail : RewardListSideEffect
+    data class NavigateToRewardDetail(val screenType: RewardDetailScreenType) : RewardListSideEffect
 
     data class ShowSnackbar(val message: String) : RewardListSideEffect
 }

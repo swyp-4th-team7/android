@@ -41,12 +41,13 @@ import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.component.RewardHeader
 import com.swyp.firsttodo.presentation.reward.component.StickerBoard
 import com.swyp.firsttodo.presentation.reward.component.StickerBoardCompleteDialog
+import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 import com.swyp.firsttodo.presentation.reward.model.RewardState
 
 @Composable
 fun RewardListRoute(
     navigateToHabit: () -> Unit,
-    navigateToRewardDetail: () -> Unit,
+    navigateToRewardDetail: (RewardDetailScreenType) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RewardListViewModel = hiltViewModel(),
 ) {
@@ -56,7 +57,7 @@ fun RewardListRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             RewardListSideEffect.NavigateToHabit -> navigateToHabit()
-            RewardListSideEffect.NavigateToRewardDetail -> navigateToRewardDetail()
+            is RewardListSideEffect.NavigateToRewardDetail -> navigateToRewardDetail(effect.screenType)
             is RewardListSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
         }
     }
@@ -84,7 +85,7 @@ fun RewardListScreen(
     onTabClick: (RewardHeaderTabType) -> Unit,
     onFilterTypeClick: (RewardFilterType) -> Unit,
     onHabitCreateBtnClick: () -> Unit,
-    onRewardLabelClick: () -> Unit,
+    onRewardLabelClick: (ParentRewardUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -118,7 +119,6 @@ fun RewardListScreen(
                 when (uiState.role) {
                     Role.PARENT -> ParentStickerList(
                         stickers = uiState.parentStickers,
-                        onLabelClick = onRewardLabelClick,
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .padding(top = 40.dp),
