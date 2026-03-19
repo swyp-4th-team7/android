@@ -19,19 +19,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.extension.dashedCircleBorder
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -168,37 +164,6 @@ private fun MarkedDate(
         }
     }
 }
-
-private fun Modifier.dashedCircleBorder(
-    color: Color,
-    strokeWidth: Dp = 2.dp,
-    dashWidth: Dp = 4.dp,
-    gapWidth: Dp = 4.dp,
-): Modifier =
-    drawBehind {
-        drawIntoCanvas { canvas ->
-            val paint = Paint().apply {
-                asFrameworkPaint().apply {
-                    isAntiAlias = true
-                    style = android.graphics.Paint.Style.STROKE
-                    this.strokeWidth = strokeWidth.toPx()
-                    this.color = android.graphics.Color.TRANSPARENT
-                    setShadowLayer(0f, 0f, 0f, android.graphics.Color.TRANSPARENT)
-                    this.color = color.toArgb()
-                    pathEffect = android.graphics.DashPathEffect(
-                        floatArrayOf(dashWidth.toPx(), gapWidth.toPx()),
-                        0f,
-                    )
-                }
-            }
-            val radius = size.minDimension / 2f
-            canvas.drawCircle(
-                center = androidx.compose.ui.geometry.Offset(size.width / 2f, size.height / 2f),
-                radius = radius - strokeWidth.toPx() / 2f,
-                paint = paint,
-            )
-        }
-    }
 
 @Preview(showBackground = true)
 @Composable
