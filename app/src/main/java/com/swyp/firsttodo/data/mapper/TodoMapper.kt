@@ -17,7 +17,7 @@ fun TodoResponseDto.toModel(): TodoModel =
         title = title,
         category = category,
         color = color.toTodoColor(),
-        isCompleted = iscompleted,
+        isCompleted = isCompleted,
     )
 
 fun TodoCategoryDto.toModel(): TodoCategoryModel =

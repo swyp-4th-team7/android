@@ -13,6 +13,6 @@ data class TodoResponseDto(
     val category: String,
     @SerialName("color")
     val color: String,
-    @SerialName("iscompleted")
-    val iscompleted: Boolean,
+    @SerialName("completed")
+    val isCompleted: Boolean,
 )
