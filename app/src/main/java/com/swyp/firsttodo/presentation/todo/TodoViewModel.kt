@@ -182,6 +182,7 @@ class TodoViewModel
                 Role.CHILD -> TodoBottomSheetType.CHILD_CREATE
             }
 
+            clearEditingTodo()
             updateState {
                 copy(
                     showTodoBottomSheet = true,
@@ -197,6 +198,7 @@ class TodoViewModel
                 Role.CHILD -> TodoBottomSheetType.CHILD_EDIT
             }
 
+            clearEditingTodo()
             todoFieldState.edit { replace(0, length, todoUiModel.title) }
             updateState {
                 copy(
@@ -241,7 +243,6 @@ class TodoViewModel
 
         fun closeTodoBottomSheet() {
             updateState { copy(showTodoBottomSheet = false) }
-            clearEditingTodo()
         }
 
         fun closeScheduleBottomSheet() {
