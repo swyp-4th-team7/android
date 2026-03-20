@@ -21,7 +21,7 @@ import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.domain.model.TodoChildCategory
+import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
@@ -95,7 +95,7 @@ fun TodoRoute(
         onCalenderPrevClick = viewModel::onCalenderPrevClick,
         onCalenderNextClick = viewModel::onCalenderNextClick,
         onTodoPlusClick = viewModel::openTodoCreateBottomSheet,
-        onTodoCheckClick = viewModel::completeTodo,
+        onTodoCheckClick = viewModel::toggleCompleteTodo,
         onTodoEditClick = viewModel::openTodoEditBottomSheet,
         onTodoDeleteClick = viewModel::openTodoDialog,
         onSchedulePlusClick = viewModel::openScheduleCreateBottomSheet,
@@ -188,42 +188,42 @@ private val previewTodos = listOf(
         todoId = 1L,
         title = "수학 숙제 완료하기",
         completed = false,
-        category = TodoChildCategory.HOMEWORK,
+        category = TodoCategoryModel("HOMEWORK", "숙제"),
         labelColor = LabelColor.BLUE,
     ),
     TodayTodoUiModel(
         todoId = 2L,
         title = "영어 단어 20개 외우기",
         completed = true,
-        category = TodoChildCategory.STUDY,
+        category = TodoCategoryModel("STUDY", "공부"),
         labelColor = LabelColor.PINK,
     ),
     TodayTodoUiModel(
         todoId = 3L,
         title = "방 청소하기",
         completed = false,
-        category = TodoChildCategory.CLEANING,
+        category = TodoCategoryModel("CLEANING", "정리"),
         labelColor = LabelColor.MINT,
     ),
     TodayTodoUiModel(
         todoId = 4L,
         title = "수학 숙제 완료하기",
         completed = false,
-        category = TodoChildCategory.HOMEWORK,
+        category = TodoCategoryModel("HOMEWORK", "숙제"),
         labelColor = LabelColor.BLUE,
     ),
     TodayTodoUiModel(
         todoId = 5L,
         title = "영어 단어 20개 외우기",
         completed = true,
-        category = TodoChildCategory.STUDY,
+        category = TodoCategoryModel("STUDY", "공부"),
         labelColor = LabelColor.PINK,
     ),
     TodayTodoUiModel(
         todoId = 6L,
         title = "방 청소하기 방 청소하기 방 청소하기 방 청소하기 방 청소하기",
         completed = false,
-        category = TodoChildCategory.CLEANING,
+        category = TodoCategoryModel("CLEANING", "정리"),
         labelColor = LabelColor.MINT,
     ),
 )

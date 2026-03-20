@@ -34,8 +34,7 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
-import com.swyp.firsttodo.domain.model.TodoCategory
-import com.swyp.firsttodo.domain.model.TodoChildCategory
+import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
 import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
@@ -43,7 +42,7 @@ data class TodayTodoUiModel(
     val todoId: Long,
     val title: String,
     val completed: Boolean,
-    val category: TodoCategory,
+    val category: TodoCategoryModel,
     val labelColor: LabelColor,
 )
 
@@ -149,7 +148,7 @@ private fun TodoItem(
                 HaebomLabel(
                     textColor = labelTextColor,
                     backgroundColor = labelBgColor,
-                    text = todo.category.displayName,
+                    text = todo.category.label,
                 )
             }
 
@@ -170,44 +169,20 @@ private fun TodoItem(
     }
 }
 
-private fun previewTodo(
-    todoId: Long,
-    title: String,
-    completed: Boolean,
-    category: TodoCategory,
-    labelColor: LabelColor,
-) = TodayTodoUiModel(
-    todoId = todoId,
-    title = title,
-    completed = completed,
-    category = category,
-    labelColor = labelColor,
-)
+private val previewCategory = TodoCategoryModel(name = "STUDY", label = "공부")
 
 private class TodoListPreviewProvider : PreviewParameterProvider<Async<List<TodayTodoUiModel>>> {
     override val values = sequenceOf(
         Async.Success(
             listOf(
-                previewTodo(1L, "수학 숙제 풀기", completed = false, TodoChildCategory.CREATIVE_ACTIVITY, LabelColor.BLUE),
-                previewTodo(
-                    2L,
-                    "30분 조깅하고 스트레칭까지 빠짐없이 하기",
-                    completed = false,
-                    TodoChildCategory.CREATIVE_ACTIVITY,
-                    LabelColor.PINK,
-                ),
-                previewTodo(
-                    3L,
-                    "방 청소 및 책상 정리",
-                    completed = true,
-                    TodoChildCategory.CREATIVE_ACTIVITY,
-                    LabelColor.ORANGE,
-                ),
-                previewTodo(
+                TodayTodoUiModel(1L, "수학 숙제 풀기", completed = false, previewCategory, LabelColor.BLUE),
+                TodayTodoUiModel(2L, "30분 조깅하고 스트레칭까지 빠짐없이 하기", completed = false, previewCategory, LabelColor.PINK),
+                TodayTodoUiModel(3L, "방 청소 및 책상 정리", completed = true, previewCategory, LabelColor.ORANGE),
+                TodayTodoUiModel(
                     4L,
                     "오늘 읽을 책 30페이지 독서하기 오늘 읽을 책 30페이지 독서하기",
                     completed = true,
-                    TodoChildCategory.CREATIVE_ACTIVITY,
+                    previewCategory,
                     LabelColor.PURPLE,
                 ),
             ),
