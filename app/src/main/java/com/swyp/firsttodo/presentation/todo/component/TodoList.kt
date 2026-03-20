@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
@@ -65,20 +66,22 @@ fun TodoList(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             when (todos) {
-                is Async.Success -> todos.data.forEach { todo ->
-                    TodoItem(
-                        todo = todo,
-                        onCheckClick = { onCheckClick(todo) },
-                        onEditClick = { onEditClick(todo) },
-                        onDeleteClick = { onDeleteClick(todo) },
-                    )
-                }
-
                 is Async.Empty -> TodoCardEmptyContent(
                     text = "+를 눌러 오늘 할 일을 적어 주세요!",
                 )
 
-                else -> Spacer(Modifier.height(56.dp))
+                else -> when (val data = todos.getDataOrNull()) {
+                    null -> Spacer(Modifier.height(56.dp))
+
+                    else -> data.forEach { todo ->
+                        TodoItem(
+                            todo = todo,
+                            onCheckClick = { onCheckClick(todo) },
+                            onEditClick = { onEditClick(todo) },
+                            onDeleteClick = { onDeleteClick(todo) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -176,7 +179,13 @@ private class TodoListPreviewProvider : PreviewParameterProvider<Async<List<Toda
         Async.Success(
             listOf(
                 TodayTodoUiModel(1L, "수학 숙제 풀기", completed = false, previewCategory, LabelColor.BLUE),
-                TodayTodoUiModel(2L, "30분 조깅하고 스트레칭까지 빠짐없이 하기", completed = false, previewCategory, LabelColor.PINK),
+                TodayTodoUiModel(
+                    2L,
+                    "30분 조깅하고 스트레칭까지 빠짐없이 하기",
+                    completed = false,
+                    previewCategory,
+                    LabelColor.PINK,
+                ),
                 TodayTodoUiModel(3L, "방 청소 및 책상 정리", completed = true, previewCategory, LabelColor.ORANGE),
                 TodayTodoUiModel(
                     4L,
