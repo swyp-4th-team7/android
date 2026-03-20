@@ -15,6 +15,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 sealed interface AuthSideEffect : UiEffect {
+    data object ForceNavigateToLogin : AuthSideEffect
+
     data object NavigateToLogin : AuthSideEffect
 }
 
@@ -85,13 +87,22 @@ class SessionManager
             Timber.d("🔒 Login (userType=$userType, isProfileCompleted=$profileCompleted)")
         }
 
-        suspend fun clearSession() {
+        suspend fun forceLogout() {
+            if (!_sessionState.value.isLoggedIn) return
+            sessionDataSource.clearTokens()
+            _sessionState.update { SessionState(isInitialized = true) }
+            _sideEffect.trySend(AuthSideEffect.ForceNavigateToLogin)
+
+            Timber.d("🔒 Force logout (token expired)")
+        }
+
+        suspend fun logout() {
             if (!_sessionState.value.isLoggedIn) return
             sessionDataSource.clearTokens()
             _sessionState.update { SessionState(isInitialized = true) }
             _sideEffect.trySend(AuthSideEffect.NavigateToLogin)
 
-            Timber.d("🔒 Session cleared")
+            Timber.d("🔒 Logout (user-initiated)")
         }
 
         suspend fun saveSession(

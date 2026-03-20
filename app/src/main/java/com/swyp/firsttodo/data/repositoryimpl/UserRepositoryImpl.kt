@@ -22,7 +22,7 @@ class UserRepositoryImpl
                 userDataSource.deleteLogout()
             }
 
-            val localResult = suspendRunCatching { sessionManager.clearSession() }
+            val localResult = suspendRunCatching { sessionManager.logout() }
 
             return if (remoteResult.isSuccess && localResult.isSuccess) {
                 Result.success(Unit)
@@ -38,7 +38,7 @@ class UserRepositoryImpl
                 userDataSource.deleteAccount()
             }
 
-            val localResult = suspendRunCatching { sessionManager.clearSession() }
+            val localResult = suspendRunCatching { sessionManager.logout() }
 
             return if (remoteResult.isSuccess && localResult.isSuccess) {
                 Result.success(Unit)

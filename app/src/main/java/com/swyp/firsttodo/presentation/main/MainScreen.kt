@@ -37,10 +37,12 @@ fun MainScreen(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            AuthSideEffect.NavigateToLogin -> {
+            AuthSideEffect.ForceNavigateToLogin -> {
                 snackbarState.showHaebomSnackbar("로그인이 만료되었어요. 다시 로그인 해주세요.")
                 navigator.navController.navigateToLogin(isSessionExpired = true)
             }
+
+            AuthSideEffect.NavigateToLogin -> navigator.navController.navigateToLogin(isSessionExpired = false)
         }
     }
 
