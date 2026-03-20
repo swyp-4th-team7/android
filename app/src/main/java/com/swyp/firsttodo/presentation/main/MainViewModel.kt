@@ -60,6 +60,16 @@ class MainViewModel
                 Timber.d("Session init complete → ${sessionManager.sessionState.value}")
                 saveNotificationTokenUseCase()
             }
+
+            // 로그아웃/회원탈퇴 시 drawer close
+            viewModelScope.launch {
+                sessionManager.sessionState
+                    .collect { state ->
+                        if (!state.isLoggedIn) {
+                            onDrawerDismiss()
+                        }
+                    }
+            }
         }
 
         fun onMenuClick() {

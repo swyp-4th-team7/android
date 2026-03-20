@@ -5,11 +5,21 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 
+enum class DrawerType(
+    val displayName: String,
+) {
+    FAMILY("가족보기"),
+    SAHRE("공유관리"),
+    LOGOUT("로그아웃"),
+    WITHDRAWAL("계정탈퇴"),
+}
+
 @Immutable
 data class MainDrawerUiState(
+    val currentDrawer: DrawerType? = null,
     val nickname: Async<String> = Async.Init,
-    val showLogoutDialog: Boolean = false,
-    val showWithdrawalDialog: Boolean = false,
+    val showDialog: Boolean = false,
+    val dialogType: DrawerDialogType = DrawerDialogType.LOGOUT,
 ) : UiState
 
 sealed interface MainDrawerSideEffect : UiEffect {
