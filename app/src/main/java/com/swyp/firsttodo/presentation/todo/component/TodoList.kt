@@ -97,7 +97,7 @@ private fun TodoItem(
 ) {
     var showPopup by remember { mutableStateOf(false) }
 
-    val (iconRes, labelTextColor, labelBgColor) = remember(todo.completed) {
+    val (iconRes, labelTextColor, labelBgColor) = remember(todo.completed, todo.labelColor) {
         if (todo.completed) {
             Triple(R.drawable.ic_check_filled, todo.labelColor.completedText, todo.labelColor.completedBackground)
         } else {
