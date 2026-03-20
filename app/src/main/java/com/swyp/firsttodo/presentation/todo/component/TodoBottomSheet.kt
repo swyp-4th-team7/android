@@ -40,8 +40,7 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
-import com.swyp.firsttodo.domain.model.TodoCategory
-import com.swyp.firsttodo.domain.model.TodoChildCategory
+import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
@@ -81,13 +80,13 @@ fun TodoBottomSheet(
     sheetType: TodoBottomSheetType,
     btnEnabled: Boolean,
     loadingStatus: Async<Unit>,
-    categories: List<TodoCategory>,
-    selectedCategory: TodoCategory?,
+    categories: List<TodoCategoryModel>,
+    selectedCategory: TodoCategoryModel?,
     selectedLabelColor: LabelColor?,
     titleFieldState: TextFieldState,
     onLabelColorClick: (LabelColor) -> Unit,
     onBtnClick: () -> Unit,
-    onCategoryClick: (TodoCategory) -> Unit,
+    onCategoryClick: (TodoCategoryModel) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -149,7 +148,7 @@ fun TodoBottomSheet(
                         categories = categories,
                         selectedCategory = selectedCategory,
                         onCategoryClick = onCategoryClick,
-                        getDisplayName = { it.displayName },
+                        getDisplayName = { it.label },
                     )
                 }
             }
@@ -232,16 +231,17 @@ private class TodoBottomSheetPreviewProvider : PreviewParameterProvider<TodoBott
 private fun TodoBottomSheetPreview(
     @PreviewParameter(TodoBottomSheetPreviewProvider::class) sheetType: TodoBottomSheetType,
 ) {
-    var selectedCategory by remember { mutableStateOf<TodoCategory?>(null) }
+    var selectedCategory by remember { mutableStateOf<TodoCategoryModel?>(null) }
     var selectedLabelColor by remember { mutableStateOf<LabelColor?>(null) }
     val titleFieldState = rememberTextFieldState()
+    val categories = listOf(TodoCategoryModel("공부", "공부"))
 
     HaebomTheme {
         TodoBottomSheet(
             sheetType = sheetType,
             btnEnabled = titleFieldState.text.isNotBlank() && selectedCategory != null && selectedLabelColor != null,
             loadingStatus = Async.Init,
-            categories = TodoChildCategory.entries,
+            categories = categories,
             selectedCategory = selectedCategory,
             selectedLabelColor = selectedLabelColor,
             titleFieldState = titleFieldState,
