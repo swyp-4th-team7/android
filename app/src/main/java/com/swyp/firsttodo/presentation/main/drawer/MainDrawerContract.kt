@@ -9,7 +9,7 @@ enum class DrawerType(
     val displayName: String,
 ) {
     FAMILY("가족보기"),
-    SAHRE("공유관리"),
+    SHARE("공유관리"),
     LOGOUT("로그아웃"),
     WITHDRAWAL("계정탈퇴"),
 }

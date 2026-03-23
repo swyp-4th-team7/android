@@ -143,7 +143,7 @@ private fun MainDrawerContent(
         )
 
         DrawerTextButton(
-            drawerType = DrawerType.SAHRE,
+            drawerType = DrawerType.SHARE,
             currentType = uiState.currentDrawer,
             onClick = onShareClick,
         )
