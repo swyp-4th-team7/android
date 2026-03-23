@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -51,6 +52,10 @@ fun MainDrawer(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
 
+    LaunchedEffect(visible) {
+        if (visible) viewModel.getMyInfo()
+    }
+
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             MainDrawerSideEffect.Dismiss -> onDismiss()
@@ -60,6 +65,7 @@ fun MainDrawer(
                 onDismiss()
                 onNavigateToFamily()
             }
+
             MainDrawerSideEffect.NavigateToShare -> {
                 onDismiss()
                 onNavigateToShare()

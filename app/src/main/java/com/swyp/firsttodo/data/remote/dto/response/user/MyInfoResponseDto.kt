@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MyInfoResponseDto(
-    @SerialName("userId")
+    @SerialName("id")
     val userId: Long,
     @SerialName("email")
     val email: String,
