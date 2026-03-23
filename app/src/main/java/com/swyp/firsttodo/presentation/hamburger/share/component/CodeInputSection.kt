@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,10 +62,9 @@ private fun InviteTextField(
     modifier: Modifier = Modifier,
     onKeyboardAction: KeyboardActionHandler? = null,
 ) {
-    val colors = HaebomTheme.colors
-
-    val borderColor = remember(errorText) {
-        if (errorText != null) colors.semanticRed else colors.gray50
+    val (borderColor, textColor) = when (errorText) {
+        null -> HaebomTheme.colors.gray50 to Color.Transparent
+        else -> HaebomTheme.colors.semanticRed to HaebomTheme.colors.semanticRed
     }
 
     Column(
@@ -85,7 +83,7 @@ private fun InviteTextField(
 
         Text(
             text = errorText ?: "",
-            color = if (errorText != null) colors.semanticRed else Color.Transparent,
+            color = textColor,
             style = HaebomTheme.typo.helperText,
         )
     }
