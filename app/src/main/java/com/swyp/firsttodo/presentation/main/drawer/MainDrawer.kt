@@ -14,12 +14,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +35,6 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.extension.widthForScreenPercentage
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
-import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
@@ -41,19 +44,32 @@ import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 fun MainDrawer(
     visible: Boolean,
     onDismiss: () -> Unit,
+    onNavigateToFamily: () -> Unit,
+    onNavigateToShare: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MainDrawerViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
 
+    LaunchedEffect(visible) {
+        if (visible) viewModel.getMyInfo()
+    }
+
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             MainDrawerSideEffect.Dismiss -> onDismiss()
             MainDrawerSideEffect.NavigateToLogin -> onDismiss()
             is MainDrawerSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
-            MainDrawerSideEffect.NavigateToFamily -> {}
-            MainDrawerSideEffect.NavigateToShare -> {}
+            MainDrawerSideEffect.NavigateToFamily -> {
+                onDismiss()
+                onNavigateToFamily()
+            }
+
+            MainDrawerSideEffect.NavigateToShare -> {
+                onDismiss()
+                onNavigateToShare()
+            }
         }
     }
 
@@ -86,6 +102,15 @@ fun MainDrawer(
                 onWithdrawClick = viewModel::onWithdrawalClick,
             )
         }
+
+        if (uiState.showDialog) {
+            MainDrawerDialog(
+                dialogType = uiState.dialogType,
+                onDismiss = viewModel::closeDialog,
+                onCancel = viewModel::closeDialog,
+                onConfirm = viewModel::onDialogConfirmBtnClick,
+            )
+        }
     }
 }
 
@@ -101,40 +126,43 @@ private fun MainDrawerContent(
         modifier = Modifier
             .widthForScreenPercentage(280.dp)
             .fillMaxHeight()
-            .background(HaebomTheme.colors.white)
-            .padding(horizontal = screenWidthDp(16.dp)),
+            .background(HaebomTheme.colors.white),
     ) {
         DrawerNickname(
             nickname = uiState.nickname,
-            modifier = Modifier.padding(top = 24.dp, bottom = 16.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 23.dp),
         )
 
         HorizontalDivider(
-            modifier = Modifier.padding(bottom = 24.dp),
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(top = 4.dp, bottom = 8.dp),
             thickness = 1.dp,
             color = HaebomTheme.colors.gray200,
         )
 
         DrawerTextButton(
-            text = "가족보기",
+            drawerType = DrawerType.FAMILY,
+            currentType = uiState.currentDrawer,
             onClick = onFamilyClick,
-            modifier = Modifier.padding(bottom = 24.dp),
         )
 
         DrawerTextButton(
-            text = "공유관리",
+            drawerType = DrawerType.SHARE,
+            currentType = uiState.currentDrawer,
             onClick = onShareClick,
-            modifier = Modifier.padding(bottom = 24.dp),
         )
 
         DrawerTextButton(
-            text = "로그아웃",
+            drawerType = DrawerType.LOGOUT,
+            currentType = uiState.currentDrawer,
             onClick = onLogoutClick,
-            modifier = Modifier.padding(bottom = 24.dp),
         )
 
         DrawerTextButton(
-            text = "계정탈퇴",
+            drawerType = DrawerType.WITHDRAWAL,
+            currentType = uiState.currentDrawer,
             onClick = onWithdrawClick,
         )
     }
@@ -169,17 +197,31 @@ private fun DrawerNickname(
 }
 
 @Composable
-fun DrawerTextButton(
-    text: String,
+private fun DrawerTextButton(
+    drawerType: DrawerType,
+    currentType: DrawerType?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colors = HaebomTheme.colors
+
+    val (backgroundColor, textColor) = remember(currentType, colors) {
+        when (drawerType == currentType) {
+            true -> colors.gray50 to colors.black
+            false -> colors.white to colors.gray400
+        }
+    }
+
     Text(
-        text = text,
+        text = drawerType.displayName,
         modifier = modifier
             .noRippleClickable(onClick)
-            .fillMaxWidth(),
-        color = HaebomTheme.colors.gray400,
+            .fillMaxWidth()
+            .heightIn(48.dp)
+            .background(backgroundColor)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .wrapContentHeight(Alignment.CenterVertically),
+        color = textColor,
         style = HaebomTheme.typo.subtitle,
     )
 }
@@ -189,7 +231,10 @@ fun DrawerTextButton(
 private fun MainDrawerContentPreview() {
     HaebomTheme {
         MainDrawerContent(
-            uiState = MainDrawerUiState(nickname = Async.Success("엄마는 외계인")),
+            uiState = MainDrawerUiState(
+                nickname = Async.Success("엄마는 외계인"),
+                currentDrawer = DrawerType.FAMILY,
+            ),
             onFamilyClick = {},
             onShareClick = {},
             onLogoutClick = {},

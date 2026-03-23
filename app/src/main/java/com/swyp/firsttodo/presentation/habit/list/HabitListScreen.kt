@@ -47,7 +47,7 @@ fun HabitListRoute(
 
     if (uiState.showDeleteDialog) {
         HaebomDeleteDialog(
-            dialogType = DeleteDialogType.HABIT,
+            dialogType = DeleteDialogType.Habit,
             onConfirm = viewModel::onDeleteConfirm,
             onCancel = viewModel::onDeleteCancel,
             onDismiss = viewModel::onDeleteCancel,

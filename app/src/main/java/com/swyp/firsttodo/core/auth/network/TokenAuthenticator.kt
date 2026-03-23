@@ -76,7 +76,7 @@ class TokenAuthenticator
         }
 
         private fun abortWithLogout(): Nothing? {
-            runBlocking { sessionManager.clearSession() }
+            runBlocking { sessionManager.forceLogout() }
             return null
         }
 

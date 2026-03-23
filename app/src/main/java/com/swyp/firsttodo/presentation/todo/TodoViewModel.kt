@@ -262,14 +262,14 @@ class TodoViewModel
         }
 
         fun openTodoDialog(todoUiModel: TodayTodoUiModel) {
-            updateState { copy(delRequestedId = todoUiModel.todoId, delRequestedType = DeleteDialogType.TODO) }
+            updateState { copy(delRequestedId = todoUiModel.todoId, delRequestedType = DeleteDialogType.Todo) }
         }
 
         fun openScheduleDialog(scheduleUiModel: ScheduleUiModel) {
             updateState {
                 copy(
                     delRequestedId = scheduleUiModel.scheduleId,
-                    delRequestedType = DeleteDialogType.SCHEDULE,
+                    delRequestedType = DeleteDialogType.Schedule,
                 )
             }
         }
@@ -280,8 +280,9 @@ class TodoViewModel
 
         fun onDeleteConfirm() {
             when (uiState.value.delRequestedType) {
-                DeleteDialogType.TODO -> deleteTodo()
-                else -> deleteSchedule()
+                DeleteDialogType.Todo -> deleteTodo()
+                DeleteDialogType.Schedule -> deleteSchedule()
+                else -> Unit
             }
         }
 

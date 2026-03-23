@@ -1,10 +1,12 @@
 package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.remote.datasource.AuthDataSource
+import com.swyp.firsttodo.data.remote.datasource.FamilyDataSource
 import com.swyp.firsttodo.data.remote.datasource.NotificationDataSource
 import com.swyp.firsttodo.data.remote.datasource.TodoDataSource
 import com.swyp.firsttodo.data.remote.datasource.UserDataSource
 import com.swyp.firsttodo.data.remote.datasourceimpl.AuthDataSourceImpl
+import com.swyp.firsttodo.data.remote.datasourceimpl.FamilyDataSourceImpl
 import com.swyp.firsttodo.data.remote.datasourceimpl.NotificationDataSourceImpl
 import com.swyp.firsttodo.data.remote.datasourceimpl.TodoDataSourceImpl
 import com.swyp.firsttodo.data.remote.datasourceimpl.UserDataSourceImpl
@@ -34,4 +36,8 @@ abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindsTodoDataSource(todoDataSourceImpl: TodoDataSourceImpl): TodoDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsFamilyDataSource(familyDataSourceImpl: FamilyDataSourceImpl): FamilyDataSource
 }

@@ -56,7 +56,7 @@ data class TodoUiState(
     val todoBottomSheetState: Async<Unit> = Async.Init,
     val scheduleBottomSheetState: Async<Unit> = Async.Init,
     val delRequestedId: Long? = null,
-    val delRequestedType: DeleteDialogType = DeleteDialogType.TODO,
+    val delRequestedType: DeleteDialogType = DeleteDialogType.Todo,
 ) : UiState {
     val month = 1
 

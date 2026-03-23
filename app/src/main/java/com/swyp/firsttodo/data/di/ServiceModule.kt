@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.remote.service.AuthService
+import com.swyp.firsttodo.data.remote.service.FamilyService
 import com.swyp.firsttodo.data.remote.service.NotificationService
 import com.swyp.firsttodo.data.remote.service.TodoService
 import com.swyp.firsttodo.data.remote.service.UserService
@@ -37,4 +38,10 @@ object ServiceModule {
     fun providesTodoService(
         @WithToken retrofit: Retrofit,
     ): TodoService = retrofit.create(TodoService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesFamilyService(
+        @WithToken retrofit: Retrofit,
+    ): FamilyService = retrofit.create(FamilyService::class.java)
 }

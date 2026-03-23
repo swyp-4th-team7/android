@@ -11,6 +11,7 @@ import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.auth.navigation.authNavGraph
 import com.swyp.firsttodo.presentation.growth.navigation.growthNavGraph
 import com.swyp.firsttodo.presentation.habit.navigation.habitNavGraph
+import com.swyp.firsttodo.presentation.hamburger.navigation.hamburgerNavGraph
 import com.swyp.firsttodo.presentation.main.bottombar.MainTab
 import com.swyp.firsttodo.presentation.onboarding.navigation.onboardingNavGraph
 import com.swyp.firsttodo.presentation.reward.navigation.rewardNavGraph
@@ -61,6 +62,10 @@ fun MainNavHost(
             navController = navigator.navController,
         )
         webViewNavGraph(
+            paddingValues = paddingValues,
+            navController = navigator.navController,
+        )
+        hamburgerNavGraph(
             paddingValues = paddingValues,
             navController = navigator.navController,
         )
