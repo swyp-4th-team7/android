@@ -29,12 +29,15 @@ fun NavGraphBuilder.hamburgerNavGraph(
 ) {
     composable<HamburgerRoute.Family> {
         FamilyRoute(
-            modifier = Modifier.padding(paddingValues),
             popBackStack = navController::popBackStack,
+            modifier = Modifier.padding(paddingValues),
         )
     }
 
     composable<HamburgerRoute.Share> {
-        ShareRoute()
+        ShareRoute(
+            popBackStack = navController::popBackStack,
+            modifier = Modifier.padding(paddingValues),
+        )
     }
 }
