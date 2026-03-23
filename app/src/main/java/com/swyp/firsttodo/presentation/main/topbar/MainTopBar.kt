@@ -43,7 +43,7 @@ fun MainTopBar(
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(MAIN_TOP_BAR_HEIGHT.dp)
-                .background(Color(0xFFFFCB48)),
+                .background(HaebomTheme.colors.yellow400),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
