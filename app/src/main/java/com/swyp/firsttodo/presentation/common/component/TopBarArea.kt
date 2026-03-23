@@ -8,12 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.presentation.main.topbar.MAIN_TOP_BAR_HEIGHT
 
 @Composable
 fun TopBarArea(
     modifier: Modifier = Modifier,
-    color: Color = Color(0xFFFFCB48),
+    color: Color = HaebomTheme.colors.yellow400,
 ) {
     Box(
         modifier = modifier
