@@ -88,16 +88,16 @@ fun MainScreen(
                         modifier = Modifier.padding(innerPadding),
                     )
                 }
-
-                HaebomSnackbarHost(
-                    hostState = snackbarState,
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
-                        .padding(bottom = screenHeightDp(40.dp))
-                        .padding(horizontal = screenWidthDp(16.dp)),
-                )
             }
+
+            HaebomSnackbarHost(
+                hostState = snackbarState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(bottom = screenHeightDp(40.dp))
+                    .padding(horizontal = screenWidthDp(16.dp)),
+            )
         }
     }
 }
