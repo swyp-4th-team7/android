@@ -81,9 +81,9 @@ class MainDrawerViewModel
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("계정이 탈퇴되었습니다."))
                     }
-                    .onFailure { throwable ->
-                        val message = if (throwable is ApiError) throwable.snackbarMsg() else ""
-                        sendEffect(MainDrawerSideEffect.ShowSnackbar(message))
+                    .onFailure { it ->
+                        closeDialog()
+                        if (it is ApiError) sendEffect(MainDrawerSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }
         }
