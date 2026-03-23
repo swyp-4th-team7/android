@@ -281,7 +281,8 @@ class TodoViewModel
         fun onDeleteConfirm() {
             when (uiState.value.delRequestedType) {
                 DeleteDialogType.Todo -> deleteTodo()
-                else -> deleteSchedule()
+                DeleteDialogType.Schedule -> deleteSchedule()
+                else -> Unit
             }
         }
 
