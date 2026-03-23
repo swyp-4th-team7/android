@@ -1,0 +1,31 @@
+package com.swyp.firsttodo.presentation.hamburger.navigation
+
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import com.swyp.firsttodo.core.navigation.Route
+import com.swyp.firsttodo.presentation.hamburger.family.FamilyRoute
+import com.swyp.firsttodo.presentation.hamburger.share.ShareRoute
+import kotlinx.serialization.Serializable
+
+sealed interface HamburgerRoute : Route {
+    @Serializable
+    data object Family : HamburgerRoute
+
+    @Serializable
+    data object Share : HamburgerRoute
+}
+
+fun NavController.navigateToFamily() = navigate(HamburgerRoute.Family)
+
+fun NavController.navigateToShare() = navigate(HamburgerRoute.Share)
+
+fun NavGraphBuilder.hamburgerNavGraph(navController: NavController) {
+    composable<HamburgerRoute.Family> {
+        FamilyRoute()
+    }
+
+    composable<HamburgerRoute.Share> {
+        ShareRoute()
+    }
+}

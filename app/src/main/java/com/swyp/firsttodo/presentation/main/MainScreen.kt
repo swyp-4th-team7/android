@@ -17,6 +17,8 @@ import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.auth.navigation.navigateToLogin
+import com.swyp.firsttodo.presentation.hamburger.navigation.navigateToFamily
+import com.swyp.firsttodo.presentation.hamburger.navigation.navigateToShare
 import com.swyp.firsttodo.presentation.main.bottombar.MainBottomBar
 import com.swyp.firsttodo.presentation.main.drawer.MainDrawer
 import com.swyp.firsttodo.presentation.main.navigation.MainNavHost
@@ -81,6 +83,8 @@ fun MainScreen(
                 MainDrawer(
                     visible = showDrawer,
                     onDismiss = viewModel::onDrawerDismiss,
+                    onNavigateToFamily = navigator.navController::navigateToFamily,
+                    onNavigateToShare = navigator.navController::navigateToShare,
                     modifier = Modifier.padding(innerPadding),
                 )
             }

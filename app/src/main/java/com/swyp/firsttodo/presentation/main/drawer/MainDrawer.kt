@@ -43,6 +43,8 @@ import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 fun MainDrawer(
     visible: Boolean,
     onDismiss: () -> Unit,
+    onNavigateToFamily: () -> Unit,
+    onNavigateToShare: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MainDrawerViewModel = hiltViewModel(),
 ) {
@@ -54,8 +56,14 @@ fun MainDrawer(
             MainDrawerSideEffect.Dismiss -> onDismiss()
             MainDrawerSideEffect.NavigateToLogin -> onDismiss()
             is MainDrawerSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
-            MainDrawerSideEffect.NavigateToFamily -> {}
-            MainDrawerSideEffect.NavigateToShare -> {}
+            MainDrawerSideEffect.NavigateToFamily -> {
+                onDismiss()
+                onNavigateToFamily()
+            }
+            MainDrawerSideEffect.NavigateToShare -> {
+                onDismiss()
+                onNavigateToShare()
+            }
         }
     }
 
