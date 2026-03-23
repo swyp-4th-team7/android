@@ -64,8 +64,8 @@ fun MyCodeSection(
                     .clickable(onClick = {
                         if (inviteCode is Async.Success) {
                             clipboardManager.setText(AnnotatedString(inviteCode.data))
+                            onCopyBtnClick()
                         }
-                        onCopyBtnClick()
                     })
                     .heightIn(min = 40.dp)
                     .clip(RoundedCornerShape(4.dp))
