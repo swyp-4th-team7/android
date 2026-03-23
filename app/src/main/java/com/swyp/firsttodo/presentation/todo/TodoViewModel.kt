@@ -13,7 +13,9 @@ import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
+import com.swyp.firsttodo.domain.repository.ScheduleRepository
 import com.swyp.firsttodo.domain.repository.TodoRepository
+import com.swyp.firsttodo.domain.throwable.ScheduleError
 import com.swyp.firsttodo.domain.throwable.TodoError
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
@@ -23,8 +25,10 @@ import com.swyp.firsttodo.presentation.todo.component.TodayTodoUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodoBottomSheetType
 import com.swyp.firsttodo.presentation.todo.extension.toLabelColor
 import com.swyp.firsttodo.presentation.todo.extension.toTodoColor
+import com.swyp.firsttodo.presentation.todo.util.removeDashes
+import com.swyp.firsttodo.presentation.todo.util.toDashedDate
+import com.swyp.firsttodo.presentation.todo.util.toDisplayDate
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,6 +38,7 @@ class TodoViewModel
     constructor(
         sessionManager: SessionManager,
         private val todoRepository: TodoRepository,
+        private val scheduleRepository: ScheduleRepository,
     ) : BaseViewModel<TodoUiState, TodoSideEffect>(TodoUiState()) {
         val todoFieldState = TextFieldState()
         val scheduleTitleFieldState = TextFieldState()
@@ -123,34 +128,34 @@ class TodoViewModel
             updateState { copy(schedules = Async.Loading(this.schedules.getDataOrNull())) }
 
             viewModelScope.launch {
-                delay(500)
+                scheduleRepository.getSchedules()
+                    .onSuccess { list ->
+                        val newSchedules = list.map { model ->
+                            ScheduleUiModel(
+                                scheduleId = model.scheduleId,
+                                dDay = model.dDay.toInt(),
+                                title = model.title,
+                                date = model.scheduleDate.toDisplayDate(),
+                                rawDate = model.scheduleDate.removeDashes(),
+                                category = model.category,
+                                isUrgent = model.dDay < 15,
+                            )
+                        }
 
-                val newSchedules = listOf(
-                    ScheduleUiModel(
-                        scheduleId = 1L,
-                        dDay = 14,
-                        title = "영어 자기소개 외워서 말하기",
-                        date = "2026.03.12.일요일",
-                        rawDate = "20260312",
-                        category = ScheduleCategory.SCHOOL_EXAM,
-                        isUrgent = false,
-                    ),
-                    ScheduleUiModel(
-                        scheduleId = 2L,
-                        dDay = 1,
-                        title = "영어 자기소개 외워서 말하기",
-                        date = "2026.03.12.일요일",
-                        rawDate = "20260312",
-                        category = ScheduleCategory.CONTEST,
-                        isUrgent = true,
-                    ),
-                )
+                        updateState {
+                            copy(
+                                schedules = if (list.isEmpty()) Async.Empty else Async.Success(newSchedules),
+                            )
+                        }
+                    }
+                    .onFailure {
+                        val prevData = uiState.value.schedules.getDataOrNull()
+                        updateState {
+                            copy(schedules = if (prevData == null) Async.Init else Async.Success(prevData))
+                        }
 
-                updateState {
-                    copy(
-                        schedules = if (newSchedules.isEmpty()) Async.Empty else Async.Success(newSchedules),
-                    )
-                }
+                        if (it is ApiError) sendEffect(TodoSideEffect.ShowSnackbar(it.snackbarMsg()))
+                    }
             }
         }
 
@@ -220,7 +225,14 @@ class TodoViewModel
                 Role.CHILD -> ScheduleBottomSheetType.CHILD_CREATE
             }
 
-            updateState { copy(showScheduleBottomSheet = true, scheduleBottomSheetType = sheetType) }
+            clearEditingSchedule()
+            updateState {
+                copy(
+                    showScheduleBottomSheet = true,
+                    scheduleBottomSheetType = sheetType,
+                    scheduleBottomSheetState = Async.Init,
+                )
+            }
         }
 
         fun openScheduleEditBottomSheet(scheduleUiModel: ScheduleUiModel) {
@@ -236,7 +248,11 @@ class TodoViewModel
                 copy(
                     showScheduleBottomSheet = true,
                     scheduleBottomSheetType = sheetType,
-                    editingSchedule = editingSchedule.copy(category = scheduleUiModel.category),
+                    scheduleBottomSheetState = Async.Init,
+                    editingSchedule = editingSchedule.copy(
+                        scheduleId = scheduleUiModel.scheduleId,
+                        category = scheduleUiModel.category,
+                    ),
                 )
             }
         }
@@ -300,6 +316,7 @@ class TodoViewModel
                         val message = when (throwable) {
                             is TodoError.IdNotFound -> {
                                 getTodos()
+                                updateState { copy(delRequestedId = null) }
                                 "이미 삭제된 할 일 입니다."
                             }
 
@@ -313,7 +330,30 @@ class TodoViewModel
         }
 
         private fun deleteSchedule() {
-            // TODO : 삭제 API
+            val scheduleId = uiState.value.delRequestedId ?: return
+
+            viewModelScope.launch {
+                scheduleRepository.deleteSchedule(scheduleId)
+                    .onSuccess {
+                        getSchedules()
+                        updateState { copy(delRequestedId = null) }
+                        sendEffect(TodoSideEffect.ShowSnackbar("다가오는 일정이 삭제되었습니다."))
+                    }
+                    .onFailure { throwable ->
+                        val message = when (throwable) {
+                            is ScheduleError.ScheduleNotFound -> {
+                                updateState { copy(delRequestedId = null) }
+                                getSchedules()
+                                "이미 삭제된 일정입니다."
+                            }
+
+                            is ApiError -> throwable.snackbarMsg()
+
+                            else -> return@launch
+                        }
+                        sendEffect(TodoSideEffect.ShowSnackbar(message))
+                    }
+            }
         }
 
         fun onTodoCategoryClick(category: TodoCategoryModel) {
@@ -428,10 +468,90 @@ class TodoViewModel
         }
 
         private fun createSchedule() {
-            // TODO: 생성 API
+            if (uiState.value.scheduleBottomSheetState is Async.Loading) return
+
+            val inputs = uiState.value.editingSchedule
+            val category = inputs.category?.request
+
+            if (!inputs.isBtnEnabled || category == null) return
+
+            updateState { copy(scheduleBottomSheetState = Async.Loading()) }
+
+            viewModelScope.launch {
+                scheduleRepository.createSchedule(
+                    title = inputs.title,
+                    category = category,
+                    scheduleDate = inputs.date.toDashedDate(),
+                )
+                    .onSuccess {
+                        updateState {
+                            copy(
+                                scheduleBottomSheetState = Async.Success(Unit),
+                                showScheduleBottomSheet = false,
+                            )
+                        }
+                        sendEffect(TodoSideEffect.ShowSnackbar("다가오는 일정이 추가되었습니다."))
+                        getSchedules()
+                    }
+                    .onFailure { throwable ->
+                        updateState { copy(scheduleBottomSheetState = Async.Init) }
+                        val message = when (throwable) {
+                            is ScheduleError.TitleEmpty -> "일정 제목을 입력해주세요."
+                            is ScheduleError.CategoryEmpty -> "카테고리를 선택해주세요."
+                            is ScheduleError.DateEmpty -> "날짜를 입력해주세요."
+                            is ApiError -> throwable.snackbarMsg()
+                            else -> return@launch
+                        }
+                        sendEffect(TodoSideEffect.ShowSnackbar(message))
+                    }
+            }
         }
 
         private fun editSchedule() {
-            // TODO: 수정 API
+            if (uiState.value.scheduleBottomSheetState is Async.Loading) return
+
+            val inputs = uiState.value.editingSchedule
+            val scheduleId = inputs.scheduleId
+            val category = inputs.category?.request
+
+            if (!inputs.isBtnEnabled || scheduleId == null || category == null) return
+
+            updateState { copy(scheduleBottomSheetState = Async.Loading()) }
+
+            viewModelScope.launch {
+                scheduleRepository.updateSchedule(
+                    scheduleId = scheduleId,
+                    title = inputs.title,
+                    category = category,
+                    scheduleDate = inputs.date.toDashedDate(),
+                )
+                    .onSuccess {
+                        updateState {
+                            copy(
+                                scheduleBottomSheetState = Async.Success(Unit),
+                                showScheduleBottomSheet = false,
+                            )
+                        }
+                        sendEffect(TodoSideEffect.ShowSnackbar("다가오는 일정이 수정되었습니다."))
+                        getSchedules()
+                    }
+                    .onFailure { throwable ->
+                        val message = when (throwable) {
+                            is ScheduleError.ScheduleNotFound -> {
+                                updateState { copy(scheduleBottomSheetState = Async.Success(Unit)) }
+                                getSchedules()
+                                "이미 삭제된 일정입니다."
+                            }
+
+                            is ApiError -> {
+                                updateState { copy(scheduleBottomSheetState = Async.Init) }
+                                throwable.snackbarMsg()
+                            }
+
+                            else -> return@launch
+                        }
+                        sendEffect(TodoSideEffect.ShowSnackbar(message))
+                    }
+            }
         }
     }

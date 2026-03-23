@@ -26,6 +26,7 @@ data class EditingTodo(
 }
 
 data class EditingSchedule(
+    val scheduleId: Long? = null,
     val title: String = "",
     val date: String = "",
     val category: ScheduleCategory? = null,
