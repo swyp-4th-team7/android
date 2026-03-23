@@ -8,8 +8,7 @@ import com.swyp.firsttodo.domain.model.family.FamilyInfo
 
 @Immutable
 data class FamilyUiState(
-    val data: String = "",
-    val familyInfos: Async<List<FamilyInfo>>,
+    val familyInfos: Async<List<FamilyInfo>> = Async.Init,
 ) : UiState
 
 sealed interface FamilySideEffect : UiEffect {
