@@ -86,6 +86,7 @@ class SessionManager
         }
 
         suspend fun clearSession() {
+            if (!_sessionState.value.isLoggedIn) return
             sessionDataSource.clearTokens()
             _sessionState.update { SessionState(isInitialized = true) }
             _sideEffect.trySend(AuthSideEffect.NavigateToLogin)

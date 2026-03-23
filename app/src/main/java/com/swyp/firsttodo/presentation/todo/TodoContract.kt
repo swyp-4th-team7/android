@@ -6,9 +6,7 @@ import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.domain.model.TodoCategory
-import com.swyp.firsttodo.domain.model.TodoChildCategory
-import com.swyp.firsttodo.domain.model.TodoParentCategory
+import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
 import com.swyp.firsttodo.presentation.todo.component.DayInfo
 import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheetType
@@ -19,8 +17,9 @@ import com.swyp.firsttodo.presentation.todo.util.isTodayOrAfter
 import com.swyp.firsttodo.presentation.todo.util.toDateOrNull
 
 data class EditingTodo(
+    val todoId: Long? = null,
     val title: String = "",
-    val category: TodoCategory? = null,
+    val category: TodoCategoryModel? = null,
     val labelColor: LabelColor? = null,
 ) {
     val isBtnEnabled: Boolean = title.isNotBlank() && category != null && labelColor != null
@@ -43,6 +42,7 @@ data class EditingSchedule(
 
 @Immutable
 data class TodoUiState(
+    val categories: List<TodoCategoryModel> = emptyList(),
     val remainTodoCount: Async<Int> = Async.Init,
     val dayInfos: Async<List<DayInfo>> = Async.Init,
     val todos: Async<List<TodayTodoUiModel>> = Async.Init,
@@ -62,12 +62,7 @@ data class TodoUiState(
 
     val week = 1
 
-    val todoCategories: List<TodoCategory> = when (todoBottomSheetType) {
-        TodoBottomSheetType.CHILD_CREATE -> TodoChildCategory.entries
-        TodoBottomSheetType.CHILD_EDIT -> TodoChildCategory.entries
-        TodoBottomSheetType.PARENT_CREATE -> TodoParentCategory.entries
-        TodoBottomSheetType.PARENT_EDIT -> TodoParentCategory.entries
-    }
+    val todoCategories: List<TodoCategoryModel> = categories
 
     val showDeleteDialog = delRequestedId != null
 }

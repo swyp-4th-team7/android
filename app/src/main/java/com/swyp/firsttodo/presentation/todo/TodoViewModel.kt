@@ -9,15 +9,20 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
+import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.domain.model.TodoCategory
-import com.swyp.firsttodo.domain.model.TodoChildCategory
+import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
+import com.swyp.firsttodo.domain.repository.TodoRepository
+import com.swyp.firsttodo.domain.throwable.TodoError
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
+import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheetType
 import com.swyp.firsttodo.presentation.todo.component.ScheduleUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodayTodoUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodoBottomSheetType
+import com.swyp.firsttodo.presentation.todo.extension.toLabelColor
+import com.swyp.firsttodo.presentation.todo.extension.toTodoColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,6 +33,7 @@ class TodoViewModel
     @Inject
     constructor(
         sessionManager: SessionManager,
+        private val todoRepository: TodoRepository,
     ) : BaseViewModel<TodoUiState, TodoSideEffect>(TodoUiState()) {
         val todoFieldState = TextFieldState()
         val scheduleTitleFieldState = TextFieldState()
@@ -39,6 +45,7 @@ class TodoViewModel
         }
 
         init {
+            getTodoCategories()
             getTodos()
             getSchedules()
 
@@ -60,30 +67,55 @@ class TodoViewModel
 
         fun onCalenderNextClick() {}
 
+        fun getTodoCategories() {
+            viewModelScope.launch {
+                todoRepository.getTodoCategories()
+                    .onSuccess { categories ->
+                        updateState { copy(categories = categories) }
+                    }
+                    .onFailure {
+                    }
+            }
+        }
+
         fun getTodos() {
             updateState { copy(todos = Async.Loading(this.todos.getDataOrNull())) }
 
             viewModelScope.launch {
-                delay(500)
+                todoRepository.getTodos()
+                    .onSuccess { data ->
+                        val categories = uiState.value.categories
 
-                val newTodos = listOf(
-                    TodayTodoUiModel(
-                        todoId = 1L,
-                        title = "미완료 할 일",
-                        completed = false,
-                        category = TodoChildCategory.CREATIVE_ACTIVITY,
-                        labelColor = LabelColor.BLUE,
-                    ),
-                    TodayTodoUiModel(
-                        todoId = 2L,
-                        title = "완료 할 일",
-                        completed = true,
-                        category = TodoChildCategory.CREATIVE_ACTIVITY,
-                        labelColor = LabelColor.PINK,
-                    ),
-                )
+                        val newTodos = data.todos.map { todo ->
+                            TodayTodoUiModel(
+                                todoId = todo.todoId,
+                                title = todo.title,
+                                completed = todo.isCompleted,
+                                category = categories.find { it.name == todo.category }
+                                    ?: TodoCategoryModel(name = todo.category, label = todo.category),
+                                labelColor = todo.color.toLabelColor(),
+                            )
+                        }
 
-                updateState { copy(todos = if (newTodos.isEmpty()) Async.Empty else Async.Success(newTodos)) }
+                        updateState {
+                            copy(
+                                remainTodoCount = Async.Success(data.remainingCount),
+                                todos = if (newTodos.isEmpty()) Async.Empty else Async.Success(newTodos),
+                            )
+                        }
+                    }
+                    .onFailure { throwable ->
+                        val prevData = uiState.value.todos.getDataOrNull()
+                        updateState {
+                            copy(
+                                todos = if (prevData == null) Async.Init else Async.Success(prevData),
+                            )
+                        }
+
+                        if (throwable is ApiError) {
+                            sendEffect(TodoSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                        }
+                    }
             }
         }
 
@@ -122,10 +154,26 @@ class TodoViewModel
             }
         }
 
-        fun completeTodo(todoUiModel: TodayTodoUiModel) {
-            if (todoUiModel.completed) return
+        fun toggleCompleteTodo(todoUiModel: TodayTodoUiModel) {
+            viewModelScope.launch {
+                todoRepository.editTodo(
+                    todoId = todoUiModel.todoId,
+                    completed = !todoUiModel.completed,
+                ).onSuccess {
+                    getTodos()
+                }.onFailure { throwable ->
+                    val message = when (throwable) {
+                        is TodoError.IdNotFound -> {
+                            getTodos()
+                            "이미 삭제된 할 일이에요."
+                        }
 
-            // TODO: 수정 API 호출
+                        is ApiError -> throwable.snackbarMsg()
+                        else -> ""
+                    }
+                    sendEffect(TodoSideEffect.ShowSnackbar(message))
+                }
+            }
         }
 
         fun openTodoCreateBottomSheet() {
@@ -134,7 +182,14 @@ class TodoViewModel
                 Role.CHILD -> TodoBottomSheetType.CHILD_CREATE
             }
 
-            updateState { copy(showTodoBottomSheet = true, todoBottomSheetType = sheetType) }
+            clearEditingTodo()
+            updateState {
+                copy(
+                    showTodoBottomSheet = true,
+                    todoBottomSheetType = sheetType,
+                    todoBottomSheetState = Async.Init,
+                )
+            }
         }
 
         fun openTodoEditBottomSheet(todoUiModel: TodayTodoUiModel) {
@@ -143,12 +198,15 @@ class TodoViewModel
                 Role.CHILD -> TodoBottomSheetType.CHILD_EDIT
             }
 
+            clearEditingTodo()
             todoFieldState.edit { replace(0, length, todoUiModel.title) }
             updateState {
                 copy(
                     showTodoBottomSheet = true,
                     todoBottomSheetType = sheetType,
+                    todoBottomSheetState = Async.Init,
                     editingTodo = editingTodo.copy(
+                        todoId = todoUiModel.todoId,
                         category = todoUiModel.category,
                         labelColor = todoUiModel.labelColor,
                     ),
@@ -173,6 +231,7 @@ class TodoViewModel
 
             scheduleTitleFieldState.edit { replace(0, length, scheduleUiModel.title) }
             scheduleDateFieldState.edit { replace(0, length, scheduleUiModel.rawDate) }
+
             updateState {
                 copy(
                     showScheduleBottomSheet = true,
@@ -184,7 +243,6 @@ class TodoViewModel
 
         fun closeTodoBottomSheet() {
             updateState { copy(showTodoBottomSheet = false) }
-            clearEditingTodo()
         }
 
         fun closeScheduleBottomSheet() {
@@ -225,19 +283,39 @@ class TodoViewModel
                 DeleteDialogType.TODO -> deleteTodo()
                 else -> deleteSchedule()
             }
-            updateState { copy(delRequestedId = null) }
-            sendEffect(TodoSideEffect.ShowSnackbar("삭제되었어요."))
         }
 
         private fun deleteTodo() {
-            // TODO : 삭제 API
+            val todoId = uiState.value.delRequestedId ?: return
+
+            viewModelScope.launch {
+                todoRepository.deleteTodo(todoId)
+                    .onSuccess {
+                        getTodos()
+                        updateState { copy(delRequestedId = null) }
+                        sendEffect(TodoSideEffect.ShowSnackbar("할 일이 삭제되었습니다."))
+                    }
+                    .onFailure { throwable ->
+                        val message = when (throwable) {
+                            is TodoError.IdNotFound -> {
+                                getTodos()
+                                "이미 삭제된 할 일 입니다."
+                            }
+
+                            is ApiError -> throwable.snackbarMsg()
+                            else -> ""
+                        }
+
+                        sendEffect(TodoSideEffect.ShowSnackbar(message))
+                    }
+            }
         }
 
         private fun deleteSchedule() {
             // TODO : 삭제 API
         }
 
-        fun onTodoCategoryClick(category: TodoCategory) {
+        fun onTodoCategoryClick(category: TodoCategoryModel) {
             updateState { copy(editingTodo = this.editingTodo.copy(category = category)) }
         }
 
@@ -255,11 +333,84 @@ class TodoViewModel
         }
 
         private fun createTodo() {
-            // TODO: 생성 API
+            if (uiState.value.todoBottomSheetState is Async.Loading) return
+            if (!uiState.value.editingTodo.isBtnEnabled) return
+
+            updateState { copy(todoBottomSheetState = Async.Loading()) }
+            viewModelScope.launch {
+                val inputs = uiState.value.editingTodo
+                val category = inputs.category?.name ?: return@launch
+                val color = inputs.labelColor?.toTodoColor() ?: return@launch
+
+                todoRepository.createTodo(
+                    title = inputs.title,
+                    category = category,
+                    color = color,
+                ).onSuccess {
+                    updateState { copy(todoBottomSheetState = Async.Success(Unit), showTodoBottomSheet = false) }
+                    getTodos()
+                    sendEffect(TodoSideEffect.ShowSnackbar("할 일이 추가되었습니다."))
+                }.onFailure { throwable ->
+                    updateState { copy(todoBottomSheetState = Async.Init) }
+                    val message = when (throwable) {
+                        is TodoError.TitleEmpty -> "할 일을 입력해주세요."
+                        is TodoError.CategoryEmpty -> "카테고리를 선택해주세요."
+                        is TodoError.ColorEmpty -> "색상을 선택해주세요."
+                        is TodoError.CategoryInvalid -> {
+                            getTodoCategories()
+                            "유효하지 않은 카테고리예요. 다시 선택해주세요."
+                        }
+
+                        is ApiError -> throwable.snackbarMsg()
+                        else -> ""
+                    }
+                    sendEffect(TodoSideEffect.ShowSnackbar(message))
+                }
+            }
         }
 
         private fun editTodo() {
-            // TODO: 수정 API
+            if (uiState.value.todoBottomSheetState is Async.Loading) return
+            if (!uiState.value.editingTodo.isBtnEnabled) return
+
+            updateState { copy(todoBottomSheetState = Async.Loading()) }
+            viewModelScope.launch {
+                val inputs = uiState.value.editingTodo
+                val todoId = inputs.todoId ?: return@launch
+                val category = inputs.category?.name ?: return@launch
+                val color = inputs.labelColor?.toTodoColor() ?: return@launch
+
+                todoRepository.editTodo(
+                    todoId = todoId,
+                    title = inputs.title,
+                    category = category,
+                    color = color,
+                ).onSuccess {
+                    updateState { copy(todoBottomSheetState = Async.Success(Unit), showTodoBottomSheet = false) }
+                    getTodos()
+                    sendEffect(TodoSideEffect.ShowSnackbar("할 일이 수정되었습니다."))
+                }.onFailure { throwable ->
+                    updateState { copy(todoBottomSheetState = Async.Init) }
+                    val message = when (throwable) {
+                        is TodoError.IdNotFound -> {
+                            getTodos()
+                            "이미 삭제된 할 일이에요."
+                        }
+
+                        is TodoError.TitleEmpty -> "할 일을 입력해주세요."
+                        is TodoError.CategoryEmpty -> "카테고리를 선택해주세요."
+                        is TodoError.ColorEmpty -> "색상을 선택해주세요."
+                        is TodoError.CategoryInvalid -> {
+                            getTodoCategories()
+                            "유효하지 않은 카테고리예요. 다시 선택해주세요."
+                        }
+
+                        is ApiError -> throwable.snackbarMsg()
+                        else -> ""
+                    }
+                    sendEffect(TodoSideEffect.ShowSnackbar(message))
+                }
+            }
         }
 
         fun onScheduleCategoryClick(category: ScheduleCategory) {
