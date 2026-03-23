@@ -12,6 +12,7 @@ data class ShareUiState(
     val inviteCode: Async<String> = Async.Init,
     val families: Async<List<ConnectedFamilyModel>> = Async.Init,
     val disconnectRequestMember: ConnectedFamilyModel? = null,
+    val disconnectState: Async<Unit> = Async.Init,
 ) : UiState {
     val showDialog = disconnectRequestMember != null
     val dialogNickname = disconnectRequestMember?.nickname ?: ""
