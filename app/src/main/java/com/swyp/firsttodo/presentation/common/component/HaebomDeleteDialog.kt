@@ -24,22 +24,29 @@ import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicDialog
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
-enum class DeleteDialogType(
+sealed class DeleteDialogType(
     val title: String,
     val description: String,
 ) {
-    TODO(
+    data object Todo : DeleteDialogType(
         title = "선택한 할 일을 삭제할까요?",
         description = "입력한 할 일이 사라져요!",
-    ),
-    SCHEDULE(
+    )
+
+    data object Schedule : DeleteDialogType(
         title = "선택한 일정을 삭제할까요?",
         description = "입력한 일정이 사라져요!",
-    ),
-    HABIT(
+    )
+
+    data object Habit : DeleteDialogType(
         title = "선택한 할 일을 삭제할까요?",
         description = "입력한 할 일이 사라져요!",
-    ),
+    )
+
+    class Disconnect(nickname: String) : DeleteDialogType(
+        title = "${nickname}님과의 연결을 끊을까요?",
+        description = "연동이 끊기면 ${nickname}님의\n활동을 볼 수 없습니다.",
+    )
 }
 
 @Composable
@@ -67,6 +74,7 @@ fun HaebomDeleteDialog(
             Text(
                 text = dialogType.title,
                 color = colors.black,
+                textAlign = TextAlign.Center,
                 style = HaebomTheme.typo.card,
             )
 
@@ -75,6 +83,7 @@ fun HaebomDeleteDialog(
             Text(
                 text = dialogType.description,
                 color = colors.gray400,
+                textAlign = TextAlign.Center,
                 style = HaebomTheme.typo.description,
             )
 
@@ -136,7 +145,7 @@ private fun DialogButton(
 private fun HaebomDeleteDialogPreview() {
     HaebomTheme {
         HaebomDeleteDialog(
-            dialogType = DeleteDialogType.TODO,
+            dialogType = DeleteDialogType.Todo,
             onConfirm = {},
             onCancel = {},
             onDismiss = {},
