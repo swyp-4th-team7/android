@@ -90,8 +90,26 @@ class ShareViewModel
                         getFamiles()
                         sendEffect(ShareSideEffect.ShowSnackbar("가족과 연결되었습니다."))
                     }
-                    .onFailure {
-                        updateState { copy(codeErrorText = "올바르지 않은 초대 코드예요. 다시 확인해 주세요.") }
+                    .onFailure { throwable ->
+                        when (throwable) {
+                            is FamilyError.InviteAlreadyDone -> {
+                                getFamiles()
+                                codeFieldState.clearText()
+                                sendEffect(ShareSideEffect.ShowSnackbar("이미 연결된 가족입니다."))
+                            }
+
+                            is FamilyError.InviteCodeEmpty, is FamilyError.InviteCodeInvalid,
+                            is FamilyError.InviteCodeMySelf,
+                            -> {
+                                updateState { copy(codeErrorText = "올바르지 않은 초대 코드예요. 다시 확인해 주세요.") }
+                            }
+
+                            is ApiError -> {
+                                sendEffect(ShareSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                            }
+
+                            else -> return@launch
+                        }
                     }
             }
         }

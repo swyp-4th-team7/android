@@ -23,15 +23,20 @@ class FamilyRepositoryImpl
             }.fold(
                 onSuccess = { Result.success(Unit) },
                 onFailure = { throwable ->
-                    val error = if (throwable is ApiError.BadRequest) {
-                        when (throwable.code) {
+                    val error = when (throwable) {
+                        is ApiError.BadRequest -> when (throwable.code) {
                             40015 -> FamilyError.InviteCodeEmpty(throwable.serverMsg)
                             40019 -> FamilyError.InviteCodeMySelf(throwable.serverMsg)
                             else -> throwable
                         }
-                    } else {
-                        throwable
+
+                        is ApiError.NotFound -> FamilyError.InviteCodeInvalid(throwable.serverMsg)
+
+                        is ApiError.Conflict -> FamilyError.InviteAlreadyDone(throwable.serverMsg)
+
+                        else -> throwable
                     }
+
                     Result.failure(error)
                 },
             )

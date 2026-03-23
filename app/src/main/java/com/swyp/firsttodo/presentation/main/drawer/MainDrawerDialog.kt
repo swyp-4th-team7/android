@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.common.util.screenHeightDp
+import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicDialog
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
@@ -50,7 +51,7 @@ fun MainDrawerDialog(
 ) {
     HaebomBasicDialog(
         onDismiss = onDismiss,
-        modifier = modifier.padding(horizontal = screenHeightDp(20.dp)),
+        modifier = modifier.padding(horizontal = screenWidthDp(20.dp)),
     ) {
         DialogContent(
             dialogType = dialogType,
