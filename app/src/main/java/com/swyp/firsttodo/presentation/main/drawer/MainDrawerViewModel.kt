@@ -3,6 +3,7 @@ package com.swyp.firsttodo.presentation.main.drawer
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.usecase.user.DeleteAccountUseCase
 import com.swyp.firsttodo.domain.usecase.user.LogoutUseCase
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,7 @@ class MainDrawerViewModel
     @Inject
     constructor(
         private val logoutUseCase: LogoutUseCase,
+        private val deleteAccountUseCase: DeleteAccountUseCase,
     ) : BaseViewModel<MainDrawerUiState, MainDrawerSideEffect>(MainDrawerUiState()) {
         fun onDismiss() {
             sendEffect(MainDrawerSideEffect.Dismiss)
@@ -73,7 +75,16 @@ class MainDrawerViewModel
         }
 
         private fun onWithdrawalConfirm() {
-            closeDialog()
-            // TODO: 회원탈퇴 유스케이스 -> NavigateToLogin
+            viewModelScope.launch {
+                deleteAccountUseCase()
+                    .onSuccess {
+                        closeDialog()
+                        sendEffect(MainDrawerSideEffect.ShowSnackbar("계정이 탈퇴되었습니다."))
+                    }
+                    .onFailure { throwable ->
+                        val message = if (throwable is ApiError) throwable.snackbarMsg() else ""
+                        sendEffect(MainDrawerSideEffect.ShowSnackbar(message))
+                    }
+            }
         }
     }
