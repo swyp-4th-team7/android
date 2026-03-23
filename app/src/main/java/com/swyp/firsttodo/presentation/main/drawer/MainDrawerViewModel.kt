@@ -57,9 +57,9 @@ class MainDrawerViewModel
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("로그아웃 되었습니다."))
                     }
-                    .onFailure { throwable ->
-                        val message = if (throwable is ApiError) throwable.snackbarMsg() else ""
-                        sendEffect(MainDrawerSideEffect.ShowSnackbar(message))
+                    .onFailure {
+                        closeDialog()
+                        if (it is ApiError) sendEffect(MainDrawerSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }
         }
