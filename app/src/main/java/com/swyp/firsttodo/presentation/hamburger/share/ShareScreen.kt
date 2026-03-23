@@ -82,7 +82,7 @@ fun ShareScreen(
         modifier = modifier,
         topBar = {
             HaebomTopBar(
-                title = "가족보기",
+                title = "공유관리",
                 onBackClick = onPopBackStack,
             )
         },
