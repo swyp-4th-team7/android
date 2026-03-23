@@ -1,5 +1,8 @@
 package com.swyp.firsttodo.presentation.hamburger.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -20,9 +23,15 @@ fun NavController.navigateToFamily() = navigate(HamburgerRoute.Family)
 
 fun NavController.navigateToShare() = navigate(HamburgerRoute.Share)
 
-fun NavGraphBuilder.hamburgerNavGraph(navController: NavController) {
+fun NavGraphBuilder.hamburgerNavGraph(
+    paddingValues: PaddingValues,
+    navController: NavController,
+) {
     composable<HamburgerRoute.Family> {
-        FamilyRoute()
+        FamilyRoute(
+            modifier = Modifier.padding(paddingValues),
+            popBackStack = navController::popBackStack,
+        )
     }
 
     composable<HamburgerRoute.Share> {

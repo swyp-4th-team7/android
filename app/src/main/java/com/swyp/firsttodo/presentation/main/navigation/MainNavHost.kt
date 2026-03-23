@@ -66,6 +66,7 @@ fun MainNavHost(
             navController = navigator.navController,
         )
         hamburgerNavGraph(
+            paddingValues = paddingValues,
             navController = navigator.navController,
         )
     }
