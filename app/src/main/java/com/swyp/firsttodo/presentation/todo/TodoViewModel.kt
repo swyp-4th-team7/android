@@ -14,8 +14,10 @@ import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.domain.repository.ScheduleRepository
+import com.swyp.firsttodo.domain.repository.StickerRepository
 import com.swyp.firsttodo.domain.repository.TodoRepository
 import com.swyp.firsttodo.domain.throwable.ScheduleError
+import com.swyp.firsttodo.domain.throwable.StickerError
 import com.swyp.firsttodo.domain.throwable.TodoError
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
@@ -39,6 +41,7 @@ class TodoViewModel
         sessionManager: SessionManager,
         private val todoRepository: TodoRepository,
         private val scheduleRepository: ScheduleRepository,
+        private val stickerRepository: StickerRepository,
     ) : BaseViewModel<TodoUiState, TodoSideEffect>(TodoUiState()) {
         val todoFieldState = TextFieldState()
         val scheduleTitleFieldState = TextFieldState()
@@ -51,6 +54,7 @@ class TodoViewModel
 
         init {
             getTodoCategories()
+            getWeeklyStickers()
             getTodos()
             getSchedules()
 
@@ -68,9 +72,65 @@ class TodoViewModel
             }
         }
 
-        fun onCalenderPrevClick() {}
+        private fun getWeeklyStickers() {
+            val weekOffset = uiState.value.weekOffset
+            if (weekOffset !in -52..52) return
 
-        fun onCalenderNextClick() {}
+            updateState { copy(weeklyStickers = Async.Loading(weeklyStickers.getDataOrNull())) }
+
+            viewModelScope.launch {
+                stickerRepository.getWeeklyStickers(weekOffset)
+                    .onSuccess {
+                        updateState {
+                            copy(
+                                weekOffset = it.weekOffset,
+                                weeklyStickers = Async.Success(it),
+                            )
+                        }
+                    }
+                    .onFailure { throwable ->
+                        if (throwable is StickerError.WeekOffsetInvalid) {
+                            sendEffect(TodoSideEffect.ShowSnackbar("주간 스티커 목록을 불러올 수 없어, 초기화합니다."))
+                            if (weekOffset != 0) {
+                                updateState { copy(weekOffset = 0) }
+                                getWeeklyStickers()
+                                return@launch
+                            }
+                        }
+
+                        if (throwable is ApiError) {
+                            sendEffect(TodoSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                        }
+
+                        val prevData = uiState.value.weeklyStickers.getDataOrNull()
+                        if (prevData != null) {
+                            updateState { copy(weeklyStickers = Async.Success(prevData)) }
+                        } else {
+                            updateState { copy(weeklyStickers = Async.Init) }
+                        }
+                    }
+            }
+        }
+
+        fun onCalenderPrevClick() {
+            if (uiState.value.weekOffset <= -52) {
+                sendEffect(TodoSideEffect.ShowSnackbar("이전 주차는 확인할 수 없습니다."))
+                return
+            }
+
+            updateState { copy(weekOffset = this.weekOffset - 1) }
+            getWeeklyStickers()
+        }
+
+        fun onCalenderNextClick() {
+            if (uiState.value.weekOffset >= 52) {
+                sendEffect(TodoSideEffect.ShowSnackbar("이후 주차는 확인할 수 없습니다."))
+                return
+            }
+
+            updateState { copy(weekOffset = this.weekOffset + 1) }
+            getWeeklyStickers()
+        }
 
         fun getTodoCategories() {
             viewModelScope.launch {

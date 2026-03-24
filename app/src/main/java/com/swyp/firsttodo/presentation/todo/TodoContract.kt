@@ -6,9 +6,9 @@ import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.ScheduleCategory
+import com.swyp.firsttodo.domain.model.sticker.WeeklyStickersModel
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
-import com.swyp.firsttodo.presentation.todo.component.DayInfo
 import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheetType
 import com.swyp.firsttodo.presentation.todo.component.ScheduleUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodayTodoUiModel
@@ -45,7 +45,8 @@ data class EditingSchedule(
 data class TodoUiState(
     val categories: List<TodoCategoryModel> = emptyList(),
     val remainTodoCount: Async<Int> = Async.Init,
-    val dayInfos: Async<List<DayInfo>> = Async.Init,
+    val weeklyStickers: Async<WeeklyStickersModel> = Async.Init,
+    val weekOffset: Int = 0,
     val todos: Async<List<TodayTodoUiModel>> = Async.Init,
     val schedules: Async<List<ScheduleUiModel>> = Async.Init,
     val editingTodo: EditingTodo = EditingTodo(),
@@ -59,10 +60,6 @@ data class TodoUiState(
     val delRequestedId: Long? = null,
     val delRequestedType: DeleteDialogType = DeleteDialogType.Todo,
 ) : UiState {
-    val month = 1
-
-    val week = 1
-
     val todoCategories: List<TodoCategoryModel> = categories
 
     val showDeleteDialog = delRequestedId != null

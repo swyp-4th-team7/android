@@ -2,7 +2,6 @@ package com.swyp.firsttodo.presentation.todo.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,23 +31,37 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.MediumStyle
+import com.swyp.firsttodo.domain.model.sticker.WeeklyStickerModel
+import com.swyp.firsttodo.domain.model.sticker.WeeklyStickersModel
+import java.time.DayOfWeek
+import java.time.LocalDate
 
 data class DayInfo(
     val weekDay: String,
     val day: Int,
     val isToday: Boolean,
-    val hasSticker: Boolean,
+    val stickerCode: String?,
+)
+
+private val DAY_OF_WEEK_LABELS = mapOf(
+    DayOfWeek.MONDAY to "월",
+    DayOfWeek.TUESDAY to "화",
+    DayOfWeek.WEDNESDAY to "수",
+    DayOfWeek.THURSDAY to "목",
+    DayOfWeek.FRIDAY to "금",
+    DayOfWeek.SATURDAY to "토",
+    DayOfWeek.SUNDAY to "일",
 )
 
 @Composable
 fun WeeklyCalendar(
     onPrevClick: () -> Unit,
     onNextClick: () -> Unit,
-    month: Int,
-    week: Int,
-    dayInfos: Async<List<DayInfo>>,
+    weeklyStickers: Async<WeeklyStickersModel>,
     modifier: Modifier = Modifier,
 ) {
+    val weekLabel = (weeklyStickers as? Async.Success)?.data?.weekLabel ?: ""
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,7 +81,7 @@ fun WeeklyCalendar(
             )
 
             Text(
-                text = "${month}월 ${week}주차",
+                text = weekLabel,
                 color = HaebomTheme.colors.black,
                 style = HaebomTheme.typo.week,
             )
@@ -83,22 +96,35 @@ fun WeeklyCalendar(
             )
         }
 
-        when (dayInfos) {
-            is Async.Success -> Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                dayInfos.data.forEach { day ->
-                    MarkedDate(
-                        weekDay = day.weekDay,
-                        day = day.day,
-                        isToday = day.isToday,
-                        hasSticker = day.hasSticker,
-                        modifier = Modifier.weight(1f),
+        when (weeklyStickers) {
+            is Async.Success -> {
+                val today = LocalDate.now()
+                val dayInfos = weeklyStickers.data.stickers.map { sticker ->
+                    val date = LocalDate.parse(sticker.date)
+                    DayInfo(
+                        weekDay = DAY_OF_WEEK_LABELS[date.dayOfWeek] ?: "",
+                        day = date.dayOfMonth,
+                        isToday = date == today,
+                        stickerCode = sticker.stickerCode,
                     )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    dayInfos.forEach { day ->
+                        MarkedDate(
+                            weekDay = day.weekDay,
+                            day = day.day,
+                            isToday = day.isToday,
+                            stickerCode = day.stickerCode,
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
             }
 
@@ -112,7 +138,7 @@ private fun MarkedDate(
     weekDay: String,
     day: Int,
     isToday: Boolean,
-    hasSticker: Boolean,
+    stickerCode: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -140,13 +166,11 @@ private fun MarkedDate(
                 style = BoldStyle.copy(fontSize = 20.sp),
             )
 
-            hasSticker -> Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(
-                        color = HaebomTheme.colors.yellow300,
-                        shape = CircleShape,
-                    ),
+            stickerCode != null -> Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_sticker_defalut_clover),
+                contentDescription = null,
+                modifier = Modifier.size(40.dp),
+                tint = Color.Unspecified,
             )
 
             else -> Text(
@@ -168,23 +192,27 @@ private fun MarkedDate(
 @Preview(showBackground = true)
 @Composable
 private fun WeeklyCalendarPreview() {
-    val previewDayInfos = listOf(
-        DayInfo(weekDay = "월", day = 10, isToday = false, hasSticker = false),
-        DayInfo(weekDay = "화", day = 11, isToday = false, hasSticker = true),
-        DayInfo(weekDay = "수", day = 12, isToday = false, hasSticker = false),
-        DayInfo(weekDay = "목", day = 13, isToday = true, hasSticker = false),
-        DayInfo(weekDay = "금", day = 14, isToday = false, hasSticker = true),
-        DayInfo(weekDay = "토", day = 15, isToday = false, hasSticker = false),
-        DayInfo(weekDay = "일", day = 16, isToday = false, hasSticker = false),
+    val previewModel = WeeklyStickersModel(
+        weekLabel = "3월 2주차",
+        weekOffset = 0,
+        startDate = "2026-03-10",
+        endDate = "2026-03-16",
+        stickers = listOf(
+            WeeklyStickerModel("2026-03-10", null),
+            WeeklyStickerModel("2026-03-11", "BASIC_STICKER"),
+            WeeklyStickerModel("2026-03-12", null),
+            WeeklyStickerModel("2026-03-13", null),
+            WeeklyStickerModel("2026-03-14", "BASIC_STICKER"),
+            WeeklyStickerModel("2026-03-15", null),
+            WeeklyStickerModel("2026-03-16", null),
+        ),
     )
 
     HaebomTheme {
         WeeklyCalendar(
             onPrevClick = {},
             onNextClick = {},
-            month = 3,
-            week = 2,
-            dayInfos = Async.Success(previewDayInfos),
+            weeklyStickers = Async.Success(previewModel),
         )
     }
 }
