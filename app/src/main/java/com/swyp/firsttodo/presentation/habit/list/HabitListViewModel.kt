@@ -77,6 +77,11 @@ class HabitListViewModel
                 ).onSuccess {
                     getHabits()
                 }.onFailure {
+                    if (it is HabitError.HabitNotFound) {
+                        sendEffect(HabitListSideEffect.ShowSnackbar("이미 삭제된 습관입니다."))
+                        getHabits()
+                    }
+
                     if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
                 }
             }
