@@ -168,7 +168,7 @@ private fun MarkedDate(
             )
 
             stickerCode != null -> Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_sticker_defalut_clover),
+                imageVector = ImageVector.vectorResource(R.drawable.img_sticker_default_clover),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp),
                 tint = Color.Unspecified,

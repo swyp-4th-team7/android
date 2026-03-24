@@ -21,6 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -107,11 +109,12 @@ fun StickerBoard(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_default_sticker),
+                    painter = painterResource(id = R.drawable.img_sticker_default_clover),
                     contentDescription = null,
                     modifier = Modifier
                         .size(92.dp, 96.dp)
                         .padding(bottom = 24.dp),
+                    colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
                 )
 
                 Text(
@@ -159,7 +162,7 @@ private fun EmptySticker(
 @Composable
 private fun Sticker(
     modifier: Modifier = Modifier,
-    @DrawableRes stickerRes: Int = R.drawable.img_default_sticker,
+    @DrawableRes stickerRes: Int = R.drawable.img_sticker_default_clover,
 ) {
     Image(
         painter = painterResource(id = stickerRes),

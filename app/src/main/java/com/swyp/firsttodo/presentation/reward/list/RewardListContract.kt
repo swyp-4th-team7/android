@@ -5,10 +5,10 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.domain.model.Role
+import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
 import com.swyp.firsttodo.presentation.common.component.HaebomHeaderTabType
 import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
-import com.swyp.firsttodo.presentation.reward.component.ParentStickerUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 
@@ -75,7 +75,7 @@ data class RewardListUiState(
     val currentTab: RewardHeaderTabType = RewardHeaderTabType.STICKER,
     // parent
     val parentSelectedFilterType: ParentRewardFilterType = ParentRewardFilterType.ALL,
-    val parentStickers: Async<List<ParentStickerUiModel>> = Async.Init,
+    val parentStickers: Async<List<ChildStickerModel>> = Async.Init,
     val parentRewards: Async<List<ParentRewardUiModel>> = Async.Init,
     // child
     val childCompletedSticker: Async<Int> = Async.Init,

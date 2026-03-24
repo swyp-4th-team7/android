@@ -22,18 +22,11 @@ import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-
-data class ParentStickerUiModel(
-    val id: Long,
-    val title: String,
-    val boardCount: Int,
-    val startDate: String,
-    val stickerCount: Int,
-)
+import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
 
 @Composable
 fun ParentStickerList(
-    stickers: Async<List<ParentStickerUiModel>>,
+    stickers: Async<List<ChildStickerModel>>,
     modifier: Modifier = Modifier,
 ) {
     when (stickers) {
@@ -63,7 +56,7 @@ fun ParentStickerList(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             Text(
-                                text = sticker.title,
+                                text = sticker.nickname ?: "",
                                 color = HaebomTheme.colors.black,
                                 style = HaebomTheme.typo.buttonL,
                             )
@@ -98,7 +91,7 @@ fun ParentStickerList(
                                     verticalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
                                     Text(
-                                        text = "${sticker.boardCount}번째",
+                                        text = "${sticker.boardNumber}번째",
                                         color = HaebomTheme.colors.gray300,
                                         style = HaebomTheme.typo.helperText,
                                         maxLines = 1,
@@ -106,7 +99,7 @@ fun ParentStickerList(
                                     )
 
                                     Text(
-                                        text = sticker.startDate,
+                                        text = sticker.startDate ?: "",
                                         color = HaebomTheme.colors.gray300,
                                         style = HaebomTheme.typo.helperText,
                                         maxLines = 1,
@@ -120,7 +113,7 @@ fun ParentStickerList(
                                         .padding(start = 8.dp),
                                 ) {
                                     Text(
-                                        text = "${sticker.stickerCount} / 30",
+                                        text = "${sticker.filledSlots} / 30",
                                         modifier = Modifier
                                             .sizeIn(84.dp, 36.dp)
                                             .background(
@@ -143,24 +136,26 @@ fun ParentStickerList(
 }
 
 private val sampleStickers = listOf(
-    ParentStickerUiModel(
-        id = 1L,
-        title = "수학 공부하기",
-        boardCount = 2,
+    ChildStickerModel(
+        childId = 1L,
+        nickname = "해봄이",
+        boardNumber = 2,
+        filledSlots = 15,
+        boardSize = 30,
         startDate = "2026.03.17 (화)",
-        stickerCount = 15,
     ),
-    ParentStickerUiModel(
-        id = 2L,
-        title = "영어 단어 외우기",
-        boardCount = 1,
+    ChildStickerModel(
+        childId = 2L,
+        nickname = "해봄이",
+        boardNumber = 20,
+        filledSlots = 15,
+        boardSize = 30,
         startDate = "2026.03.17 (화)",
-        stickerCount = 3,
     ),
 )
 
-private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<List<ParentStickerUiModel>>> {
-    override val values: Sequence<Async<List<ParentStickerUiModel>>> = sequenceOf(
+private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<List<ChildStickerModel>>> {
+    override val values: Sequence<Async<List<ChildStickerModel>>> = sequenceOf(
         Async.Success(sampleStickers),
         Async.Empty,
         Async.Loading(),
@@ -170,7 +165,7 @@ private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun ParentStickerListPreview(
-    @PreviewParameter(ParentStickerListPreviewProvider::class) stickers: Async<List<ParentStickerUiModel>>,
+    @PreviewParameter(ParentStickerListPreviewProvider::class) stickers: Async<List<ChildStickerModel>>,
 ) {
     HaebomTheme {
         ParentStickerList(
