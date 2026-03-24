@@ -104,9 +104,9 @@ class TodoViewModel
 
                         val prevData = uiState.value.weeklyStickers.getDataOrNull()
                         if (prevData != null) {
-                            updateState { copy(weeklyStickers = Async.Success(prevData)) }
+                            updateState { copy(weeklyStickers = Async.Success(prevData), weekOffset = weekOffset) }
                         } else {
-                            updateState { copy(weeklyStickers = Async.Init) }
+                            updateState { copy(weeklyStickers = Async.Init, weekOffset = weekOffset) }
                         }
                     }
             }
