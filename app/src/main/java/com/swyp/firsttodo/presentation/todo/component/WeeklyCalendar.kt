@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.dashedCircleBorder
+import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -60,7 +61,7 @@ fun WeeklyCalendar(
     weeklyStickers: Async<WeeklyStickersModel>,
     modifier: Modifier = Modifier,
 ) {
-    val weekLabel = (weeklyStickers as? Async.Success)?.data?.weekLabel ?: ""
+    val weekLabel = weeklyStickers.getDataOrNull()?.weekLabel ?: "       "
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -96,10 +97,12 @@ fun WeeklyCalendar(
             )
         }
 
-        when (weeklyStickers) {
-            is Async.Success -> {
+        when (val data = weeklyStickers.getDataOrNull()) {
+            null -> Spacer(Modifier.height(72.dp))
+
+            else -> {
                 val today = LocalDate.now()
-                val dayInfos = weeklyStickers.data.stickers.map { sticker ->
+                val dayInfos = data.stickers.map { sticker ->
                     val date = LocalDate.parse(sticker.date)
                     DayInfo(
                         weekDay = DAY_OF_WEEK_LABELS[date.dayOfWeek] ?: "",
@@ -127,8 +130,6 @@ fun WeeklyCalendar(
                     }
                 }
             }
-
-            else -> Spacer(Modifier.height(72.dp))
         }
     }
 }
