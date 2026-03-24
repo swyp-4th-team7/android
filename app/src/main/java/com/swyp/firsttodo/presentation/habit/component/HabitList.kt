@@ -104,14 +104,20 @@ private fun ListItem(
         }
     }
 
-    val durationIconRes = remember(habit.duration) {
+    val durationIconRes = remember(habit.duration, habit.isCompleted) {
         when (habit.duration) {
-            HabitDuration.THREE_DAYS -> R.drawable.ic_habit_day_3
-            HabitDuration.SEVEN_DAYS -> R.drawable.ic_habit_day_7
-            HabitDuration.FOURTEEN_DAYS -> R.drawable.ic_habbit_day_14
-            HabitDuration.TWENTYONE_DAYS -> R.drawable.ic_habbit_day_21
-            HabitDuration.SIXTYSIX_DAYS -> R.drawable.ic_habbit_day_66
-            HabitDuration.NINETYNINE_DAYS -> R.drawable.ic_habbit_day_99
+            HabitDuration.THREE_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_3_completed else R.drawable.ic_habit_day_3
+            HabitDuration.SEVEN_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_7_completed else R.drawable.ic_habit_day_7
+            HabitDuration.FOURTEEN_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_14_completed else R.drawable.ic_habit_day_14
+            HabitDuration.TWENTYONE_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_21_completed else R.drawable.ic_habit_day_21
+            HabitDuration.SIXTYSIX_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_66_completed else R.drawable.ic_habit_day_66
+            HabitDuration.NINETYNINE_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_99_completed else R.drawable.ic_habit_day_99
         }
     }
 
