@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class HabitPatchResponseDto(
+data class HabitPatchRequestDto(
     @SerialName("title")
     val title: String,
     @SerialName("duration")
