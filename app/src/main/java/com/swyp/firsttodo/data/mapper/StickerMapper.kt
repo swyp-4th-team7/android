@@ -29,7 +29,7 @@ fun StickerBoardResponseDto.toModel(): StickerBoardModel =
     StickerBoardModel(
         boardSize = this.boardSize,
         filledSlotCount = this.filledSlotCount,
-        showCompletionPopup = this.showCompletionPupup,
+        showCompletionPopup = this.showCompletePopup,
     )
 
 fun ChildrenStickerResponseDto.toModel(): List<ChildStickerModel> = this.children.map { it.toModel() }

@@ -26,6 +26,7 @@ fun CompletedStickerHeader(
     modifier: Modifier = Modifier,
 ) {
     val count = when (completedSticker) {
+        is Async.Empty -> 0
         is Async.Success -> completedSticker.data
         else -> "  "
     }

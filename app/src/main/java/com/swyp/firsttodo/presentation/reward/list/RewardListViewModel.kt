@@ -6,10 +6,12 @@ import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
+import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
+import com.swyp.firsttodo.domain.repository.StickerRepository
+import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
-import com.swyp.firsttodo.presentation.reward.component.ParentStickerUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 import com.swyp.firsttodo.presentation.reward.model.RewardState
@@ -23,6 +25,7 @@ class RewardListViewModel
     @Inject
     constructor(
         sessionManager: SessionManager,
+        private val stickerRepository: StickerRepository,
     ) : BaseViewModel<RewardListUiState, RewardListSideEffect>(RewardListUiState()) {
         init {
             val role: Role = when (sessionManager.sessionState.value.userType) {
@@ -53,100 +56,49 @@ class RewardListViewModel
 
         private fun initParentStickerTab() {
             updateState { copy(parentStickers = Async.Loading(this.parentStickers.getDataOrNull())) }
-            viewModelScope.launch { delay(500) }
-            val newStickers = listOf(
-                ParentStickerUiModel(
-                    id = 1L,
-                    title = "수학 공부하기",
-                    boardCount = 2,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 15,
-                ),
-                ParentStickerUiModel(
-                    id = 2L,
-                    title = "영어 단어 외우기",
-                    boardCount = 1,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 3,
-                ),
-                ParentStickerUiModel(
-                    id = 1L,
-                    title = "수학 공부하기",
-                    boardCount = 2,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 15,
-                ),
-                ParentStickerUiModel(
-                    id = 2L,
-                    title = "영어 단어 외우기",
-                    boardCount = 1,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 3,
-                ),
-                ParentStickerUiModel(
-                    id = 1L,
-                    title = "수학 공부하기",
-                    boardCount = 2,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 15,
-                ),
-                ParentStickerUiModel(
-                    id = 2L,
-                    title = "영어 단어 외우기",
-                    boardCount = 1,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 3,
-                ),
-                ParentStickerUiModel(
-                    id = 3L,
-                    title = "수학 공부하기",
-                    boardCount = 2,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 15,
-                ),
-                ParentStickerUiModel(
-                    id = 4L,
-                    title = "영어 단어 외우기",
-                    boardCount = 1,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 3,
-                ),
-                ParentStickerUiModel(
-                    id = 5L,
-                    title = "수학 공부하기",
-                    boardCount = 2,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 15,
-                ),
-                ParentStickerUiModel(
-                    id = 6L,
-                    title = "영어 단어 외우기",
-                    boardCount = 1,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 3,
-                ),
-                ParentStickerUiModel(
-                    id = 1L,
-                    title = "수학 공부하기",
-                    boardCount = 2,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 15,
-                ),
-                ParentStickerUiModel(
-                    id = 7L,
-                    title = "영어 단어 외우기",
-                    boardCount = 1,
-                    startDate = "2026.03.17 (화)",
-                    stickerCount = 3,
-                ),
-            )
-            updateState { copy(parentStickers = Async.Success(newStickers)) }
+            viewModelScope.launch {
+                stickerRepository.getChildrenStickerList()
+                    .onSuccess {
+                        updateState { copy(parentStickers = Async.Success(it)) }
+                    }.onFailure { throwable ->
+                        uiState.value.parentStickers.getDataOrNull()?.let { prevData ->
+                            updateState { copy(parentStickers = Async.Success(prevData)) }
+                        } ?: updateState { copy(parentStickers = Async.Init) }
+
+                        if (throwable is ApiError) {
+                            sendEffect(RewardListSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                        }
+                    }
+            }
         }
 
         private fun initChildStickerTab() {
             updateState { copy(childCompletedSticker = Async.Loading(this.childCompletedSticker.getDataOrNull())) }
-            viewModelScope.launch { delay(500) }
-            updateState { copy(childCompletedSticker = Async.Success(10), showStickerCompleteDialog = true) }
+            viewModelScope.launch {
+                stickerRepository.getStickerBoard()
+                    .onSuccess {
+                        val stickerCount = it.filledSlotCount
+                        updateState {
+                            copy(
+                                childCompletedSticker = if (stickerCount == 0) {
+                                    Async.Empty
+                                } else {
+                                    Async.Success(
+                                        stickerCount,
+                                    )
+                                },
+                                showStickerCompleteDialog = it.showCompletionPopup,
+                            )
+                        }
+                    }
+                    .onFailure {
+                        uiState.value.childCompletedSticker.getDataOrNull()?.let { prevData ->
+                            updateState { copy(childCompletedSticker = Async.Success(prevData)) }
+                        } ?: updateState { copy(childCompletedSticker = Async.Init) }
+
+                        if (it is ApiError) sendEffect(RewardListSideEffect.ShowSnackbar(it.snackbarMsg()))
+                    }
+            }
         }
 
         private fun initParentRewardTab() {
@@ -274,8 +226,15 @@ class RewardListViewModel
         }
 
         fun onBoardCompleteBtnClick() {
-            initStickerTab()
-            updateState { copy(showStickerCompleteDialog = false) }
+            viewModelScope.launch {
+                stickerRepository.stickerPopupConfirm()
+                    .onSuccess {
+                        updateState { copy(showStickerCompleteDialog = false) }
+                    }
+                    .onFailure {
+                        if (it is ApiError) sendEffect(RewardListSideEffect.ShowSnackbar(it.snackbarMsg()))
+                    }
+            }
         }
 
         fun onCreateHabitBtnClick() {

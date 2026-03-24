@@ -9,6 +9,6 @@ data class StickerBoardResponseDto(
     val boardSize: Int,
     @SerialName("filledSlotCount")
     val filledSlotCount: Int,
-    @SerialName("showCompletionPupup")
-    val showCompletionPupup: Boolean,
+    @SerialName("showCompletePopup")
+    val showCompletePopup: Boolean,
 )

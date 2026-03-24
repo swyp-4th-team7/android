@@ -25,6 +25,7 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.Role
+import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
 import com.swyp.firsttodo.presentation.common.component.HaebomHeaderTab
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
@@ -35,7 +36,6 @@ import com.swyp.firsttodo.presentation.reward.component.CompletedStickerHeader
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardManageList
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentStickerList
-import com.swyp.firsttodo.presentation.reward.component.ParentStickerUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilter
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.component.RewardHeader
@@ -182,8 +182,22 @@ fun RewardListScreen(
 // region Preview
 
 private val sampleParentStickers = listOf(
-    ParentStickerUiModel(id = 1L, title = "수학 공부하기", boardCount = 2, startDate = "2026.03.17 (화)", stickerCount = 15),
-    ParentStickerUiModel(id = 2L, title = "영어 단어 외우기", boardCount = 1, startDate = "2026.03.17 (화)", stickerCount = 3),
+    ChildStickerModel(
+        childId = 1L,
+        nickname = "해봄이",
+        boardNumber = 2,
+        filledSlots = 15,
+        boardSize = 30,
+        startDate = "2026.03.17 (화)",
+    ),
+    ChildStickerModel(
+        childId = 2L,
+        nickname = "봄이",
+        boardNumber = 1,
+        filledSlots = 3,
+        boardSize = 30,
+        startDate = "2026.03.17 (화)",
+    ),
 )
 
 private val sampleParentRewards = listOf(
