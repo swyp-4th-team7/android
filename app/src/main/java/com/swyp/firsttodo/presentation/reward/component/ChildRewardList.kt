@@ -34,17 +34,17 @@ import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.presentation.reward.model.RewardState
-import com.swyp.firsttodo.presentation.reward.model.backgroundColor
-import com.swyp.firsttodo.presentation.reward.model.textColor
+import com.swyp.firsttodo.domain.model.reward.RewardStatus
+import com.swyp.firsttodo.presentation.reward.extension.backgroundColor
+import com.swyp.firsttodo.presentation.reward.extension.displayName
+import com.swyp.firsttodo.presentation.reward.extension.textColor
 
 data class ChildRewardUiModel(
     val rewardId: Long,
     val title: String,
     val reward: String,
-    @param:DrawableRes val defaultIconRes: Int,
-    @param:DrawableRes val completedIconRes: Int,
-    val rewardState: RewardState,
+    @param:DrawableRes val iconRes: Int,
+    val rewardState: RewardStatus,
 )
 
 @Composable
@@ -67,9 +67,9 @@ fun ChildRewardList(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     data.forEach { reward ->
-                        val (backgroundColor, iconRes) = when (reward.rewardState) {
-                            RewardState.DONE -> HaebomTheme.colors.gray50 to reward.completedIconRes
-                            else -> HaebomTheme.colors.white to reward.defaultIconRes
+                        val backgroundColor = when (reward.rewardState) {
+                            RewardStatus.COMPLETE -> HaebomTheme.colors.gray50
+                            else -> HaebomTheme.colors.white
                         }
 
                         Row(
@@ -87,7 +87,7 @@ fun ChildRewardList(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(iconRes),
+                                imageVector = ImageVector.vectorResource(reward.iconRes),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .align(Alignment.Top)
@@ -163,49 +163,43 @@ private val previewRewards = listOf(
         rewardId = 1L,
         title = "하루 10분 명상하기",
         reward = "아이스크림 사주기",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7,
-        rewardState = RewardState.ING,
+        iconRes = R.drawable.ic_habit_day_7,
+        rewardState = RewardStatus.IN_PROGRESS,
     ),
     ChildRewardUiModel(
         rewardId = 2L,
         title = "하루에 책 10장 읽기 하루에 책 10장 읽기 하루에 책 10장 읽기",
         reward = "가족이랑 놀이공원 가기 가족이랑 놀이공원 가기 가족이랑 놀이공원",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7,
-        rewardState = RewardState.ING,
+        iconRes = R.drawable.ic_habit_day_7,
+        rewardState = RewardStatus.IN_PROGRESS,
     ),
     ChildRewardUiModel(
         rewardId = 3L,
         title = "매일 아침 스트레칭",
         reward = "영화 보러 가기",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7,
-        rewardState = RewardState.WAITING,
+        iconRes = R.drawable.ic_habit_day_7,
+        rewardState = RewardStatus.REWARD_CHECKING,
     ),
     ChildRewardUiModel(
         rewardId = 4L,
         title = "매일 아침 스트레칭 10분 매일 아침 스트레칭 10분 매일 아침",
         reward = "가족과 외식하기 가족과 외식하기 가족과 외식하기 가족과 외식하기",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7,
-        rewardState = RewardState.WAITING,
+        iconRes = R.drawable.ic_habit_day_7,
+        rewardState = RewardStatus.REWARD_WAITING,
     ),
     ChildRewardUiModel(
         rewardId = 5L,
         title = "취침 전 일기 쓰기",
         reward = "좋아하는 카페 가기",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7,
-        rewardState = RewardState.DONE,
+        iconRes = R.drawable.ic_habit_day_7,
+        rewardState = RewardStatus.REWARD_CHECKING,
     ),
     ChildRewardUiModel(
         rewardId = 6L,
         title = "취침 전 일기 쓰기 취침 전 일기 쓰기 취침 전 일기 쓰기 취침 전",
         reward = "좋아하는 카페 가기 좋아하는 카페 가기 좋아하는 카페 가기 좋아",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7,
-        rewardState = RewardState.DONE,
+        iconRes = R.drawable.ic_habit_day_7,
+        rewardState = RewardStatus.REWARD_CHECKING,
     ),
 )
 

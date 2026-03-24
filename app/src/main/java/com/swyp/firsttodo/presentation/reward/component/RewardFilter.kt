@@ -232,7 +232,7 @@ private fun RewardFilterPreview() {
         ) {
             RewardFilter(
                 allFilters = ChildRewardFilterType.entries,
-                selectedFilterType = ChildRewardFilterType.DONE,
+                selectedFilterType = ChildRewardFilterType.IN_PROGRESS,
                 onFilterClick = {},
             )
         }
@@ -245,7 +245,7 @@ private fun PopupContentPreview() {
     HaebomTheme {
         PopupContent(
             allFilters = ChildRewardFilterType.entries,
-            selectedFilterType = ChildRewardFilterType.DONE,
+            selectedFilterType = ChildRewardFilterType.COMPLETE,
             onFilterClick = {},
         )
     }

@@ -25,6 +25,7 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.Role
+import com.swyp.firsttodo.domain.model.reward.RewardStatus
 import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
 import com.swyp.firsttodo.presentation.common.component.HaebomHeaderTab
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
@@ -42,7 +43,6 @@ import com.swyp.firsttodo.presentation.reward.component.RewardHeader
 import com.swyp.firsttodo.presentation.reward.component.StickerBoard
 import com.swyp.firsttodo.presentation.reward.component.StickerBoardCompleteDialog
 import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
-import com.swyp.firsttodo.presentation.reward.model.RewardState
 
 @Composable
 fun RewardListRoute(
@@ -206,7 +206,7 @@ private val sampleParentRewards = listOf(
         title = "수학 공부하기",
         habit = "매일 수학 문제 풀기",
         reward = "치킨 사주기",
-        rewardState = RewardState.ING,
+        rewardState = RewardStatus.IN_PROGRESS,
         habitIconRes = R.drawable.ic_habit_day_7,
     ),
     ParentRewardUiModel(
@@ -214,7 +214,7 @@ private val sampleParentRewards = listOf(
         title = "영어 단어 외우기",
         habit = "매일 영어 단어 20개",
         reward = "게임 1시간",
-        rewardState = RewardState.CONFIRMING,
+        rewardState = RewardStatus.REWARD_CHECKING,
         habitIconRes = R.drawable.ic_habit_day_3,
     ),
     ParentRewardUiModel(
@@ -222,7 +222,7 @@ private val sampleParentRewards = listOf(
         title = "독서하기",
         habit = "하루 30분 독서",
         reward = "문화상품권",
-        rewardState = RewardState.WAITING,
+        rewardState = RewardStatus.REWARD_CHECKING,
         habitIconRes = R.drawable.ic_habit_day_7,
     ),
     ParentRewardUiModel(
@@ -230,7 +230,7 @@ private val sampleParentRewards = listOf(
         title = "운동하기",
         habit = "줄넘기 100개",
         reward = "아이스크림",
-        rewardState = RewardState.DONE,
+        rewardState = RewardStatus.COMPLETE,
         habitIconRes = R.drawable.ic_habit_day_7,
     ),
 )
@@ -240,25 +240,22 @@ private val sampleChildRewards = listOf(
         rewardId = 1L,
         title = "하루 10분 명상하기",
         reward = "아이스크림 사주기",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7_completed,
-        rewardState = RewardState.ING,
+        iconRes = R.drawable.ic_habit_day_3,
+        rewardState = RewardStatus.COMPLETE,
     ),
     ChildRewardUiModel(
         rewardId = 2L,
         title = "매일 아침 스트레칭",
         reward = "영화 보러 가기",
-        defaultIconRes = R.drawable.ic_habit_day_3,
-        completedIconRes = R.drawable.ic_habit_day_3_completed,
-        rewardState = RewardState.WAITING,
+        iconRes = R.drawable.ic_habit_day_3,
+        rewardState = RewardStatus.COMPLETE,
     ),
     ChildRewardUiModel(
         rewardId = 3L,
         title = "취침 전 일기 쓰기",
         reward = "좋아하는 카페 가기",
-        defaultIconRes = R.drawable.ic_habit_day_7,
-        completedIconRes = R.drawable.ic_habit_day_7_completed,
-        rewardState = RewardState.DONE,
+        iconRes = R.drawable.ic_habit_day_3,
+        rewardState = RewardStatus.COMPLETE,
     ),
 )
 

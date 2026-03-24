@@ -28,17 +28,17 @@ enum class ChildRewardFilterType(
         displayName = "전체",
         request = "ALL",
     ),
-    WAITING(
+    REWARD_WAITING(
         displayName = "보상 대기중",
-        request = "WAITING",
+        request = "REWARD_WAITING",
     ),
-    ING(
+    IN_PROGRESS(
         displayName = "진행중",
-        request = "ING",
+        request = "IN_PROGRESS",
     ),
-    DONE(
+    COMPLETE(
         displayName = "완료",
-        request = "DONE",
+        request = "COMPLETE",
     ),
 }
 
@@ -50,21 +50,21 @@ enum class ParentRewardFilterType(
         displayName = "전체",
         request = "ALL",
     ),
-    CONFIRMING(
+    REWARD_CHECKING(
         displayName = "보상 확인중",
-        request = "CONFIRMING",
+        request = "REWARD_CHECKING",
     ),
-    WAITING(
+    REWARD_WAITING(
         displayName = "보상 대기중",
-        request = "WAITING",
+        request = "REWARD_WAITING",
     ),
-    ING(
+    IN_PROGRESS(
         displayName = "진행중",
-        request = "ING",
+        request = "IN_PROGRESS",
     ),
-    DONE(
+    COMPLETE(
         displayName = "완료",
-        request = "DONE",
+        request = "COMPLETE",
     ),
 }
 
