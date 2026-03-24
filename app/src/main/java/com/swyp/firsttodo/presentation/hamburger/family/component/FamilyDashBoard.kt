@@ -108,7 +108,7 @@ fun FamilyDashBoard(
                                             strokeWidth = 2.dp.toPx(),
                                         )
                                     }
-                                    .padding(horizontal = 5.dp, vertical = 16.dp)
+                                    .padding(horizontal = 8.dp, vertical = 16.dp)
                                     .wrapContentHeight(Alignment.CenterVertically),
                                 color = HaebomTheme.colors.gray500,
                                 style = HaebomTheme.typo.buttonM,

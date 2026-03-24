@@ -3,6 +3,8 @@ package com.swyp.firsttodo.data.di
 import com.swyp.firsttodo.data.remote.service.AuthService
 import com.swyp.firsttodo.data.remote.service.FamilyService
 import com.swyp.firsttodo.data.remote.service.NotificationService
+import com.swyp.firsttodo.data.remote.service.ScheduleService
+import com.swyp.firsttodo.data.remote.service.StickerService
 import com.swyp.firsttodo.data.remote.service.TodoService
 import com.swyp.firsttodo.data.remote.service.UserService
 import dagger.Module
@@ -44,4 +46,16 @@ object ServiceModule {
     fun providesFamilyService(
         @WithToken retrofit: Retrofit,
     ): FamilyService = retrofit.create(FamilyService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesScheduleService(
+        @WithToken retrofit: Retrofit,
+    ): ScheduleService = retrofit.create(ScheduleService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesStickerService(
+        @WithToken retrofit: Retrofit,
+    ): StickerService = retrofit.create(StickerService::class.java)
 }

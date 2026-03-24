@@ -21,12 +21,13 @@ import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.ScheduleCategory
+import com.swyp.firsttodo.domain.model.sticker.WeeklyStickerModel
+import com.swyp.firsttodo.domain.model.sticker.WeeklyStickersModel
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
-import com.swyp.firsttodo.presentation.todo.component.DayInfo
 import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheet
 import com.swyp.firsttodo.presentation.todo.component.ScheduleList
 import com.swyp.firsttodo.presentation.todo.component.ScheduleUiModel
@@ -139,9 +140,7 @@ fun TodoScreen(
             WeeklyCalendar(
                 onPrevClick = onCalenderPrevClick,
                 onNextClick = onCalenderNextClick,
-                month = uiState.month,
-                week = uiState.week,
-                dayInfos = uiState.dayInfos,
+                weeklyStickers = uiState.weeklyStickers,
                 modifier = Modifier.padding(bottom = 28.dp),
             )
 
@@ -173,14 +172,20 @@ fun TodoScreen(
     }
 }
 
-private val previewDayInfos = listOf(
-    DayInfo(weekDay = "월", day = 10, isToday = false, hasSticker = true),
-    DayInfo(weekDay = "화", day = 11, isToday = false, hasSticker = false),
-    DayInfo(weekDay = "수", day = 12, isToday = false, hasSticker = true),
-    DayInfo(weekDay = "목", day = 13, isToday = true, hasSticker = false),
-    DayInfo(weekDay = "금", day = 14, isToday = false, hasSticker = false),
-    DayInfo(weekDay = "토", day = 15, isToday = false, hasSticker = false),
-    DayInfo(weekDay = "일", day = 16, isToday = false, hasSticker = false),
+private val previewWeeklyStickers = WeeklyStickersModel(
+    weekLabel = "3월 2주차",
+    weekOffset = 0,
+    startDate = "2026-03-10",
+    endDate = "2026-03-16",
+    stickers = listOf(
+        WeeklyStickerModel("2026-03-10", "BASIC_STICKER"),
+        WeeklyStickerModel("2026-03-11", null),
+        WeeklyStickerModel("2026-03-12", "BASIC_STICKER"),
+        WeeklyStickerModel("2026-03-13", null),
+        WeeklyStickerModel("2026-03-14", null),
+        WeeklyStickerModel("2026-03-15", null),
+        WeeklyStickerModel("2026-03-16", null),
+    ),
 )
 
 private val previewTodos = listOf(
@@ -253,19 +258,19 @@ private class TodoScreenPreviewProvider : PreviewParameterProvider<TodoUiState> 
     override val values = sequenceOf(
         TodoUiState(
             remainTodoCount = Async.Success(2),
-            dayInfos = Async.Success(previewDayInfos),
+            weeklyStickers = Async.Success(previewWeeklyStickers),
             todos = Async.Success(previewTodos),
             schedules = Async.Success(previewSchedules),
         ),
         TodoUiState(
             remainTodoCount = Async.Success(0),
-            dayInfos = Async.Success(previewDayInfos),
+            weeklyStickers = Async.Success(previewWeeklyStickers),
             todos = Async.Empty,
             schedules = Async.Empty,
         ),
         TodoUiState(
             remainTodoCount = Async.Loading(),
-            dayInfos = Async.Loading(),
+            weeklyStickers = Async.Loading(),
             todos = Async.Loading(),
             schedules = Async.Loading(),
         ),

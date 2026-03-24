@@ -36,7 +36,7 @@ import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
 data class ScheduleUiModel(
     val scheduleId: Long,
-    val dDay: Int,
+    val dDay: Long,
     val title: String,
     val date: String,
     val rawDate: String,
