@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,8 +17,8 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
 import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
@@ -30,12 +31,19 @@ import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 
 @Composable
 fun HabitListRoute(
-    navigateToHabitDetail: (Habit?) -> Unit,
+    navigateToHabitDetail: (HabitModel?) -> Unit,
+    habitDetailResult: String?,
+    onDetailResultConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HabitListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
+
+    LaunchedEffect(habitDetailResult) {
+        viewModel.onDetailResult(habitDetailResult)
+        onDetailResultConsumed()
+    }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -70,9 +78,9 @@ fun HabitListScreen(
     uiState: HabitListUiState,
     habitListType: HabitListType,
     onCreateClick: () -> Unit,
-    onCheckClick: (Habit) -> Unit,
-    onEditClick: (Habit) -> Unit,
-    onDeleteClick: (Habit) -> Unit,
+    onCheckClick: (HabitModel) -> Unit,
+    onEditClick: (HabitModel) -> Unit,
+    onDeleteClick: (HabitModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -111,7 +119,7 @@ fun HabitListScreen(
 
 private class HabitListScreenPreviewProvider : PreviewParameterProvider<HabitListUiState> {
     private val sampleHabits = HabitDuration.entries.mapIndexed { index, duration ->
-        Habit(
+        HabitModel(
             habitId = index.toLong(),
             duration = duration,
             isCompleted = index % 2 == 0,

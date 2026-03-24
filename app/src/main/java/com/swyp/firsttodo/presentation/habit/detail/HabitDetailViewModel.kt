@@ -7,17 +7,22 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.domain.repository.HabitRepository
+import com.swyp.firsttodo.domain.throwable.HabitError
+import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgs
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgsNavType
 import com.swyp.firsttodo.presentation.habit.navigation.HabitRoute
-import com.swyp.firsttodo.presentation.habit.navigation.toHabit
+import com.swyp.firsttodo.presentation.habit.navigation.toModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.reflect.typeOf
 
@@ -27,6 +32,7 @@ class HabitDetailViewModel
     constructor(
         savedStateHandle: SavedStateHandle,
         sessionManager: SessionManager,
+        private val habitRepository: HabitRepository,
     ) : BaseViewModel<HabitDetailUiState, HabitDetailSideEffect>(HabitDetailUiState()) {
         private val role: Role = when (sessionManager.sessionState.value.userType) {
             Role.PARENT.request -> Role.PARENT
@@ -40,12 +46,10 @@ class HabitDetailViewModel
 
         private val initialHabit = savedStateHandle
             .toRoute<HabitRoute.HabitDetail>(typeMap = mapOf(typeOf<HabitNavArgs?>() to HabitNavArgsNavType))
-            .habitNavArgs?.toHabit()
+            .habitNavArgs?.toModel()
 
         val titleState = TextFieldState(initialText = initialHabit?.title ?: "")
         val rewardState = TextFieldState(initialText = initialHabit?.reward ?: "")
-
-        private val validInputRegex = Regex("^[가-힣ㄱ-ㅎㅏ-ㅣa-zA-Z0-9\\s]+$")
 
         init {
             val state = when (initialHabit) {
@@ -56,6 +60,8 @@ class HabitDetailViewModel
             updateState {
                 copy(
                     duration = initialHabit?.duration,
+                    habitId = initialHabit?.habitId,
+                    isCompleted = initialHabit?.isCompleted,
                     screenState = state,
                 )
             }
@@ -78,7 +84,7 @@ class HabitDetailViewModel
         )
 
         fun onBackClick() {
-            sendEffect(HabitDetailSideEffect.PopBackStack)
+            sendEffect(HabitDetailSideEffect.PopBackStack())
         }
 
         fun onDurationClick(duration: HabitDuration) {
@@ -87,12 +93,12 @@ class HabitDetailViewModel
 
         private fun validateTitle(): Boolean {
             val title = titleState.text.toString()
-            return title.isNotBlank() && title.length <= 12 && validInputRegex.matches(title)
+            return title.isNotBlank()
         }
 
         private fun validateReward(): Boolean {
             val reward = rewardState.text.toString()
-            return reward.isNotBlank() && validInputRegex.matches(reward)
+            return reward.isNotBlank()
         }
 
         private fun validateDuration(): Boolean = uiState.value.duration != null
@@ -117,17 +123,74 @@ class HabitDetailViewModel
         fun onBtnClick() {
             when (uiState.value.screenState) {
                 HabitDetailScreenState.IDLE -> Unit
-                HabitDetailScreenState.CREATE -> {
-                    // TODO: CREATE API
-                    sendEffect(HabitDetailSideEffect.ShowSnackbar("습관 생성이 완료되었어요."))
-                    sendEffect(HabitDetailSideEffect.PopBackStack)
-                }
 
-                HabitDetailScreenState.EDIT -> {
-                    // TODO: EDIT API
-                    sendEffect(HabitDetailSideEffect.ShowSnackbar("습관 수정이 완료되었어요."))
-                    sendEffect(HabitDetailSideEffect.PopBackStack)
+                HabitDetailScreenState.CREATE -> createHabit()
+
+                HabitDetailScreenState.EDIT -> editHabit()
+            }
+        }
+
+        private fun createHabit() {
+            if (!validateAllField()) return
+
+            val inputTitle = titleState.text.toString()
+            val inputDuration = uiState.value.duration ?: return
+            val inputReward = when (screenType) {
+                HabitDetailScreenType.CHILD -> rewardState.text.toString()
+                HabitDetailScreenType.PARENT -> null
+            }
+
+            viewModelScope.launch {
+                habitRepository.createHabit(
+                    title = inputTitle,
+                    duration = inputDuration,
+                    reward = inputReward,
+                ).onSuccess {
+                    sendEffect(HabitDetailSideEffect.PopBackStack("습관이 추가되었습니다."))
+                }.onFailure { throwable ->
+                    val message = when (throwable) {
+                        is HabitError.TitleEmpty -> "습관 제목을 입력해주세요"
+                        is HabitError.DurationEmpty -> "기간을 선택해주세요"
+                        is ApiError -> throwable.snackbarMsg()
+                        else -> return@launch
+                    }
+                    sendEffect(HabitDetailSideEffect.ShowSnackbar(message))
                 }
+            }
+        }
+
+        private fun editHabit() {
+            if (!validateAllField()) return
+
+            val habitId = uiState.value.habitId ?: return
+            val inputTitle = titleState.text.toString()
+            val inputDuration = uiState.value.duration ?: return
+            val inputReward = when (screenType) {
+                HabitDetailScreenType.CHILD -> rewardState.text.toString()
+                HabitDetailScreenType.PARENT -> null
+            }
+            val completed = uiState.value.isCompleted ?: return
+
+            viewModelScope.launch {
+                habitRepository.editHabit(
+                    habitId = habitId,
+                    title = inputTitle,
+                    duration = inputDuration,
+                    reward = inputReward,
+                    isCompleted = completed,
+                )
+                    .onSuccess {
+                        sendEffect(HabitDetailSideEffect.PopBackStack("습관이 수정되었습니다."))
+                    }
+                    .onFailure { throwable ->
+                        when (throwable) {
+                            is HabitError.HabitNotFound -> {
+                                sendEffect(HabitDetailSideEffect.PopBackStack("이미 삭제된 습관입니다."))
+                            }
+
+                            is ApiError -> sendEffect(HabitDetailSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                        }
+                    }
             }
         }
     }

@@ -19,7 +19,9 @@ enum class HabitDetailScreenState {
 @Immutable
 data class HabitDetailUiState(
     val screenState: HabitDetailScreenState = HabitDetailScreenState.IDLE,
+    val habitId: Long? = null,
     val duration: HabitDuration? = null,
+    val isCompleted: Boolean? = null,
 ) : UiState {
     val title = when (screenState) {
         HabitDetailScreenState.IDLE -> ""
@@ -41,7 +43,7 @@ data class HabitDetailUiState(
 }
 
 sealed interface HabitDetailSideEffect : UiEffect {
-    data object PopBackStack : HabitDetailSideEffect
+    data class PopBackStack(val resultMessage: String? = null) : HabitDetailSideEffect
 
     data class ShowSnackbar(val message: String) : HabitDetailSideEffect
 }

@@ -3,8 +3,8 @@ package com.swyp.firsttodo.presentation.habit.navigation
 import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavType
-import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.domain.model.habit.HabitModel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -14,7 +14,7 @@ data class HabitNavArgs(
     val duration: SerializableHabitDuration,
     val isCompleted: Boolean,
     val title: String,
-    val reward: String,
+    val reward: String?,
 )
 
 @Serializable
@@ -51,7 +51,7 @@ val HabitNavArgsNavType = object : NavType<HabitNavArgs?>(isNullableAllowed = tr
     }
 }
 
-fun Habit.toNavArgs() =
+fun HabitModel.toNavArgs() =
     HabitNavArgs(
         habitId = habitId,
         duration = duration.toSerializable(),
@@ -60,8 +60,8 @@ fun Habit.toNavArgs() =
         reward = reward,
     )
 
-fun HabitNavArgs.toHabit() =
-    Habit(
+fun HabitNavArgs.toModel() =
+    HabitModel(
         habitId = habitId,
         duration = duration.toDomain(),
         isCompleted = isCompleted,

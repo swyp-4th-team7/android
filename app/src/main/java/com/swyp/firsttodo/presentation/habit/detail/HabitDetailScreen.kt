@@ -42,7 +42,7 @@ import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 
 @Composable
 fun HabitDetailRoute(
-    popBackStack: () -> Unit,
+    popBackStack: (resultMessage: String?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HabitDetailViewModel = hiltViewModel(),
 ) {
@@ -60,7 +60,7 @@ fun HabitDetailRoute(
         when (effect) {
             is HabitDetailSideEffect.PopBackStack -> {
                 keyboardController?.hide()
-                popBackStack()
+                popBackStack(effect.resultMessage)
             }
 
             is HabitDetailSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
