@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.data.remote.service
 
 import com.swyp.firsttodo.core.network.model.BaseResponse
+import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPatchRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPostRequestDto
 import com.swyp.firsttodo.data.remote.dto.response.habit.HabitResponseDto
 import com.swyp.firsttodo.data.remote.dto.response.habit.HabitResponseListDto
@@ -20,7 +21,7 @@ interface HabitService {
     @PATCH("/api/v1/habits/{habitId}")
     suspend fun patchHabit(
         @Path("habitId") habitId: Long,
-        @Body request: HabitPostRequestDto,
+        @Body request: HabitPatchRequestDto,
     ): BaseResponse<Unit>
 
     @DELETE("/api/v1/habits/{habitId}")

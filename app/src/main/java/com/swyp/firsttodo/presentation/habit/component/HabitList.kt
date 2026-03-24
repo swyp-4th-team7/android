@@ -34,8 +34,8 @@ import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
 enum class HabitListType {
@@ -46,10 +46,10 @@ enum class HabitListType {
 @Composable
 fun HabitList(
     habitListType: HabitListType,
-    onCheckClick: (Habit) -> Unit,
-    onEditClick: (Habit) -> Unit,
-    onDeleteClick: (Habit) -> Unit,
-    habits: List<Habit>,
+    onCheckClick: (HabitModel) -> Unit,
+    onEditClick: (HabitModel) -> Unit,
+    onDeleteClick: (HabitModel) -> Unit,
+    habits: List<HabitModel>,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -90,7 +90,7 @@ private fun ListItem(
     onCheckClick: () -> Unit,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    habit: Habit,
+    habit: HabitModel,
     modifier: Modifier = Modifier,
 ) {
     var showPopup by remember { mutableStateOf(false) }
@@ -171,7 +171,7 @@ private fun ListItem(
                             )
 
                             Text(
-                                text = habit.reward,
+                                text = habit.reward ?: "",
                                 color = rewardColor,
                                 style = HaebomTheme.typo.helperText,
                             )
@@ -207,7 +207,7 @@ private fun ListItem(
 }
 
 private val previewHabits = HabitDuration.entries.mapIndexed { index, duration ->
-    Habit(
+    HabitModel(
         habitId = index.toLong(),
         duration = duration,
         isCompleted = index % 2 == 0,
