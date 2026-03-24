@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface StickerService {
-    @GET("/api/v1/stickers")
+    @GET("/api/v1/stickers/weekly")
     suspend fun getWeeklyStickers(
         @Query("weekOffset") weekOffset: Int,
     ): BaseResponse<StickerListResponseDto>
