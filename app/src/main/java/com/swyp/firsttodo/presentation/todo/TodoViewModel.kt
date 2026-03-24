@@ -193,7 +193,7 @@ class TodoViewModel
                         val newSchedules = list.map { model ->
                             ScheduleUiModel(
                                 scheduleId = model.scheduleId,
-                                dDay = model.dDay.toInt(),
+                                dDay = model.dDay,
                                 title = model.title,
                                 date = model.scheduleDate.toDisplayDate(),
                                 rawDate = model.scheduleDate.removeDashes(),
