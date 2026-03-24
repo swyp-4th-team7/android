@@ -34,8 +34,8 @@ import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.domain.model.habit.Habit
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
 
 enum class HabitListType {
@@ -46,10 +46,10 @@ enum class HabitListType {
 @Composable
 fun HabitList(
     habitListType: HabitListType,
-    onCheckClick: (Habit) -> Unit,
-    onEditClick: (Habit) -> Unit,
-    onDeleteClick: (Habit) -> Unit,
-    habits: List<Habit>,
+    onCheckClick: (HabitModel) -> Unit,
+    onEditClick: (HabitModel) -> Unit,
+    onDeleteClick: (HabitModel) -> Unit,
+    habits: List<HabitModel>,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -90,7 +90,7 @@ private fun ListItem(
     onCheckClick: () -> Unit,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    habit: Habit,
+    habit: HabitModel,
     modifier: Modifier = Modifier,
 ) {
     var showPopup by remember { mutableStateOf(false) }
@@ -104,14 +104,20 @@ private fun ListItem(
         }
     }
 
-    val durationIconRes = remember(habit.duration) {
+    val durationIconRes = remember(habit.duration, habit.isCompleted) {
         when (habit.duration) {
-            HabitDuration.THREE_DAYS -> R.drawable.ic_habit_day_3
-            HabitDuration.SEVEN_DAYS -> R.drawable.ic_habit_day_7
-            HabitDuration.FOURTEEN_DAYS -> R.drawable.ic_habbit_day_14
-            HabitDuration.TWENTYONE_DAYS -> R.drawable.ic_habbit_day_21
-            HabitDuration.SIXTYSIX_DAYS -> R.drawable.ic_habbit_day_66
-            HabitDuration.NINETYNINE_DAYS -> R.drawable.ic_habbit_day_99
+            HabitDuration.THREE_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_3_completed else R.drawable.ic_habit_day_3
+            HabitDuration.SEVEN_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_7_completed else R.drawable.ic_habit_day_7
+            HabitDuration.FOURTEEN_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_14_completed else R.drawable.ic_habit_day_14
+            HabitDuration.TWENTYONE_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_21_completed else R.drawable.ic_habit_day_21
+            HabitDuration.SIXTYSIX_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_66_completed else R.drawable.ic_habit_day_66
+            HabitDuration.NINETYNINE_DAYS ->
+                if (habit.isCompleted) R.drawable.ic_habit_day_99_completed else R.drawable.ic_habit_day_99
         }
     }
 
@@ -171,7 +177,7 @@ private fun ListItem(
                             )
 
                             Text(
-                                text = habit.reward,
+                                text = habit.reward ?: "",
                                 color = rewardColor,
                                 style = HaebomTheme.typo.helperText,
                             )
@@ -207,7 +213,7 @@ private fun ListItem(
 }
 
 private val previewHabits = HabitDuration.entries.mapIndexed { index, duration ->
-    Habit(
+    HabitModel(
         habitId = index.toLong(),
         duration = duration,
         isCompleted = index % 2 == 0,

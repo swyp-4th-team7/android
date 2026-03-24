@@ -2,6 +2,7 @@ package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.remote.datasource.AuthDataSource
 import com.swyp.firsttodo.data.remote.datasource.FamilyDataSource
+import com.swyp.firsttodo.data.remote.datasource.HabitDataSource
 import com.swyp.firsttodo.data.remote.datasource.NotificationDataSource
 import com.swyp.firsttodo.data.remote.datasource.ScheduleDataSource
 import com.swyp.firsttodo.data.remote.datasource.StickerDataSource
@@ -9,6 +10,7 @@ import com.swyp.firsttodo.data.remote.datasource.TodoDataSource
 import com.swyp.firsttodo.data.remote.datasource.UserDataSource
 import com.swyp.firsttodo.data.remote.datasourceimpl.AuthDataSourceImpl
 import com.swyp.firsttodo.data.remote.datasourceimpl.FamilyDataSourceImpl
+import com.swyp.firsttodo.data.remote.datasourceimpl.HabitDataSourceImpl
 import com.swyp.firsttodo.data.remote.datasourceimpl.NotificationDataSourceImpl
 import com.swyp.firsttodo.data.remote.datasourceimpl.ScheduleDataSourceImpl
 import com.swyp.firsttodo.data.remote.datasourceimpl.StickerDataSourceImpl
@@ -52,4 +54,8 @@ abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindsStickerDataSource(stickerDataSourceImpl: StickerDataSourceImpl): StickerDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsHabitDataSource(habitDataSourceImpl: HabitDataSourceImpl): HabitDataSource
 }

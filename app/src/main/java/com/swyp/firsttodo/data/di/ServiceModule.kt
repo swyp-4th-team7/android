@@ -2,6 +2,7 @@ package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.remote.service.AuthService
 import com.swyp.firsttodo.data.remote.service.FamilyService
+import com.swyp.firsttodo.data.remote.service.HabitService
 import com.swyp.firsttodo.data.remote.service.NotificationService
 import com.swyp.firsttodo.data.remote.service.ScheduleService
 import com.swyp.firsttodo.data.remote.service.StickerService
@@ -58,4 +59,10 @@ object ServiceModule {
     fun providesStickerService(
         @WithToken retrofit: Retrofit,
     ): StickerService = retrofit.create(StickerService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesHabitService(
+        @WithToken retrofit: Retrofit,
+    ): HabitService = retrofit.create(HabitService::class.java)
 }
