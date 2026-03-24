@@ -103,7 +103,6 @@ class RewardListViewModel
         }
 
         private fun initParentRewardTab() {
-            updateState { copy(parentRewards = Async.Loading(this.parentRewards.getDataOrNull())) }
             viewModelScope.launch {
                 rewardRepository.getRewards(uiState.value.selectedFilter.request)
                     .onSuccess {
@@ -124,10 +123,6 @@ class RewardListViewModel
                         }
                     }
                     .onFailure { throwable ->
-                        uiState.value.parentRewards.getDataOrNull()?.let { prevData ->
-                            updateState { copy(parentRewards = Async.Success(prevData)) }
-                        } ?: updateState { copy(parentRewards = Async.Init) }
-
                         if (throwable is ApiError) {
                             sendEffect(RewardListSideEffect.ShowSnackbar(throwable.snackbarMsg()))
                         }
@@ -136,7 +131,6 @@ class RewardListViewModel
         }
 
         private fun initChildRewardTab() {
-            updateState { copy(childRewards = Async.Loading(this.childRewards.getDataOrNull())) }
             viewModelScope.launch {
                 rewardRepository.getRewards(uiState.value.childSelectedFilterType.request)
                     .onSuccess {
@@ -156,10 +150,6 @@ class RewardListViewModel
                         }
                     }
                     .onFailure { throwable ->
-                        uiState.value.childRewards.getDataOrNull()?.let { prevData ->
-                            updateState { copy(childRewards = Async.Success(prevData)) }
-                        } ?: updateState { copy(childRewards = Async.Init) }
-
                         if (throwable is ApiError) {
                             sendEffect(RewardListSideEffect.ShowSnackbar(throwable.snackbarMsg()))
                         }
