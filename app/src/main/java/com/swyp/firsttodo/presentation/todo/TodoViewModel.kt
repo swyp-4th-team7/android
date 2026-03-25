@@ -146,6 +146,7 @@ class TodoViewModel
                             copy(
                                 remainTodoCount = Async.Success(data.remainingCount),
                                 todos = if (newTodos.isEmpty()) Async.Empty else Async.Success(newTodos),
+                                progressPercent = Async.Success(data.progressPercent),
                             )
                         }
                     }

@@ -104,6 +104,8 @@ fun TodoScreen(
         TopBarArea()
 
         TodoBanner(
+            imageRes = uiState.characterImageRes,
+            bubbleText = uiState.bubbleText,
             remainTodo = uiState.remainTodoCount,
         )
 

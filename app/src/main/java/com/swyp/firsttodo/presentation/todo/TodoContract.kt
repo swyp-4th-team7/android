@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.todo
 
 import androidx.compose.runtime.Immutable
+import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
@@ -23,6 +24,7 @@ data class EditingTodo(
 @Immutable
 data class TodoUiState(
     val categories: List<TodoCategoryModel> = emptyList(),
+    val progressPercent: Async<Int> = Async.Init,
     val remainTodoCount: Async<Int> = Async.Init,
     val weeklyStickers: Async<WeeklyStickersModel> = Async.Init,
     val weekOffset: Int = 0,
@@ -37,6 +39,26 @@ data class TodoUiState(
     val todoCategories: List<TodoCategoryModel> = categories
 
     val showDeleteDialog = delRequestedId != null
+
+    val characterImageRes = if (progressPercent is Async.Success) {
+        when {
+            progressPercent.data == 100 -> R.drawable.img_todo_perfect_176
+            progressPercent.data in 50..99 -> R.drawable.img_todo_cheer_176
+            else -> R.drawable.img_todo_nagging_176
+        }
+    } else {
+        null
+    }
+
+    val bubbleText = if (progressPercent is Async.Success) {
+        when {
+            progressPercent.data == 100 -> "완전 대단해!!"
+            progressPercent.data in 50..99 -> "잘하고 있어! 힘내!!"
+            else -> "뭐하고 있어! 빨리 해야해!!"
+        }
+    } else {
+        null
+    }
 }
 
 sealed interface TodoSideEffect : UiEffect {

@@ -1,5 +1,7 @@
 package com.swyp.firsttodo.presentation.todo.component
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,9 +31,12 @@ import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
+import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 
 @Composable
 fun TodoBanner(
+    @DrawableRes imageRes: Int?,
+    bubbleText: String?,
     remainTodo: Async<Int>,
     modifier: Modifier = Modifier,
 ) {
@@ -38,7 +44,7 @@ fun TodoBanner(
         modifier = modifier
             .fillMaxWidth()
             .heightForScreenPercentage(132.dp)
-            .background(Color(0xFFFFFAC9)),
+            .background(LabelColor.YELLOW.completedBackground),
     ) {
         val text = remember(remainTodo) {
             when (remainTodo) {
@@ -47,14 +53,42 @@ fun TodoBanner(
             }
         }
 
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_fighting_bubble),
-            contentDescription = null,
+        imageRes?.let {
+            Image(
+                painter = painterResource(it),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(top = 8.dp, end = 8.dp)
+                    .align(Alignment.TopEnd),
+            )
+        }
+
+        Box(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = screenWidthDp(24.dp), top = screenHeightDp(12.dp)),
-            tint = Color.Unspecified,
-        )
+                .padding(
+                    start = screenWidthDp(10.dp),
+                    top = screenHeightDp(12.dp),
+                ),
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_speech_bubble),
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.Center),
+                tint = Color.Unspecified,
+            )
+
+            bubbleText?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier
+                        .padding(bottom = 7.dp)
+                        .align(Alignment.Center),
+                    color = HaebomTheme.colors.white,
+                    style = HaebomTheme.typo.card,
+                )
+            }
+        }
 
         Box(
             modifier = Modifier
@@ -70,7 +104,7 @@ fun TodoBanner(
                         color = HaebomTheme.colors.white,
                         shape = RoundedCornerShape(4.dp),
                     )
-                    .padding(horizontal = 6.dp)
+                    .padding(horizontal = 6.dp, vertical = 4.dp)
                     .wrapContentHeight(Alignment.CenterVertically),
                 color = HaebomTheme.colors.gray600,
                 textAlign = TextAlign.Center,
@@ -91,6 +125,8 @@ private fun TodoBannerPreview(
 ) {
     HaebomTheme {
         TodoBanner(
+            imageRes = R.drawable.img_todo_perfect_176,
+            bubbleText = "완전 대단해!!",
             remainTodo = remainTodo,
         )
     }
