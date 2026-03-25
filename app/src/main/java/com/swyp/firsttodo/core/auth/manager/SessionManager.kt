@@ -90,7 +90,7 @@ class SessionManager
         suspend fun forceLogout() {
             if (!_sessionState.value.isLoggedIn) return
             sessionDataSource.clearTokens()
-            _sessionState.update { SessionState(isInitialized = true) }
+            _sessionState.update { it.copy(isLoggedIn = false, userType = null, isProfileCompleted = false) }
             _sideEffect.trySend(AuthSideEffect.ForceNavigateToLogin)
 
             Timber.d("🔒 Force logout (token expired)")
@@ -99,7 +99,7 @@ class SessionManager
         suspend fun logout() {
             if (!_sessionState.value.isLoggedIn) return
             sessionDataSource.clearTokens()
-            _sessionState.update { SessionState(isInitialized = true) }
+            _sessionState.update { it.copy(isLoggedIn = false, userType = null, isProfileCompleted = false) }
             _sideEffect.trySend(AuthSideEffect.NavigateToLogin)
 
             Timber.d("🔒 Logout (user-initiated)")
