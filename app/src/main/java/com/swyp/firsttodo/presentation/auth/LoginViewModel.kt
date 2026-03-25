@@ -24,6 +24,12 @@ class LoginViewModel
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
         val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
 
+        init {
+            if (isSessionExpired) {
+                sendEffect(LoginSideEffect.ShowSnackbar("로그인이 만료되었어요. 다시 로그인 해주세요."))
+            }
+        }
+
         fun onBack() {
             if (isSessionExpired) return
 

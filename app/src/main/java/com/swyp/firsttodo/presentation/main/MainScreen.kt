@@ -28,7 +28,6 @@ import com.swyp.firsttodo.presentation.main.navigation.MainNavHost
 import com.swyp.firsttodo.presentation.main.navigation.MainNavigator
 import com.swyp.firsttodo.presentation.main.snackbar.HaebomSnackbarHost
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
-import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 import com.swyp.firsttodo.presentation.main.topbar.MainTopBar
 
 @Composable
@@ -42,10 +41,7 @@ fun MainScreen(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            AuthSideEffect.ForceNavigateToLogin -> {
-                snackbarState.showHaebomSnackbar("로그인이 만료되었어요. 다시 로그인 해주세요.")
-                navigator.navController.navigateToLogin(isSessionExpired = true)
-            }
+            AuthSideEffect.ForceNavigateToLogin -> navigator.navController.navigateToLogin(isSessionExpired = true)
 
             AuthSideEffect.NavigateToLogin -> navigator.navController.navigateToLogin(isSessionExpired = false)
         }
