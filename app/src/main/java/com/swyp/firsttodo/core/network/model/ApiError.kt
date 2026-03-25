@@ -1,25 +1,28 @@
 package com.swyp.firsttodo.core.network.model
 
 sealed class ApiError(
+    open val code: Int?,
     override val message: String?,
     override val cause: Throwable? = null,
 ) : Throwable(message, cause) {
-    data class BadRequest(val code: Int?, val serverMsg: String) : ApiError(serverMsg)
+    open val serverMsg: String get() = message ?: ""
 
-    data class Unauthorized(val serverMsg: String) : ApiError(serverMsg)
+    data class BadRequest(override val code: Int?, override val serverMsg: String) : ApiError(code, serverMsg)
 
-    data class Forbidden(val serverMsg: String) : ApiError(serverMsg)
+    data class Unauthorized(override val code: Int?, override val serverMsg: String) : ApiError(code, serverMsg)
 
-    data class NotFound(val serverMsg: String) : ApiError(serverMsg)
+    data class Forbidden(override val code: Int?, override val serverMsg: String) : ApiError(code, serverMsg)
 
-    data class Conflict(val serverMsg: String) : ApiError(serverMsg)
+    data class NotFound(override val code: Int?, override val serverMsg: String) : ApiError(code, serverMsg)
 
-    data class ServerError(val serverMsg: String) : ApiError(serverMsg)
+    data class Conflict(override val code: Int?, override val serverMsg: String) : ApiError(code, serverMsg)
 
-    class NetworkConnection : ApiError("Network connection failed")
+    data class ServerError(override val code: Int?, override val serverMsg: String) : ApiError(code, serverMsg)
+
+    class NetworkConnection : ApiError(null, "Network connection failed")
 
     data class Unknown(
         val errorMsg: String? = null,
         val throwable: Throwable? = null,
-    ) : ApiError(errorMsg, throwable)
+    ) : ApiError(null, errorMsg, throwable)
 }

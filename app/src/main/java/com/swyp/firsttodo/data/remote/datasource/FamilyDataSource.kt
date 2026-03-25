@@ -13,4 +13,6 @@ interface FamilyDataSource {
     suspend fun deleteFamilyConnect(targetUserId: Long): BaseResponse<Unit>
 
     suspend fun getFamilyDashboard(): BaseResponse<FamilyDashboardResponseDto>
+
+    suspend fun getMyInviteCode(): BaseResponse<String>
 }

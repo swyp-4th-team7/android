@@ -20,4 +20,6 @@ data class ShareUiState(
 
 sealed interface ShareSideEffect : UiEffect {
     data class ShowSnackbar(val message: String) : ShareSideEffect
+
+    data object NavigateToOnboarding : ShareSideEffect
 }

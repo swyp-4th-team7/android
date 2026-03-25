@@ -4,6 +4,7 @@ import com.swyp.firsttodo.data.remote.service.AuthService
 import com.swyp.firsttodo.data.remote.service.FamilyService
 import com.swyp.firsttodo.data.remote.service.HabitService
 import com.swyp.firsttodo.data.remote.service.NotificationService
+import com.swyp.firsttodo.data.remote.service.RewardService
 import com.swyp.firsttodo.data.remote.service.ScheduleService
 import com.swyp.firsttodo.data.remote.service.StickerService
 import com.swyp.firsttodo.data.remote.service.TodoService
@@ -65,4 +66,10 @@ object ServiceModule {
     fun providesHabitService(
         @WithToken retrofit: Retrofit,
     ): HabitService = retrofit.create(HabitService::class.java)
+
+    @Provides
+    @Singleton
+    fun providesRewardService(
+        @WithToken retrofit: Retrofit,
+    ): RewardService = retrofit.create(RewardService::class.java)
 }

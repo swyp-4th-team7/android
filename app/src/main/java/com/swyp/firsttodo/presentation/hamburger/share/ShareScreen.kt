@@ -32,6 +32,7 @@ import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 @Composable
 fun ShareRoute(
     popBackStack: () -> Unit,
+    navigateToOnboarding: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ShareViewModel = hiltViewModel(),
 ) {
@@ -41,6 +42,7 @@ fun ShareRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             is ShareSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
+            is ShareSideEffect.NavigateToOnboarding -> navigateToOnboarding()
         }
     }
 

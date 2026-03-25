@@ -30,16 +30,19 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.presentation.reward.model.RewardState
-import com.swyp.firsttodo.presentation.reward.model.backgroundColor
-import com.swyp.firsttodo.presentation.reward.model.textColor
+import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.domain.model.reward.RewardStatus
+import com.swyp.firsttodo.presentation.reward.extension.backgroundColor
+import com.swyp.firsttodo.presentation.reward.extension.displayName
+import com.swyp.firsttodo.presentation.reward.extension.textColor
 
 data class ParentRewardUiModel(
     val id: Long,
     val title: String,
     val habit: String,
+    val duration: HabitDuration,
     val reward: String,
-    val rewardState: RewardState,
+    val rewardState: RewardStatus,
     @param:DrawableRes val habitIconRes: Int,
 )
 
@@ -172,32 +175,36 @@ private val sampleRewards = listOf(
         id = 1L,
         title = "수학 공부하기",
         habit = "매일 수학 문제 풀기",
+        duration = HabitDuration.SEVEN_DAYS,
         reward = "치킨 사주기",
-        rewardState = RewardState.ING,
+        rewardState = RewardStatus.COMPLETE,
         habitIconRes = R.drawable.ic_habit_day_7,
     ),
     ParentRewardUiModel(
         id = 2L,
         title = "영어 단어 외우기",
         habit = "매일 영어 단어 20개",
+        duration = HabitDuration.THREE_DAYS,
         reward = "게임 1시간",
-        rewardState = RewardState.CONFIRMING,
+        rewardState = RewardStatus.REWARD_CHECKING,
         habitIconRes = R.drawable.ic_habit_day_3,
     ),
     ParentRewardUiModel(
         id = 3L,
         title = "독서하기",
         habit = "하루 30분 독서",
+        duration = HabitDuration.SEVEN_DAYS,
         reward = "문화상품권",
-        rewardState = RewardState.WAITING,
+        rewardState = RewardStatus.REWARD_WAITING,
         habitIconRes = R.drawable.ic_habit_day_7,
     ),
     ParentRewardUiModel(
         id = 4L,
         title = "운동하기",
         habit = "줄넘기 100개",
+        duration = HabitDuration.FOURTEEN_DAYS,
         reward = "아이스크림",
-        rewardState = RewardState.DONE,
+        rewardState = RewardStatus.IN_PROGRESS,
         habitIconRes = R.drawable.ic_habit_day_7,
     ),
 )

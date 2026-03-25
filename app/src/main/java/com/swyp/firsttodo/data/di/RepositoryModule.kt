@@ -4,12 +4,16 @@ import com.swyp.firsttodo.data.repositoryimpl.AuthRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.FamilyRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.HabitRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.NotificationRepositoryImpl
+import com.swyp.firsttodo.data.repositoryimpl.RewardRepositoryImpl
+import com.swyp.firsttodo.data.repositoryimpl.ScheduleRepositoryImpl
+import com.swyp.firsttodo.data.repositoryimpl.StickerRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.TodoRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.UserRepositoryImpl
 import com.swyp.firsttodo.domain.repository.AuthRepository
 import com.swyp.firsttodo.domain.repository.FamilyRepository
 import com.swyp.firsttodo.domain.repository.HabitRepository
 import com.swyp.firsttodo.domain.repository.NotificationRepository
+import com.swyp.firsttodo.domain.repository.RewardRepository
 import com.swyp.firsttodo.domain.repository.ScheduleRepository
 import com.swyp.firsttodo.domain.repository.StickerRepository
 import com.swyp.firsttodo.domain.repository.TodoRepository
@@ -56,4 +60,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsHabitRepository(habitRepositoryImpl: HabitRepositoryImpl): HabitRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsRewardRepository(rewardRepositoryImpl: RewardRepositoryImpl): RewardRepository
 }

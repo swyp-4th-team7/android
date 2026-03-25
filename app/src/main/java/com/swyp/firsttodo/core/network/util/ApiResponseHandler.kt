@@ -37,18 +37,18 @@ class ApiResponseHandler
             if (code in 20000..20499) {
                 if (response.data == null) {
                     @Suppress("UNCHECKED_CAST")
-                    return Unit as? T ?: throw ApiError.ServerError("Success code but data is null")
+                    return Unit as? T ?: throw ApiError.ServerError(null, "Success code but data is null")
                 }
                 return response.data
             }
 
             throw when (code) {
                 in 40000..40099 -> ApiError.BadRequest(code, message)
-                in 40100..40199 -> ApiError.Unauthorized(message)
-                in 40300..40399 -> ApiError.Forbidden(message)
-                in 40400..40499 -> ApiError.NotFound(message)
-                in 40900..40999 -> ApiError.Conflict(message)
-                in 50000..59999 -> ApiError.ServerError(message)
+                in 40100..40199 -> ApiError.Unauthorized(code, message)
+                in 40300..40399 -> ApiError.Forbidden(code, message)
+                in 40400..40499 -> ApiError.NotFound(code, message)
+                in 40900..40999 -> ApiError.Conflict(code, message)
+                in 50000..59999 -> ApiError.ServerError(code, message)
                 else -> ApiError.Unknown(message)
             }
         }
@@ -64,11 +64,11 @@ class ApiResponseHandler
 
             return when (e.code()) {
                 400 -> ApiError.BadRequest(serverCode, serverMsg)
-                401 -> ApiError.Unauthorized(serverMsg)
-                403 -> ApiError.Forbidden(serverMsg)
-                404 -> ApiError.NotFound(serverMsg)
-                409 -> ApiError.Conflict(serverMsg)
-                in 500..599 -> ApiError.ServerError(serverMsg)
+                401 -> ApiError.Unauthorized(serverCode, serverMsg)
+                403 -> ApiError.Forbidden(serverCode, serverMsg)
+                404 -> ApiError.NotFound(serverCode, serverMsg)
+                409 -> ApiError.Conflict(serverCode, serverMsg)
+                in 500..599 -> ApiError.ServerError(serverCode, serverMsg)
                 else -> ApiError.Unknown(serverMsg, e)
             }
         }

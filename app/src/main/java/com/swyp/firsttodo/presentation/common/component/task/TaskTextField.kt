@@ -28,6 +28,7 @@ fun TaskTextField(
     onKeyboardAction: KeyboardActionHandler? = null,
     inputTransformation: InputTransformation? = null,
     outputTransformation: OutputTransformation? = null,
+    enabled: Boolean = true,
 ) {
     val colors = HaebomTheme.colors
 
@@ -52,6 +53,7 @@ fun TaskTextField(
             keyboardOptions = keyboardOptions,
             onKeyboardAction = onKeyboardAction,
             lineLimits = TextFieldLineLimits.SingleLine,
+            enabled = enabled,
         )
 
         when {

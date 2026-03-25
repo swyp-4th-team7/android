@@ -11,4 +11,6 @@ interface FamilyRepository {
     suspend fun disconnectFamily(targetUserId: Long): Result<Unit>
 
     suspend fun getFamilyDashboard(): Result<List<FamilyInfo>>
+
+    suspend fun getMyInviteCode(): Result<String>
 }
