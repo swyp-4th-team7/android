@@ -36,10 +36,10 @@ import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
+import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 import com.swyp.firsttodo.presentation.common.component.HaebomTag
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
 import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
-import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
 
 enum class ScheduleBottomSheetType(
     val title: String,
@@ -117,7 +117,7 @@ fun ScheduleBottomSheet(
             TaskInputSection(
                 title = "일정",
             ) {
-                TaskTextField(
+                HaebomMultiLineTextField(
                     fieldState = titleFieldState,
                     placeholder = "다가오는 일정을 입력해주세요.",
                     modifier = Modifier
@@ -134,7 +134,7 @@ fun ScheduleBottomSheet(
             TaskInputSection(
                 title = "날짜",
             ) {
-                TaskTextField(
+                HaebomMultiLineTextField(
                     fieldState = dateFieldState,
                     placeholder = "년/월/일",
                     modifier = Modifier

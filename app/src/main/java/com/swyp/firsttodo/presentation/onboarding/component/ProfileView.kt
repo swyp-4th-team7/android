@@ -14,7 +14,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
+import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 
 @Composable
 fun ProfileView(
@@ -46,7 +46,7 @@ fun ProfileView(
             style = HaebomTheme.typo.helperText,
         )
 
-        TaskTextField(
+        HaebomMultiLineTextField(
             fieldState = nickNameFieldState,
             placeholder = "이름을 입력해주세요.",
             modifier = Modifier.fillMaxWidth(),

@@ -26,9 +26,9 @@ import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
+import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
-import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailTopBar
 import com.swyp.firsttodo.presentation.habit.extension.displayName
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
@@ -130,7 +130,7 @@ fun RewardDetailScreen(
                 title = "보상 정하기",
                 modifier = Modifier.padding(bottom = 28.dp),
             ) {
-                TaskTextField(
+                HaebomMultiLineTextField(
                     fieldState = rewardFieldState,
                     placeholder = uiState.initialReward,
                     modifier = Modifier.fillMaxWidth(),

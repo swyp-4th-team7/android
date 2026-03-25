@@ -42,10 +42,10 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
+import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
 import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
-import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
 
 enum class TodoBottomSheetType(
     val title: String,
@@ -124,7 +124,7 @@ fun TodoBottomSheet(
             TaskInputSection(
                 title = "할 일",
             ) {
-                TaskTextField(
+                HaebomMultiLineTextField(
                     fieldState = titleFieldState,
                     placeholder = "할 일을 입력해 주세요.",
                     modifier = Modifier
