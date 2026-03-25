@@ -5,10 +5,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -16,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -27,7 +34,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
-import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -42,9 +48,9 @@ fun TodoBanner(
 ) {
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .heightForScreenPercentage(132.dp)
-            .background(LabelColor.YELLOW.completedBackground),
+            .height(132.dp)
+            .background(LabelColor.YELLOW.completedBackground)
+            .clipToBounds(),
     ) {
         val text = remember(remainTodo) {
             when (remainTodo) {
@@ -53,81 +59,111 @@ fun TodoBanner(
             }
         }
 
-        imageRes?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(top = 8.dp, end = 8.dp)
-                    .align(Alignment.TopEnd),
-            )
-        }
-
         Box(
             modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(
-                    start = screenWidthDp(10.dp),
-                    top = screenHeightDp(12.dp),
-                ),
+                .fillMaxWidth()
+                .wrapContentWidth(Alignment.CenterHorizontally)
+                .width(360.dp)
+                .align(Alignment.Center),
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_speech_bubble),
-                contentDescription = null,
-                modifier = Modifier.align(Alignment.Center),
-                tint = Color.Unspecified,
-            )
-
-            bubbleText?.let {
-                Text(
-                    text = it,
+            imageRes?.let {
+                Image(
+                    painter = painterResource(it),
+                    contentDescription = null,
                     modifier = Modifier
-                        .padding(bottom = 7.dp)
-                        .align(Alignment.Center),
-                    color = HaebomTheme.colors.white,
-                    style = HaebomTheme.typo.card,
+                        .align(Alignment.TopEnd)
+                        .offset(x = (-8).dp, y = 0.dp)
+                        .wrapContentSize(align = Alignment.TopEnd, unbounded = true)
+                        .size(176.dp),
                 )
             }
-        }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = screenWidthDp(24.dp), bottom = screenHeightDp(24.dp)),
-        ) {
-            Text(
-                text = text,
+            Box(
                 modifier = Modifier
-                    .widthIn(screenWidthDp(112.dp))
-                    .heightIn(screenHeightDp(24.dp))
-                    .background(
+                    .align(Alignment.TopStart)
+                    .offset(x = 10.dp, y = 12.dp),
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_speech_bubble),
+                    contentDescription = null,
+                    modifier = Modifier.align(Alignment.Center),
+                    tint = Color.Unspecified,
+                )
+
+                bubbleText?.let {
+                    Text(
+                        text = it,
+                        modifier = Modifier
+                            .padding(bottom = 7.dp)
+                            .align(Alignment.Center),
                         color = HaebomTheme.colors.white,
-                        shape = RoundedCornerShape(4.dp),
+                        style = HaebomTheme.typo.card,
                     )
-                    .padding(horizontal = 6.dp, vertical = 4.dp)
-                    .wrapContentHeight(Alignment.CenterVertically),
-                color = HaebomTheme.colors.gray600,
-                textAlign = TextAlign.Center,
-                style = HaebomTheme.typo.caption,
-            )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .offset(x = screenWidthDp(24.dp), y = screenHeightDp((-24).dp)),
+            ) {
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .widthIn(112.dp)
+                        .heightIn(24.dp)
+                        .background(
+                            color = HaebomTheme.colors.white,
+                            shape = RoundedCornerShape(4.dp),
+                        )
+                        .padding(horizontal = 6.dp, vertical = 4.dp)
+                        .wrapContentHeight(Alignment.CenterVertically),
+                    color = HaebomTheme.colors.gray600,
+                    textAlign = TextAlign.Center,
+                    style = HaebomTheme.typo.caption,
+                )
+            }
         }
     }
 }
 
-private class TodoBannerPreviewProvider : PreviewParameterProvider<Async<Int>> {
-    override val values = sequenceOf(Async.Success(3), Async.Success(9999999), Async.Init)
+private data class TodoBannerPreviewModel(
+    val progressPercent: Async<Int>,
+    @param:DrawableRes val imageRes: Int?,
+    val bubbleText: String?,
+)
+
+private class TodoBannerPreviewProvider : PreviewParameterProvider<TodoBannerPreviewModel> {
+    override val values = sequenceOf(
+        TodoBannerPreviewModel(
+            progressPercent = Async.Success(100),
+            imageRes = R.drawable.img_todo_perfect_176,
+            bubbleText = "완전 대단해!!",
+        ),
+        TodoBannerPreviewModel(
+            progressPercent = Async.Success(70),
+            imageRes = R.drawable.img_todo_cheer_176,
+            bubbleText = "잘하고 있어! 힘내!!",
+        ),
+        TodoBannerPreviewModel(
+            progressPercent = Async.Success(10),
+            imageRes = R.drawable.img_todo_nagging_176,
+            bubbleText = "뭐하고 있어! 빨리 해야해!!",
+        ),
+    )
 }
 
-@Preview(widthDp = 360)
+@Preview(widthDp = 500, showBackground = true)
 @Composable
 private fun TodoBannerPreview(
-    @PreviewParameter(TodoBannerPreviewProvider::class) remainTodo: Async<Int>,
+    @PreviewParameter(TodoBannerPreviewProvider::class)
+    model: TodoBannerPreviewModel,
 ) {
     HaebomTheme {
         TodoBanner(
-            imageRes = R.drawable.img_todo_perfect_176,
-            bubbleText = "완전 대단해!!",
-            remainTodo = remainTodo,
+            imageRes = model.imageRes,
+            bubbleText = model.bubbleText,
+            remainTodo = model.progressPercent,
         )
     }
 }
