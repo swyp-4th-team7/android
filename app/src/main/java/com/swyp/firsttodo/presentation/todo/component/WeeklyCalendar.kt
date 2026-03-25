@@ -1,5 +1,6 @@
 package com.swyp.firsttodo.presentation.todo.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -167,11 +169,10 @@ private fun MarkedDate(
                 style = BoldStyle.copy(fontSize = 20.sp),
             )
 
-            stickerCode != null -> Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.img_sticker_default_clover),
+            stickerCode != null -> Image(
+                painter = painterResource(R.drawable.img_sticker_default_clover),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp),
-                tint = Color.Unspecified,
             )
 
             else -> Text(
