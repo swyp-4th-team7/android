@@ -12,4 +12,6 @@ sealed class FamilyError(
     class InviteAlreadyDone(message: String) : FamilyError(message) // 이미 연결된 유저
 
     class ConnectInvalid(message: String) : FamilyError(message) // 해당하는 유저랑 연결 안되어있음
+
+    class OnboardingUnCompleted(message: String) : FamilyError(message) // 온보딩 미완료됨
 }

@@ -68,4 +68,15 @@ class FamilyRepositoryImpl
             apiResponseHandler.safeApiCall {
                 familyDataSource.getFamilyDashboard()
             }.map { it.toModel() }
+
+        override suspend fun getMyInviteCode(): Result<String> =
+            apiResponseHandler.safeApiCall {
+                familyDataSource.getMyInviteCode()
+            }.recoverCatching {
+                throw if (it is ApiError && it.code == 40026) {
+                    FamilyError.OnboardingUnCompleted(it.serverMsg)
+                } else {
+                    it
+                }
+            }
     }

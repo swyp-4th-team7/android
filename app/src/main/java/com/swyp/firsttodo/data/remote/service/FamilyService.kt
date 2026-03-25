@@ -26,4 +26,7 @@ interface FamilyService {
 
     @GET("/api/v1/family/dashboard")
     suspend fun getFamilyDashboard(): BaseResponse<FamilyDashboardResponseDto>
+
+    @GET("/api/v1/users/me/invite-code")
+    suspend fun getMyInviteCode(): BaseResponse<String>
 }

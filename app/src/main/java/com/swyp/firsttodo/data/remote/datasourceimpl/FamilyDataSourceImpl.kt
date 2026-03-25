@@ -24,4 +24,6 @@ class FamilyDataSourceImpl
 
         override suspend fun getFamilyDashboard(): BaseResponse<FamilyDashboardResponseDto> =
             familyService.getFamilyDashboard()
+
+        override suspend fun getMyInviteCode(): BaseResponse<String> = familyService.getMyInviteCode()
     }
