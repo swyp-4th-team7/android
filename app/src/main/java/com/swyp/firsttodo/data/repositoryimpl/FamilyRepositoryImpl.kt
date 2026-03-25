@@ -74,7 +74,7 @@ class FamilyRepositoryImpl
                 familyDataSource.getMyInviteCode()
             }.recoverCatching {
                 throw if (it is ApiError && it.code == 40026) {
-                    FamilyError.OnboardingUnCompleted(it.serverMsg)
+                    FamilyError.OnboardingUncompleted(it.serverMsg)
                 } else {
                     it
                 }

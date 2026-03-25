@@ -13,5 +13,5 @@ sealed class FamilyError(
 
     class ConnectInvalid(message: String) : FamilyError(message) // 해당하는 유저랑 연결 안되어있음
 
-    class OnboardingUnCompleted(message: String) : FamilyError(message) // 온보딩 미완료됨
+    class OnboardingUncompleted(message: String) : FamilyError(message) // 온보딩 미완료됨
 }
