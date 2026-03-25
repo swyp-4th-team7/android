@@ -94,7 +94,7 @@ class LoginViewModel
                     updateState { copy(loginState = Async.Success(Unit)) }
 
                     when {
-                        isSessionExpired -> sendEffect(LoginSideEffect.PopBackStack)
+                        isSessionExpired -> sendEffect(LoginSideEffect.NavigateToHome)
                         isProfileComplete -> sendEffect(LoginSideEffect.NavigateToHome)
                         else -> sendEffect(LoginSideEffect.NavigateToOnboarding)
                     }
