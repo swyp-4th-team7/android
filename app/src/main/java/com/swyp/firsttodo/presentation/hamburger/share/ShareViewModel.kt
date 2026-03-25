@@ -39,7 +39,24 @@ class ShareViewModel
             }
         }
 
-        private fun getMyCode() {}
+        private fun getMyCode() {
+            viewModelScope.launch {
+                familyRepository.getMyInviteCode()
+                    .onSuccess {
+                        updateState { copy(inviteCode = Async.Success(it)) }
+                    }
+                    .onFailure {
+                        when (it) {
+                            is FamilyError.OnboardingUncompleted -> {
+                                sendEffect(ShareSideEffect.ShowSnackbar("프로필 설정이 필요합니다."))
+                                sendEffect(ShareSideEffect.NavigateToOnboarding)
+                            }
+
+                            is ApiError -> sendEffect(ShareSideEffect.ShowSnackbar(it.snackbarMsg()))
+                        }
+                    }
+            }
+        }
 
         fun closeDialog() {
             updateState { copy(disconnectRequestMember = null) }
@@ -114,7 +131,9 @@ class ShareViewModel
             }
         }
 
-        fun onInviteCodeCopy() {}
+        fun onInviteCodeCopy() {
+            sendEffect(ShareSideEffect.ShowSnackbar("클립보드에 복사되었습니다."))
+        }
 
         fun onDisconnectClick(member: ConnectedFamilyModel) {
             updateState { copy(disconnectRequestMember = member) }

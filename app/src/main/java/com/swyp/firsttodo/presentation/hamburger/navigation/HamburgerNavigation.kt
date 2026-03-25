@@ -25,6 +25,7 @@ fun NavController.navigateToShare() = navigate(HamburgerRoute.Share)
 
 fun NavGraphBuilder.hamburgerNavGraph(
     paddingValues: PaddingValues,
+    navigateToOnboarding: () -> Unit,
     navController: NavController,
 ) {
     composable<HamburgerRoute.Family> {
@@ -37,6 +38,7 @@ fun NavGraphBuilder.hamburgerNavGraph(
     composable<HamburgerRoute.Share> {
         ShareRoute(
             popBackStack = navController::popBackStack,
+            navigateToOnboarding = navigateToOnboarding,
             modifier = Modifier.padding(paddingValues),
         )
     }

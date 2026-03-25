@@ -67,6 +67,7 @@ fun MainNavHost(
         )
         hamburgerNavGraph(
             paddingValues = paddingValues,
+            navigateToOnboarding = navigator::navigateToOnboarding,
             navController = navigator.navController,
         )
     }
