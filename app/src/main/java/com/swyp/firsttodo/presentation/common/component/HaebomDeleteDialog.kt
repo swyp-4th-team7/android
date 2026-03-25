@@ -33,11 +33,6 @@ sealed class DeleteDialogType(
         description = "입력한 할 일이 사라져요!",
     )
 
-    data object Schedule : DeleteDialogType(
-        title = "선택한 일정을 삭제할까요?",
-        description = "입력한 일정이 사라져요!",
-    )
-
     data object Habit : DeleteDialogType(
         title = "선택한 할 일을 삭제할까요?",
         description = "입력한 할 일이 사라져요!",
