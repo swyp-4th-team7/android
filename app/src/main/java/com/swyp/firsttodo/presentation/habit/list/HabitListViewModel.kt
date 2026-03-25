@@ -11,7 +11,6 @@ import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.domain.repository.HabitRepository
 import com.swyp.firsttodo.domain.throwable.HabitError
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
-import com.swyp.firsttodo.presentation.habit.component.HabitListType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,17 +22,14 @@ class HabitListViewModel
         sessionManager: SessionManager,
         private val habitRepository: HabitRepository,
     ) : BaseViewModel<HabitListUiState, HabitListSideEffect>(HabitListUiState()) {
-        private val role: Role = when (sessionManager.sessionState.value.userType) {
-            Role.PARENT.request -> Role.PARENT
-            else -> Role.CHILD
-        }
-
-        val listType = when (role) {
-            Role.PARENT -> HabitListType.PARENT
-            Role.CHILD -> HabitListType.CHILD
-        }
-
         init {
+            val role: Role = when (sessionManager.sessionState.value.userType) {
+                Role.PARENT.request -> Role.PARENT
+                else -> Role.CHILD
+            }
+
+            updateState { copy(role = role) }
+
             getHabits()
         }
 

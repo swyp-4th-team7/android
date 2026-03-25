@@ -24,7 +24,6 @@ import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.habit.component.HabitList
 import com.swyp.firsttodo.presentation.habit.component.HabitListEmpty
-import com.swyp.firsttodo.presentation.habit.component.HabitListType
 import com.swyp.firsttodo.presentation.habit.component.HabitMainBanner
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
@@ -64,7 +63,6 @@ fun HabitListRoute(
 
     HabitListScreen(
         uiState = uiState,
-        habitListType = viewModel.listType,
         onCreateClick = viewModel::onCreateClick,
         onCheckClick = viewModel::onCheckClick,
         onEditClick = viewModel::onEditClick,
@@ -76,7 +74,6 @@ fun HabitListRoute(
 @Composable
 fun HabitListScreen(
     uiState: HabitListUiState,
-    habitListType: HabitListType,
     onCreateClick: () -> Unit,
     onCheckClick: (HabitModel) -> Unit,
     onEditClick: (HabitModel) -> Unit,
@@ -89,6 +86,7 @@ fun HabitListScreen(
         TopBarArea()
 
         HabitMainBanner(
+            description = uiState.description,
             onButtonClick = onCreateClick,
             modifier = Modifier.padding(bottom = 32.dp),
         )
@@ -102,7 +100,7 @@ fun HabitListScreen(
             )
 
             uiState.habitsData != null -> HabitList(
-                habitListType = habitListType,
+                habitListType = uiState.listType,
                 onCheckClick = onCheckClick,
                 onEditClick = onEditClick,
                 onDeleteClick = onDeleteClick,
@@ -142,7 +140,6 @@ private fun HabitListScreenPreview(
     HaebomTheme {
         HabitListScreen(
             uiState = uiState,
-            habitListType = HabitListType.CHILD,
             onCreateClick = {},
             onCheckClick = {},
             onEditClick = {},

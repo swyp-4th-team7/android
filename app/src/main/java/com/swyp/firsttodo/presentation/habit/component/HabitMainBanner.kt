@@ -25,6 +25,7 @@ import com.swyp.firsttodo.core.designsystem.theme.MediumStyle
 
 @Composable
 fun HabitMainBanner(
+    description: String,
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -47,7 +48,7 @@ fun HabitMainBanner(
             )
 
             Text(
-                text = "가족과 보상을 정하고\n재미있는 습관을 실천해요!",
+                text = description,
                 color = HaebomTheme.colors.gray400,
                 style = MediumStyle.copy(fontSize = 14.sp),
             )
@@ -80,6 +81,7 @@ fun HabitMainBanner(
 private fun HabitMainBannerPreview() {
     HaebomTheme {
         HabitMainBanner(
+            description = "가족과 보상을 정하고\n재미있는 습관을 실천해요!",
             onButtonClick = {},
         )
     }
