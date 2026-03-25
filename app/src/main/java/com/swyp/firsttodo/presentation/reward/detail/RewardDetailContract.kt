@@ -16,9 +16,11 @@ enum class RewardDetailScreenType {
 @Immutable
 data class RewardDetailUiState(
     val screenType: RewardDetailScreenType? = null,
+    val habitId: Long? = null,
     val habit: String = "",
     val duration: HabitDuration? = null,
-    val reward: String = "",
+    val initialReward: String = "",
+    val rewardText: String = "",
     val btnState: Async<Unit> = Async.Init,
 ) : UiState {
     val title = when (screenType) {
@@ -33,15 +35,27 @@ data class RewardDetailUiState(
         null -> ""
     }
 
+    val rewardFieldEnabled = when (screenType) {
+        RewardDetailScreenType.ACCEPT -> true
+        RewardDetailScreenType.DELIVER -> false
+        null -> false
+    }
+
     val btnText = when (screenType) {
         RewardDetailScreenType.ACCEPT -> "보상 수락하기"
         RewardDetailScreenType.DELIVER -> "전달 완료"
         null -> ""
     }
+
+    val isBtnEnabled = when (screenType) {
+        RewardDetailScreenType.ACCEPT -> rewardText.isNotBlank()
+        RewardDetailScreenType.DELIVER -> true
+        null -> false
+    } && btnState !is Async.Loading
 }
 
 sealed interface RewardDetailSideEffect : UiEffect {
-    data object PopBackStack : RewardDetailSideEffect
+    data class PopBackStack(val resultMessage: String? = null) : RewardDetailSideEffect
 
     data class ShowSnackbar(val message: String) : RewardDetailSideEffect
 }

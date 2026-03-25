@@ -119,7 +119,13 @@ data class RewardListUiState(
 sealed interface RewardListSideEffect : UiEffect {
     data object NavigateToHabit : RewardListSideEffect
 
-    data class NavigateToRewardDetail(val screenType: RewardDetailScreenType) : RewardListSideEffect
+    data class NavigateToRewardDetail(
+        val screenType: RewardDetailScreenType,
+        val habitId: Long,
+        val habit: String,
+        val duration: String,
+        val reward: String,
+    ) : RewardListSideEffect
 
     data class ShowSnackbar(val message: String) : RewardListSideEffect
 }

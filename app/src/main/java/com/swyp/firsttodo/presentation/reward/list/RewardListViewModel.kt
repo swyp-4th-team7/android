@@ -111,6 +111,7 @@ class RewardListViewModel
                                 id = model.habitId,
                                 title = model.nickname ?: "",
                                 habit = model.title,
+                                duration = model.duration,
                                 reward = model.reward,
                                 rewardState = model.status,
                                 habitIconRes = model.durationIconRes,
@@ -201,17 +202,26 @@ class RewardListViewModel
             sendEffect(RewardListSideEffect.NavigateToHabit)
         }
 
+        fun onDetailResult(message: String?) {
+            message ?: return
+            sendEffect(RewardListSideEffect.ShowSnackbar(message))
+            initRewardTab()
+        }
+
         fun onRewardLabelClick(reward: ParentRewardUiModel) {
-            when (reward.rewardState) {
-                RewardStatus.REWARD_CHECKING -> sendEffect(
-                    RewardListSideEffect.NavigateToRewardDetail(RewardDetailScreenType.ACCEPT),
-                )
-
-                RewardStatus.REWARD_WAITING -> sendEffect(
-                    RewardListSideEffect.NavigateToRewardDetail(RewardDetailScreenType.DELIVER),
-                )
-
-                else -> Unit
+            val screenType = when (reward.rewardState) {
+                RewardStatus.REWARD_CHECKING -> RewardDetailScreenType.ACCEPT
+                RewardStatus.REWARD_WAITING -> RewardDetailScreenType.DELIVER
+                else -> return
             }
+            sendEffect(
+                RewardListSideEffect.NavigateToRewardDetail(
+                    screenType = screenType,
+                    habitId = reward.id,
+                    habit = reward.habit,
+                    duration = reward.duration.name,
+                    reward = reward.reward,
+                ),
+            )
         }
     }

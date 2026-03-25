@@ -5,11 +5,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -24,6 +28,7 @@ import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
+import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailTopBar
 import com.swyp.firsttodo.presentation.habit.extension.displayName
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
@@ -33,7 +38,7 @@ import com.swyp.firsttodo.presentation.reward.component.RewardHeader
 
 @Composable
 fun RewardDetailRoute(
-    popBackStack: () -> Unit,
+    popBackStack: (String?) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RewardDetailViewModel = hiltViewModel(),
 ) {
@@ -42,13 +47,14 @@ fun RewardDetailRoute(
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
-            is RewardDetailSideEffect.PopBackStack -> popBackStack()
+            is RewardDetailSideEffect.PopBackStack -> popBackStack(effect.resultMessage)
             is RewardDetailSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
         }
     }
 
     RewardDetailScreen(
         uiState = uiState,
+        rewardFieldState = viewModel.rewardFieldState,
         onPopBackStack = viewModel::onPopBackStack,
         onBtnClick = viewModel::onBtnClick,
         modifier = modifier,
@@ -58,6 +64,7 @@ fun RewardDetailRoute(
 @Composable
 fun RewardDetailScreen(
     uiState: RewardDetailUiState,
+    rewardFieldState: TextFieldState,
     onPopBackStack: () -> Unit,
     onBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -75,7 +82,7 @@ fun RewardDetailScreen(
             HaebomLargeButton(
                 text = uiState.btnText,
                 onClick = onBtnClick,
-                enabled = true,
+                enabled = uiState.isBtnEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
@@ -123,8 +130,14 @@ fun RewardDetailScreen(
                 title = "보상 정하기",
                 modifier = Modifier.padding(bottom = 28.dp),
             ) {
-                RewardDetailTextBox(
-                    text = uiState.reward,
+                TaskTextField(
+                    fieldState = rewardFieldState,
+                    placeholder = uiState.initialReward,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Done,
+                    ),
+                    enabled = uiState.rewardFieldEnabled,
                 )
             }
         }
@@ -137,13 +150,13 @@ private class RewardDetailScreenPreviewProvider : PreviewParameterProvider<Rewar
             screenType = RewardDetailScreenType.ACCEPT,
             habit = "매일 수학 문제 풀기",
             duration = HabitDuration.SEVEN_DAYS,
-            reward = "치킨 사주기",
+            initialReward = "치킨 사주세요",
         ),
         RewardDetailUiState(
             screenType = RewardDetailScreenType.DELIVER,
             habit = "매일 수학 문제 풀기 매일 수학 문제 풀기 매일 수학 문제 풀기 매일 수학 문제 풀기",
             duration = HabitDuration.SEVEN_DAYS,
-            reward = "치킨 사주기 치킨 사주기 치킨 사주기 치킨 사주기 치킨 사주기",
+            initialReward = "치킨 사주세요",
         ),
     )
 }
@@ -158,6 +171,7 @@ private fun RewardDetailScreenPreview(
             uiState = uiState,
             onPopBackStack = {},
             onBtnClick = {},
+            rewardFieldState = rememberTextFieldState(),
         )
     }
 }

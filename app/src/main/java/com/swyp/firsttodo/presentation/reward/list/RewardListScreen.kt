@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.Role
+import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.reward.RewardStatus
 import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
 import com.swyp.firsttodo.presentation.common.component.HaebomHeaderTab
@@ -47,17 +49,30 @@ import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 @Composable
 fun RewardListRoute(
     navigateToHabit: () -> Unit,
-    navigateToRewardDetail: (RewardDetailScreenType) -> Unit,
+    navigateToRewardDetail: (RewardDetailScreenType, Long, String, String, String) -> Unit,
+    rewardDetailResult: String?,
+    onDetailResultConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RewardListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
 
+    LaunchedEffect(rewardDetailResult) {
+        viewModel.onDetailResult(rewardDetailResult)
+        onDetailResultConsumed()
+    }
+
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             RewardListSideEffect.NavigateToHabit -> navigateToHabit()
-            is RewardListSideEffect.NavigateToRewardDetail -> navigateToRewardDetail(effect.screenType)
+            is RewardListSideEffect.NavigateToRewardDetail -> navigateToRewardDetail(
+                effect.screenType,
+                effect.habitId,
+                effect.habit,
+                effect.duration,
+                effect.reward,
+            )
             is RewardListSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
         }
     }
@@ -205,6 +220,7 @@ private val sampleParentRewards = listOf(
         id = 1L,
         title = "수학 공부하기",
         habit = "매일 수학 문제 풀기",
+        duration = HabitDuration.SEVEN_DAYS,
         reward = "치킨 사주기",
         rewardState = RewardStatus.IN_PROGRESS,
         habitIconRes = R.drawable.ic_habit_day_7,
@@ -213,6 +229,7 @@ private val sampleParentRewards = listOf(
         id = 2L,
         title = "영어 단어 외우기",
         habit = "매일 영어 단어 20개",
+        duration = HabitDuration.THREE_DAYS,
         reward = "게임 1시간",
         rewardState = RewardStatus.REWARD_CHECKING,
         habitIconRes = R.drawable.ic_habit_day_3,
@@ -221,6 +238,7 @@ private val sampleParentRewards = listOf(
         id = 3L,
         title = "독서하기",
         habit = "하루 30분 독서",
+        duration = HabitDuration.SEVEN_DAYS,
         reward = "문화상품권",
         rewardState = RewardStatus.REWARD_CHECKING,
         habitIconRes = R.drawable.ic_habit_day_7,
@@ -229,6 +247,7 @@ private val sampleParentRewards = listOf(
         id = 4L,
         title = "운동하기",
         habit = "줄넘기 100개",
+        duration = HabitDuration.FOURTEEN_DAYS,
         reward = "아이스크림",
         rewardState = RewardStatus.COMPLETE,
         habitIconRes = R.drawable.ic_habit_day_7,
