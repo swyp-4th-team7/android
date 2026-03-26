@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.hamburger.family.FamilyRoute
 import com.swyp.firsttodo.presentation.hamburger.share.ShareRoute
+import com.swyp.firsttodo.presentation.onboarding.navigation.navigateToOnboarding
 import kotlinx.serialization.Serializable
 
 sealed interface HamburgerRoute : Route {
@@ -25,7 +26,6 @@ fun NavController.navigateToShare() = navigate(HamburgerRoute.Share)
 
 fun NavGraphBuilder.hamburgerNavGraph(
     paddingValues: PaddingValues,
-    navigateToOnboarding: () -> Unit,
     navController: NavController,
 ) {
     composable<HamburgerRoute.Family> {
@@ -38,7 +38,7 @@ fun NavGraphBuilder.hamburgerNavGraph(
     composable<HamburgerRoute.Share> {
         ShareRoute(
             popBackStack = navController::popBackStack,
-            navigateToOnboarding = navigateToOnboarding,
+            navigateToOnboarding = navController::navigateToOnboarding,
             modifier = Modifier.padding(paddingValues),
         )
     }

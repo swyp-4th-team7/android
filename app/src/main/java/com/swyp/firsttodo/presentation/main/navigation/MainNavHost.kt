@@ -37,7 +37,6 @@ fun MainNavHost(
         authNavGraph(
             navController = navigator.navController,
             navigateToTodo = navigator::navigateToTodo,
-            navigateToOnboarding = navigator::navigateToOnboarding,
             paddingValues = paddingValues,
         )
         onboardingNavGraph(
@@ -67,7 +66,6 @@ fun MainNavHost(
         )
         hamburgerNavGraph(
             paddingValues = paddingValues,
-            navigateToOnboarding = navigator::navigateToOnboarding,
             navController = navigator.navController,
         )
     }
