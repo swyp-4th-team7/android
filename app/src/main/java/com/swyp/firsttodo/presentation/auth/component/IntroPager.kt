@@ -55,6 +55,7 @@ fun IntroPager(modifier: Modifier = Modifier) {
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(30.dp),
             ) {
                 Image(
