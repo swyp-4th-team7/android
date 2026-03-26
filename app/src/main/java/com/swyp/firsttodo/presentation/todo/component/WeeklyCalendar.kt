@@ -170,9 +170,11 @@ private fun MarkedDate(
             )
 
             stickerCode != null -> Image(
-                painter = painterResource(R.drawable.img_sticker_default_clover),
+                painter = painterResource(R.drawable.img_sticker_clover),
                 contentDescription = null,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp)
+                    .wrapContentSize(Alignment.Center),
             )
 
             else -> Text(
