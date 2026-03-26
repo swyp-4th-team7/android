@@ -42,9 +42,11 @@ class TodoViewModel
         }
 
         init {
-            getTodoCategories()
+            viewModelScope.launch {
+                getTodoCategories()
+                getTodos()
+            }
             getWeeklyStickers()
-            getTodos()
 
             viewModelScope.launch {
                 snapshotFlow { todoFieldState.text.toString() }
@@ -112,57 +114,53 @@ class TodoViewModel
             getWeeklyStickers()
         }
 
-        fun getTodoCategories() {
-            viewModelScope.launch {
-                todoRepository.getTodoCategories()
-                    .onSuccess { categories ->
-                        updateState { copy(categories = categories) }
-                    }
-                    .onFailure {
-                    }
-            }
-        }
+        suspend fun getTodoCategories() =
+            todoRepository.getTodoCategories()
+                .onSuccess { categories ->
+                    updateState { copy(categories = categories) }
+                }
+                .onFailure {
+                    if (it is ApiError) sendEffect(TodoSideEffect.ShowSnackbar(it.snackbarMsg()))
+                }
 
-        fun getTodos() {
+        suspend fun getTodos() {
             updateState { copy(todos = Async.Loading(this.todos.getDataOrNull())) }
 
-            viewModelScope.launch {
-                todoRepository.getTodos()
-                    .onSuccess { data ->
-                        val categories = uiState.value.categories
+            todoRepository.getTodos()
+                .onSuccess { data ->
+                    val categories = uiState.value.categories
 
-                        val newTodos = data.todos.map { todo ->
-                            TodayTodoUiModel(
-                                todoId = todo.todoId,
-                                title = todo.title,
-                                completed = todo.isCompleted,
-                                category = categories.find { it.name == todo.category }
-                                    ?: TodoCategoryModel(name = todo.category, label = todo.category),
-                                labelColor = todo.color.toLabelColor(),
-                            )
-                        }
-
-                        updateState {
-                            copy(
-                                remainTodoCount = Async.Success(data.remainingCount),
-                                todos = if (newTodos.isEmpty()) Async.Empty else Async.Success(newTodos),
-                                progressPercent = Async.Success(data.progressPercent),
-                            )
-                        }
+                    val newTodos = data.todos.map { todo ->
+                        TodayTodoUiModel(
+                            todoId = todo.todoId,
+                            title = todo.title,
+                            completed = todo.isCompleted,
+                            category = categories.find { it.name == todo.category }
+                                ?: TodoCategoryModel(name = todo.category, label = todo.category),
+                            labelColor = todo.color.toLabelColor(),
+                        )
                     }
-                    .onFailure { throwable ->
-                        val prevData = uiState.value.todos.getDataOrNull()
-                        updateState {
-                            copy(
-                                todos = if (prevData == null) Async.Init else Async.Success(prevData),
-                            )
-                        }
 
-                        if (throwable is ApiError) {
-                            sendEffect(TodoSideEffect.ShowSnackbar(throwable.snackbarMsg()))
-                        }
+                    updateState {
+                        copy(
+                            remainTodoCount = Async.Success(data.remainingCount),
+                            todos = if (newTodos.isEmpty()) Async.Empty else Async.Success(newTodos),
+                            progressPercent = Async.Success(data.progressPercent),
+                        )
                     }
-            }
+                }
+                .onFailure { throwable ->
+                    val prevData = uiState.value.todos.getDataOrNull()
+                    updateState {
+                        copy(
+                            todos = if (prevData == null) Async.Init else Async.Success(prevData),
+                        )
+                    }
+
+                    if (throwable is ApiError) {
+                        sendEffect(TodoSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                    }
+                }
         }
 
         fun toggleCompleteTodo(todoUiModel: TodayTodoUiModel) {
