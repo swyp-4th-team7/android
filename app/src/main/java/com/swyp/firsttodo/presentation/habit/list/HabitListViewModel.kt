@@ -88,7 +88,7 @@ class HabitListViewModel
         }
 
         fun onDeleteClick(habit: HabitModel) {
-            updateState { copy(delRequestedId = habit.habitId) }
+            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init) }
         }
 
         fun onDeleteConfirm() {

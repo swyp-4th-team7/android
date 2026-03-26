@@ -136,6 +136,6 @@ class ShareViewModel
         }
 
         fun onDisconnectClick(member: ConnectedFamilyModel) {
-            updateState { copy(disconnectRequestMember = member) }
+            updateState { copy(disconnectRequestMember = member, disconnectState = Async.Init) }
         }
     }

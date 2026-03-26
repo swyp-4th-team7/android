@@ -234,7 +234,13 @@ class TodoViewModel
         }
 
         fun openTodoDialog(todoUiModel: TodayTodoUiModel) {
-            updateState { copy(delRequestedId = todoUiModel.todoId, delRequestedType = DeleteDialogType.Todo) }
+            updateState {
+                copy(
+                    delRequestedId = todoUiModel.todoId,
+                    delRequestedType = DeleteDialogType.Todo,
+                    deleteState = Async.Init,
+                )
+            }
         }
 
         fun onDeleteCancel() {
@@ -269,6 +275,7 @@ class TodoViewModel
                                 updateState { copy(deleteState = Async.Init) }
                                 throwable.snackbarMsg()
                             }
+
                             else -> return@onFailure
                         }
 
