@@ -64,4 +64,6 @@ data class TodoUiState(
 
 sealed interface TodoSideEffect : UiEffect {
     data class ShowSnackbar(val message: String) : TodoSideEffect
+
+    data object FinishApp : TodoSideEffect
 }

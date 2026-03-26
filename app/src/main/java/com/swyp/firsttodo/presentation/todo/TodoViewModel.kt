@@ -35,6 +35,7 @@ class TodoViewModel
         private val stickerRepository: StickerRepository,
     ) : BaseViewModel<TodoUiState, TodoSideEffect>(TodoUiState()) {
         val todoFieldState = TextFieldState()
+        private var lastBackPressedTime = 0L
 
         private val role: Role = when (sessionManager.sessionState.value.userType) {
             Role.PARENT.request -> Role.PARENT
@@ -51,6 +52,16 @@ class TodoViewModel
             viewModelScope.launch {
                 snapshotFlow { todoFieldState.text.toString() }
                     .collect { updateState { copy(editingTodo = editingTodo.copy(title = it)) } }
+            }
+        }
+
+        fun onBack() {
+            val now = System.currentTimeMillis()
+            if (now - lastBackPressedTime < 2000L) {
+                sendEffect(TodoSideEffect.FinishApp)
+            } else {
+                lastBackPressedTime = now
+                sendEffect(TodoSideEffect.ShowSnackbar("한 번 더 '뒤로가기'하면 앱이 종료됩니다."))
             }
         }
 
