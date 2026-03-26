@@ -216,6 +216,7 @@ class TodoViewModel
                     todoBottomSheetState = Async.Init,
                     editingTodo = editingTodo.copy(
                         todoId = todoUiModel.todoId,
+                        title = todoUiModel.title,
                         category = todoUiModel.category,
                         labelColor = todoUiModel.labelColor,
                     ),
