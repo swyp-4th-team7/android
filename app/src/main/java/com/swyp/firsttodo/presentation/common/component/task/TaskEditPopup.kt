@@ -122,7 +122,7 @@ private fun PopupContent(
                     color = dividerColor,
                     start = Offset(horizontalPadding, y),
                     end = Offset(size.width - horizontalPadding, y),
-                    strokeWidth = 0.5.dp.toPx(),
+                    strokeWidth = 0.8.dp.toPx(),
                 )
             },
         )
