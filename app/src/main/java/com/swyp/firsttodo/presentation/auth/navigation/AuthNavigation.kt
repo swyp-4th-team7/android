@@ -19,10 +19,8 @@ sealed interface AuthRoute : Route {
 
 fun NavController.navigateToLogin(isSessionExpired: Boolean = false) {
     navigate(AuthRoute.Login(isSessionExpired)) {
-        if (isSessionExpired) {
-            popUpTo(0) { inclusive = true }
-            launchSingleTop = true
-        }
+        popUpTo(0) { inclusive = true }
+        launchSingleTop = true
     }
 }
 
