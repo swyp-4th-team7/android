@@ -83,9 +83,7 @@ fun FamilyScreen(
                 uiState.familyData?.let { data ->
                     FamilyDashBoard(
                         familyInfos = data,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
