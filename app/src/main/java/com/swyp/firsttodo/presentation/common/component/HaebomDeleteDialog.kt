@@ -7,18 +7,24 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
+import com.swyp.firsttodo.core.common.extension.skeleton
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicDialog
@@ -50,20 +56,28 @@ fun HaebomDeleteDialog(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     onDismiss: () -> Unit,
+    loadingState: Async<Unit>,
     modifier: Modifier = Modifier,
     confirmBtnLabel: String = "네, 삭제할래요",
     cancelBtnLabel: String = "아니요",
 ) {
+    LaunchedEffect(loadingState) {
+        if (loadingState is Async.Success) onDismiss()
+    }
+
     HaebomBasicDialog(
         onDismiss = onDismiss,
         modifier = modifier.padding(horizontal = screenWidthDp(20.dp)),
     ) {
+        val isLoading = loadingState is Async.Loading
+
         DialogContent(
             dialogType = dialogType,
             onConfirm = onConfirm,
             onCancel = onCancel,
             confirmBtnLabel = confirmBtnLabel,
             cancelBtnLabel = cancelBtnLabel,
+            isLoading = isLoading,
         )
     }
 }
@@ -73,27 +87,44 @@ fun DialogContent(
     dialogType: DeleteDialogType,
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
-    confirmBtnLabel: String = "네, 삭제할래요",
-    cancelBtnLabel: String = "아니요",
+    isLoading: Boolean,
+    confirmBtnLabel: String,
+    cancelBtnLabel: String,
 ) {
     Column(
         modifier = Modifier
             .padding(all = screenWidthDp(24.dp)),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
-            text = dialogType.title,
-            color = HaebomTheme.colors.black,
-            style = HaebomTheme.typo.card,
-        )
+        if (isLoading) {
+            Spacer(
+                modifier = Modifier
+                    .size(198.dp, 26.dp)
+                    .skeleton(),
+            )
+        } else {
+            Text(
+                text = dialogType.title,
+                color = HaebomTheme.colors.black,
+                style = HaebomTheme.typo.card,
+            )
+        }
 
         Spacer(Modifier.heightForScreenPercentage(8.dp))
 
-        Text(
-            text = dialogType.description,
-            color = HaebomTheme.colors.gray400,
-            style = HaebomTheme.typo.description,
-        )
+        if (isLoading) {
+            Spacer(
+                modifier = Modifier
+                    .size(138.dp, 21.dp)
+                    .skeleton(),
+            )
+        } else {
+            Text(
+                text = dialogType.description,
+                color = HaebomTheme.colors.gray400,
+                style = HaebomTheme.typo.description,
+            )
+        }
 
         Spacer(Modifier.heightForScreenPercentage(10.dp))
 
@@ -148,14 +179,24 @@ private fun DialogButton(
     )
 }
 
+private class HaebomDeleteDialogContentPreviewProvider : PreviewParameterProvider<Boolean> {
+    override val values: Sequence<Boolean>
+        get() = sequenceOf(true, false)
+}
+
 @Preview(showBackground = true, widthDp = 360)
 @Composable
-private fun HaebomDeleteDialogContentPreview() {
+private fun HaebomDeleteDialogContentPreview(
+    @PreviewParameter(HaebomDeleteDialogContentPreviewProvider::class) isLoading: Boolean,
+) {
     HaebomTheme {
         DialogContent(
             dialogType = DeleteDialogType.Todo,
             onConfirm = {},
             onCancel = {},
+            isLoading = isLoading,
+            confirmBtnLabel = "네",
+            cancelBtnLabel = "아니오",
         )
     }
 }

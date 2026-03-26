@@ -14,6 +14,7 @@ data class HabitListUiState(
     val role: Role? = null,
     val habits: Async<List<HabitModel>> = Async.Init,
     val delRequestedId: Long? = null,
+    val deleteState: Async<Unit> = Async.Init,
 ) : UiState {
     val showDeleteDialog = delRequestedId != null
 

@@ -52,6 +52,7 @@ fun TodoRoute(
             onConfirm = viewModel::onDeleteConfirm,
             onCancel = viewModel::onDeleteCancel,
             onDismiss = viewModel::onDeleteCancel,
+            loadingState = uiState.deleteState,
         )
     }
 

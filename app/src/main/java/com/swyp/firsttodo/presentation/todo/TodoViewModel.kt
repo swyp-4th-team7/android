@@ -248,23 +248,28 @@ class TodoViewModel
         private fun deleteTodo() {
             val todoId = uiState.value.delRequestedId ?: return
 
+            updateState { copy(deleteState = Async.Loading()) }
+
             viewModelScope.launch {
                 todoRepository.deleteTodo(todoId)
                     .onSuccess {
                         getTodos()
-                        updateState { copy(delRequestedId = null) }
+                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
                         sendEffect(TodoSideEffect.ShowSnackbar("할 일이 삭제되었습니다."))
                     }
                     .onFailure { throwable ->
                         val message = when (throwable) {
                             is TodoError.IdNotFound -> {
                                 getTodos()
-                                updateState { copy(delRequestedId = null) }
+                                updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
                                 "이미 삭제된 할 일 입니다."
                             }
 
-                            is ApiError -> throwable.snackbarMsg()
-                            else -> ""
+                            is ApiError -> {
+                                updateState { copy(deleteState = Async.Init) }
+                                throwable.snackbarMsg()
+                            }
+                            else -> return@onFailure
                         }
 
                         sendEffect(TodoSideEffect.ShowSnackbar(message))

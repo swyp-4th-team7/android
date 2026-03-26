@@ -35,6 +35,7 @@ data class TodoUiState(
     val todoBottomSheetState: Async<Unit> = Async.Init,
     val delRequestedId: Long? = null,
     val delRequestedType: DeleteDialogType = DeleteDialogType.Todo,
+    val deleteState: Async<Unit> = Async.Init,
 ) : UiState {
     val todoCategories: List<TodoCategoryModel> = categories
 
