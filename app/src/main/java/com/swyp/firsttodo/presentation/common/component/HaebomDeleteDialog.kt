@@ -106,6 +106,7 @@ fun DialogContent(
             Text(
                 text = dialogType.title,
                 color = HaebomTheme.colors.black,
+                textAlign = TextAlign.Center,
                 style = HaebomTheme.typo.card,
             )
         }
@@ -122,6 +123,7 @@ fun DialogContent(
             Text(
                 text = dialogType.description,
                 color = HaebomTheme.colors.gray400,
+                textAlign = TextAlign.Center,
                 style = HaebomTheme.typo.description,
             )
         }

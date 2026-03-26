@@ -131,9 +131,7 @@ class ShareViewModel
             }
         }
 
-        fun onInviteCodeCopy() {
-            sendEffect(ShareSideEffect.ShowSnackbar("클립보드에 복사되었습니다."))
-        }
+        fun onInviteCodeCopy() {}
 
         fun onDisconnectClick(member: ConnectedFamilyModel) {
             updateState { copy(disconnectRequestMember = member, disconnectState = Async.Init) }

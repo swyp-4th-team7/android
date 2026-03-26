@@ -47,10 +47,12 @@ fun MyCodeSection(
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             when (inviteCode) {
                 is Async.Success -> Text(
                     text = inviteCode.data,
+                    modifier = Modifier.weight(1f),
                     color = HaebomTheme.colors.black,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
