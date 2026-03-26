@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,21 +39,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
+import com.swyp.firsttodo.core.common.extension.skeleton
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
 import com.swyp.firsttodo.core.designsystem.component.HaebomBottomSheetHandle
+import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
+import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
+import com.swyp.firsttodo.core.designsystem.theme.SemiBoldStyle
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
 import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
-import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
-import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
 import com.swyp.firsttodo.presentation.main.snackbar.HaebomSnackbarHost
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 
@@ -83,7 +87,7 @@ enum class TodoBottomSheetType(
     ),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TodoBottomSheet(
     sheetType: TodoBottomSheetType,
@@ -101,6 +105,9 @@ fun TodoBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
+    val snackbarHostState = LocalSnackbarHostState.current
+    val isLoading = loadingStatus is Async.Loading
+    val colors = HaebomTheme.colors
 
     LaunchedEffect(loadingStatus) {
         if (loadingStatus is Async.Success) {
@@ -108,8 +115,6 @@ fun TodoBottomSheet(
             onDismiss()
         }
     }
-
-    val snackbarHostState = LocalSnackbarHostState.current
 
     HaebomBasicBottomSheet(
         onDismiss = onDismiss,
@@ -125,23 +130,153 @@ fun TodoBottomSheet(
             ) {
                 HaebomBottomSheetHandle()
 
-                when (loadingStatus) {
-                    is Async.Loading -> SkeletonView(
-                        onDismiss = onDismiss,
-                        categories = categories,
-                    )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom,
+                ) {
+                    if (isLoading) {
+                        Spacer(Modifier.size(161.dp, 29.dp).skeleton())
+                    } else {
+                        Text(
+                            text = sheetType.title,
+                            color = colors.black,
+                            style = BoldStyle.copy(fontSize = 20.sp),
+                        )
+                    }
 
-                    else -> BottomSheetContent(
-                        sheetType = sheetType,
-                        btnEnabled = btnEnabled,
-                        categories = categories,
-                        selectedCategory = selectedCategory,
-                        selectedLabelColor = selectedLabelColor,
-                        titleFieldState = titleFieldState,
-                        onLabelColorClick = onLabelColorClick,
-                        onBtnClick = onBtnClick,
-                        onCategoryClick = onCategoryClick,
-                        onDismiss = onDismiss,
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .noRippleClickable(onDismiss)
+                            .padding(all = 12.dp),
+                        tint = colors.black,
+                    )
+                }
+
+                if (isLoading) {
+                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.size(241.dp, 20.dp).skeleton())
+                } else {
+                    Text(
+                        text = sheetType.description,
+                        color = colors.gray400,
+                        style = RegularStyle.copy(fontSize = 14.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(28.dp))
+
+                if (isLoading) {
+                    Spacer(Modifier.size(56.dp, 26.dp).skeleton())
+                } else {
+                    Text(
+                        text = "할 일",
+                        color = colors.black,
+                        style = SemiBoldStyle.copy(fontSize = 18.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                if (isLoading) {
+                    Spacer(Modifier.fillMaxWidth().height(48.dp).skeleton())
+                    Spacer(Modifier.height(20.dp))
+                } else {
+                    HaebomMultiLineTextField(
+                        fieldState = titleFieldState,
+                        placeholder = "할 일을 입력해 주세요.",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    )
+                }
+
+                if (isLoading) {
+                    Spacer(Modifier.size(70.dp, 28.dp).skeleton())
+                } else {
+                    Text(
+                        text = "카테고리",
+                        color = colors.black,
+                        style = SemiBoldStyle.copy(fontSize = 18.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                if (isLoading) {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        categories.forEach { _ ->
+                            Spacer(Modifier.size(64.dp, 32.dp).skeleton())
+                        }
+                    }
+
+                    Spacer(Modifier.height(40.dp))
+                } else {
+                    Column(
+                        modifier = Modifier.padding(bottom = 40.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        TaskCategoryList(
+                            categories = categories,
+                            selectedCategory = selectedCategory,
+                            onCategoryClick = onCategoryClick,
+                            getDisplayName = { it.label },
+                        )
+                    }
+                }
+
+                if (isLoading) {
+                    Spacer(Modifier.size(70.dp, 26.dp).skeleton())
+                } else {
+                    Text(
+                        text = "색상 선택",
+                        color = colors.black,
+                        style = SemiBoldStyle.copy(fontSize = 18.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                FlowRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 22.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    LabelColor.entries.forEach { labelColor ->
+                        if (isLoading) {
+                            Spacer(
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .size(44.dp)
+                                    .skeleton(),
+                            )
+                        } else {
+                            LabelColorChip(
+                                labelColor = labelColor,
+                                selected = selectedLabelColor == labelColor,
+                                onClick = { onLabelColorClick(labelColor) },
+                            )
+                        }
+                    }
+                }
+
+                if (isLoading) {
+                    Spacer(Modifier.fillMaxWidth().height(52.dp).skeleton())
+                } else {
+                    HaebomLargeButton(
+                        text = sheetType.btnText,
+                        onClick = onBtnClick,
+                        enabled = btnEnabled,
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }
@@ -155,207 +290,6 @@ fun TodoBottomSheet(
                     .padding(horizontal = screenWidthDp(16.dp)),
             )
         }
-    }
-}
-
-@Composable
-fun SkeletonView(
-    onDismiss: () -> Unit,
-    categories: List<TodoCategoryModel>,
-    modifier: Modifier = Modifier,
-) {
-    val color = HaebomTheme.colors.gray50
-    val shape = RoundedCornerShape(4.dp)
-
-    Column(modifier = modifier) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            Spacer(
-                modifier = Modifier
-                    .background(color, shape)
-                    .size(161.dp, 29.dp),
-            )
-
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
-                contentDescription = null,
-                modifier = Modifier
-                    .noRippleClickable(onDismiss)
-                    .padding(all = 12.dp),
-                tint = HaebomTheme.colors.black,
-            )
-        }
-
-        Spacer(Modifier.height(2.dp))
-
-        Spacer(
-            modifier = Modifier
-                .background(color, shape)
-                .size(241.dp, 20.dp),
-        )
-
-        Spacer(Modifier.height(28.dp))
-
-        Spacer(
-            modifier = Modifier
-                .background(color, shape)
-                .size(56.dp, 26.dp),
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        Spacer(
-            modifier = Modifier
-                .background(color, shape)
-                .fillMaxWidth()
-                .height(48.dp),
-        )
-
-        Spacer(Modifier.height(20.dp))
-
-        Spacer(
-            modifier = Modifier
-                .background(color, shape)
-                .size(70.dp, 28.dp),
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            categories.map {
-                Spacer(
-                    modifier = Modifier
-                        .background(color, shape)
-                        .size(64.dp, 32.dp),
-                )
-            }
-        }
-
-        Spacer(Modifier.height(40.dp))
-
-        Spacer(
-            modifier = Modifier
-                .background(color, shape)
-                .size(70.dp, 26.dp),
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            LabelColor.entries.forEach { _ ->
-                Spacer(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .background(color, shape)
-                        .size(44.dp),
-                )
-            }
-        }
-
-        Spacer(Modifier.height(22.dp))
-
-        Spacer(
-            modifier = Modifier
-                .background(color, shape)
-                .fillMaxWidth()
-                .height(52.dp),
-        )
-    }
-}
-
-@Composable
-fun BottomSheetContent(
-    sheetType: TodoBottomSheetType,
-    btnEnabled: Boolean,
-    categories: List<TodoCategoryModel>,
-    selectedCategory: TodoCategoryModel?,
-    selectedLabelColor: LabelColor?,
-    titleFieldState: TextFieldState,
-    onLabelColorClick: (LabelColor) -> Unit,
-    onBtnClick: () -> Unit,
-    onCategoryClick: (TodoCategoryModel) -> Unit,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier) {
-        TaskSheetHeader(
-            title = sheetType.title,
-            description = sheetType.description,
-            onDismiss = onDismiss,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 28.dp),
-        )
-
-        TaskInputSection(
-            title = "할 일",
-        ) {
-            HaebomMultiLineTextField(
-                fieldState = titleFieldState,
-                placeholder = "할 일을 입력해 주세요.",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                ),
-            )
-        }
-
-        TaskInputSection(
-            title = "카테고리",
-        ) {
-            Column(
-                modifier = Modifier.padding(bottom = 40.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                TaskCategoryList(
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategoryClick = onCategoryClick,
-                    getDisplayName = { it.label },
-                )
-            }
-        }
-
-        TaskInputSection(
-            title = "색상 선택",
-        ) {
-            @OptIn(ExperimentalLayoutApi::class)
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 22.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                LabelColor.entries.forEach { labelColor ->
-                    LabelColorChip(
-                        labelColor = labelColor,
-                        selected = selectedLabelColor == labelColor,
-                        onClick = { onLabelColorClick(labelColor) },
-                    )
-                }
-            }
-        }
-
-        HaebomLargeButton(
-            text = sheetType.btnText,
-            onClick = onBtnClick,
-            enabled = btnEnabled,
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }
 

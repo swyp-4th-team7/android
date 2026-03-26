@@ -1,9 +1,11 @@
 package com.swyp.firsttodo.core.common.extension
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
+import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 inline fun Modifier.noRippleClickable(
     crossinline onClick: () -> Unit,
@@ -84,6 +87,9 @@ fun Modifier.dashedCircleBorder(
             )
         }
     }
+
+@Composable
+fun Modifier.skeleton(): Modifier = background(HaebomTheme.colors.gray50, RoundedCornerShape(4.dp))
 
 @Composable
 fun Modifier.heightForScreenPercentage(height: Dp): Modifier = this.height(screenHeightDp(height))
