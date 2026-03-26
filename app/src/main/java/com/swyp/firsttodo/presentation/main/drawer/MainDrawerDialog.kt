@@ -29,15 +29,15 @@ enum class DrawerDialogType(
     LOGOUT(
         title = "로그아웃",
         description = "로그아웃 하시겠습니까?",
-        cancelBtnText = "취소",
-        confirmBtnText = "로그아웃",
+        cancelBtnText = "아니요",
+        confirmBtnText = "네",
     ),
 
     WITHDRAWAL(
         title = "탈퇴하기",
         description = "회원 탈퇴 시 개인정보와 설정이 모두 삭제됩니다.\n탈퇴를 진행하시겠습니까?",
-        cancelBtnText = "취소",
-        confirmBtnText = "탈퇴",
+        cancelBtnText = "아니요",
+        confirmBtnText = "네",
     ),
 }
 
