@@ -136,10 +136,14 @@ fun HabitDetailScreen(
                     placeholder = "습관을 작성해주세요.",
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
+                        imeAction = if (screenType == HabitDetailScreenType.CHILD) ImeAction.Next else ImeAction.Done,
                     ),
-                    onKeyboardAction = KeyboardActionHandler {
-                        focusManager.moveFocus(FocusDirection.Next)
+                    onKeyboardAction = if (screenType == HabitDetailScreenType.CHILD) {
+                        KeyboardActionHandler {
+                            focusManager.moveFocus(FocusDirection.Next)
+                        }
+                    } else {
+                        null
                     },
                 )
             }
