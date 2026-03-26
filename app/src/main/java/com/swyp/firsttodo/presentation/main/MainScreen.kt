@@ -73,7 +73,6 @@ fun MainScreen(
                     MainTopBar(
                         visible = navigator.shouldShowBottomBar(),
                         onMenuClick = viewModel::onMenuClick,
-                        onAlarmClick = viewModel::onAlarmClick,
                     )
 
                     MainDrawer(

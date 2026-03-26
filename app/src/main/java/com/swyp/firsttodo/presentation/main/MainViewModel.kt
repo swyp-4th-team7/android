@@ -81,7 +81,4 @@ class MainViewModel
         fun onDrawerDismiss() {
             _showDrawer.update { false }
         }
-
-        fun onAlarmClick() {
-        }
     }
