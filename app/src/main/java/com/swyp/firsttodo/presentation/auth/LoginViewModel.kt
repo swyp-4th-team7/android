@@ -100,7 +100,6 @@ class LoginViewModel
                     updateState { copy(loginState = Async.Success(Unit)) }
 
                     when {
-                        isSessionExpired -> sendThrottledEffect(LoginSideEffect.NavigateToHome)
                         isProfileComplete -> sendThrottledEffect(LoginSideEffect.NavigateToHome)
                         else -> sendThrottledEffect(LoginSideEffect.NavigateToOnboarding)
                     }
