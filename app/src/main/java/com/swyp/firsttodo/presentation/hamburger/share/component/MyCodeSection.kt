@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -45,10 +47,12 @@ fun MyCodeSection(
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             when (inviteCode) {
                 is Async.Success -> Text(
                     text = inviteCode.data,
+                    modifier = Modifier.weight(1f),
                     color = HaebomTheme.colors.black,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -70,7 +74,8 @@ fun MyCodeSection(
                     .heightIn(min = 40.dp)
                     .clip(RoundedCornerShape(4.dp))
                     .background(HaebomTheme.colors.orange500)
-                    .padding(horizontal = 15.dp, vertical = 10.dp),
+                    .padding(horizontal = 15.dp, vertical = 10.dp)
+                    .wrapContentSize(Alignment.Center),
                 color = HaebomTheme.colors.white,
                 style = HaebomTheme.typo.buttonM,
             )

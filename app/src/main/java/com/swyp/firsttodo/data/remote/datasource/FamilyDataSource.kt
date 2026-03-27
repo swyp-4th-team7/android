@@ -4,6 +4,7 @@ import com.swyp.firsttodo.core.network.model.BaseResponse
 import com.swyp.firsttodo.data.remote.dto.request.family.FamilyConnectRequestBody
 import com.swyp.firsttodo.data.remote.dto.response.family.ConnectedFamilyResponseDto
 import com.swyp.firsttodo.data.remote.dto.response.family.FamilyDashboardResponseDto
+import com.swyp.firsttodo.data.remote.dto.response.family.MyInviteCodeResponseDto
 
 interface FamilyDataSource {
     suspend fun postFamilyConnect(request: FamilyConnectRequestBody): BaseResponse<Unit>
@@ -14,5 +15,5 @@ interface FamilyDataSource {
 
     suspend fun getFamilyDashboard(): BaseResponse<FamilyDashboardResponseDto>
 
-    suspend fun getMyInviteCode(): BaseResponse<String>
+    suspend fun getMyInviteCode(): BaseResponse<MyInviteCodeResponseDto>
 }

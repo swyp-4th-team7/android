@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.auth.LoginRoute
+import com.swyp.firsttodo.presentation.onboarding.navigation.navigateToOnboarding
 import com.swyp.firsttodo.presentation.webview.navigation.navigateToWebView
 import kotlinx.serialization.Serializable
 
@@ -18,20 +19,22 @@ sealed interface AuthRoute : Route {
 }
 
 fun NavController.navigateToLogin(isSessionExpired: Boolean = false) {
-    navigate(AuthRoute.Login(isSessionExpired))
+    navigate(AuthRoute.Login(isSessionExpired)) {
+        popUpTo(0) { inclusive = true }
+        launchSingleTop = true
+    }
 }
 
 fun NavGraphBuilder.authNavGraph(
     navController: NavHostController,
     navigateToTodo: () -> Unit,
-    navigateToOnboarding: () -> Unit,
     paddingValues: PaddingValues,
 ) {
     composable<AuthRoute.Login> {
         LoginRoute(
             popBackStack = navController::popBackStack,
             navigateToTodo = navigateToTodo,
-            navigateToOnboarding = navigateToOnboarding,
+            navigateToOnboarding = navController::navigateToOnboarding,
             navigateToWebView = navController::navigateToWebView,
             modifier = Modifier.padding(paddingValues),
         )

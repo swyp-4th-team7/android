@@ -5,15 +5,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,7 +28,6 @@ const val MAIN_TOP_BAR_HEIGHT = 56
 fun MainTopBar(
     visible: Boolean,
     onMenuClick: () -> Unit,
-    onAlarmClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
@@ -38,29 +35,18 @@ fun MainTopBar(
         enter = fadeIn(animationSpec = tween(300)),
         exit = fadeOut(animationSpec = tween(300)),
     ) {
-        Row(
+        Box(
             modifier = modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(MAIN_TOP_BAR_HEIGHT.dp)
                 .background(HaebomTheme.colors.yellow400),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_menu),
                 contentDescription = null,
                 modifier = Modifier
                     .noRippleClickable(onMenuClick)
-                    .padding(all = 16.dp),
-                tint = Color.Unspecified,
-            )
-
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_alarm),
-                contentDescription = null,
-                modifier = Modifier
-                    .noRippleClickable(onAlarmClick)
                     .padding(all = 16.dp),
                 tint = Color.Unspecified,
             )
@@ -75,7 +61,6 @@ private fun MainTopBarPreview() {
         MainTopBar(
             visible = true,
             onMenuClick = {},
-            onAlarmClick = {},
         )
     }
 }

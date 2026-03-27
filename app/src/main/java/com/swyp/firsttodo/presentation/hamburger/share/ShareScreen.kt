@@ -54,6 +54,7 @@ fun ShareRoute(
             onDismiss = viewModel::closeDialog,
             confirmBtnLabel = "네",
             cancelBtnLabel = "아니요",
+            loadingState = uiState.disconnectState,
         )
     }
 

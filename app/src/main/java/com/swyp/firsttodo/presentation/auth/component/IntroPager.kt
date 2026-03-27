@@ -84,7 +84,6 @@ fun IntroPager(modifier: Modifier = Modifier) {
 
                 Box(
                     modifier = Modifier
-                        .background(color, CircleShape)
                         .size(8.dp)
                         .figmaDropShadow(
                             shape = CircleShape,
@@ -92,7 +91,8 @@ fun IntroPager(modifier: Modifier = Modifier) {
                             blur = 1.dp,
                             spread = 0.dp,
                             color = HaebomTheme.colors.black.copy(alpha = 0.2f),
-                        ),
+                        )
+                        .background(color, CircleShape),
                 )
             }
         }

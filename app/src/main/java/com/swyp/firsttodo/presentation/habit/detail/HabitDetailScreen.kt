@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.habit.detail
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -31,9 +32,9 @@ import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
+import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
-import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailHeader
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailTopBar
 import com.swyp.firsttodo.presentation.habit.extension.displayName
@@ -110,6 +111,7 @@ fun HabitDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
+                    .background(HaebomTheme.colors.white)
                     .padding(horizontal = screenWidthDp(16.dp))
                     .padding(vertical = screenHeightDp(20.dp)),
             )
@@ -131,15 +133,19 @@ fun HabitDetailScreen(
                 title = "습관 작성",
                 modifier = Modifier.padding(bottom = 28.dp),
             ) {
-                TaskTextField(
+                HaebomMultiLineTextField(
                     fieldState = titleFieldState,
                     placeholder = "습관을 작성해주세요.",
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
+                        imeAction = if (screenType == HabitDetailScreenType.CHILD) ImeAction.Next else ImeAction.Done,
                     ),
-                    onKeyboardAction = KeyboardActionHandler {
-                        focusManager.moveFocus(FocusDirection.Next)
+                    onKeyboardAction = if (screenType == HabitDetailScreenType.CHILD) {
+                        KeyboardActionHandler {
+                            focusManager.moveFocus(FocusDirection.Next)
+                        }
+                    } else {
+                        null
                     },
                 )
             }
@@ -162,7 +168,7 @@ fun HabitDetailScreen(
                     title = "보상 정하기",
                     modifier = Modifier.padding(bottom = 28.dp),
                 ) {
-                    TaskTextField(
+                    HaebomMultiLineTextField(
                         fieldState = rewardFieldState,
                         placeholder = "받고 싶은 보상을 적어주세요.",
                         modifier = Modifier.fillMaxWidth(),

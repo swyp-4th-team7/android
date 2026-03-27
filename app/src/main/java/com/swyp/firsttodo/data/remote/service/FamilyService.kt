@@ -4,6 +4,7 @@ import com.swyp.firsttodo.core.network.model.BaseResponse
 import com.swyp.firsttodo.data.remote.dto.request.family.FamilyConnectRequestBody
 import com.swyp.firsttodo.data.remote.dto.response.family.ConnectedFamilyResponseDto
 import com.swyp.firsttodo.data.remote.dto.response.family.FamilyDashboardResponseDto
+import com.swyp.firsttodo.data.remote.dto.response.family.MyInviteCodeResponseDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -28,5 +29,5 @@ interface FamilyService {
     suspend fun getFamilyDashboard(): BaseResponse<FamilyDashboardResponseDto>
 
     @GET("/api/v1/users/me/invite-code")
-    suspend fun getMyInviteCode(): BaseResponse<String>
+    suspend fun getMyInviteCode(): BaseResponse<MyInviteCodeResponseDto>
 }

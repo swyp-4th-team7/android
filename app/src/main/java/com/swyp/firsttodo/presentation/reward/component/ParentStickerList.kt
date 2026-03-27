@@ -45,86 +45,88 @@ fun ParentStickerList(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     data.forEach { sticker ->
-                        Column(
-                            modifier = Modifier
-                                .background(
-                                    color = HaebomTheme.colors.gray50,
-                                    shape = RoundedCornerShape(8.dp),
-                                )
-                                .padding(horizontal = 8.dp)
-                                .padding(top = 16.dp, bottom = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                        ) {
-                            Text(
-                                text = sticker.nickname ?: "",
-                                color = HaebomTheme.colors.black,
-                                style = HaebomTheme.typo.buttonL,
-                            )
-
-                            Row(
+                        sticker.startDate?.let { startDate ->
+                            Column(
                                 modifier = Modifier
                                     .background(
-                                        color = HaebomTheme.colors.white,
-                                        shape = RoundedCornerShape(4.dp),
+                                        color = HaebomTheme.colors.gray50,
+                                        shape = RoundedCornerShape(8.dp),
                                     )
-                                    .padding(horizontal = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
+                                    .padding(horizontal = 8.dp)
+                                    .padding(top = 16.dp, bottom = 8.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
                             ) {
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                                ) {
-                                    Text(
-                                        text = "스티커판 : ",
-                                        color = HaebomTheme.colors.gray300,
-                                        style = HaebomTheme.typo.helperText,
-                                    )
+                                Text(
+                                    text = sticker.nickname ?: "",
+                                    color = HaebomTheme.colors.black,
+                                    style = HaebomTheme.typo.buttonL,
+                                )
 
-                                    Text(
-                                        text = "시작 날짜 : ",
-                                        color = HaebomTheme.colors.gray300,
-                                        style = HaebomTheme.typo.helperText,
-                                    )
-                                }
-
-                                Column(
-                                    modifier = Modifier.weight(1f),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                                ) {
-                                    Text(
-                                        text = "${sticker.boardNumber}번째",
-                                        color = HaebomTheme.colors.gray300,
-                                        style = HaebomTheme.typo.helperText,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-
-                                    Text(
-                                        text = sticker.startDate ?: "",
-                                        color = HaebomTheme.colors.gray300,
-                                        style = HaebomTheme.typo.helperText,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
-
-                                Box(
+                                Row(
                                     modifier = Modifier
-                                        .padding(vertical = 8.dp)
-                                        .padding(start = 8.dp),
+                                        .background(
+                                            color = HaebomTheme.colors.white,
+                                            shape = RoundedCornerShape(4.dp),
+                                        )
+                                        .padding(horizontal = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    Text(
-                                        text = "${sticker.filledSlots} / 30",
+                                    Column(
+                                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                                    ) {
+                                        Text(
+                                            text = "스티커판 : ",
+                                            color = HaebomTheme.colors.gray300,
+                                            style = HaebomTheme.typo.helperText,
+                                        )
+
+                                        Text(
+                                            text = "시작 날짜 : ",
+                                            color = HaebomTheme.colors.gray300,
+                                            style = HaebomTheme.typo.helperText,
+                                        )
+                                    }
+
+                                    Column(
+                                        modifier = Modifier.weight(1f),
+                                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                                    ) {
+                                        Text(
+                                            text = "${sticker.boardNumber}번째",
+                                            color = HaebomTheme.colors.gray300,
+                                            style = HaebomTheme.typo.helperText,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+
+                                        Text(
+                                            text = startDate,
+                                            color = HaebomTheme.colors.gray300,
+                                            style = HaebomTheme.typo.helperText,
+                                            maxLines = 1,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
+
+                                    Box(
                                         modifier = Modifier
-                                            .sizeIn(84.dp, 36.dp)
-                                            .background(
-                                                color = HaebomTheme.colors.yellow300,
-                                                shape = RoundedCornerShape(4.dp),
-                                            )
-                                            .padding(all = 5.dp)
-                                            .wrapContentSize(Alignment.Center),
-                                        color = HaebomTheme.colors.orange500,
-                                        style = HaebomTheme.typo.card,
-                                    )
+                                            .padding(vertical = 8.dp)
+                                            .padding(start = 8.dp),
+                                    ) {
+                                        Text(
+                                            text = "${sticker.filledSlots} / 30",
+                                            modifier = Modifier
+                                                .sizeIn(84.dp, 36.dp)
+                                                .background(
+                                                    color = HaebomTheme.colors.yellow300,
+                                                    shape = RoundedCornerShape(4.dp),
+                                                )
+                                                .padding(all = 5.dp)
+                                                .wrapContentSize(Alignment.Center),
+                                            color = HaebomTheme.colors.orange500,
+                                            style = HaebomTheme.typo.card,
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -151,6 +153,14 @@ private val sampleStickers = listOf(
         filledSlots = 15,
         boardSize = 30,
         startDate = "2026.03.17 (화)",
+    ),
+    ChildStickerModel(
+        childId = 2L,
+        nickname = "해봄이",
+        boardNumber = 20,
+        filledSlots = 15,
+        boardSize = 30,
+        startDate = null,
     ),
 )
 

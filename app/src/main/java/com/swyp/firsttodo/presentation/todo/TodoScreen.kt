@@ -1,15 +1,17 @@
 package com.swyp.firsttodo.presentation.todo
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -20,7 +22,6 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
-import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.domain.model.sticker.WeeklyStickerModel
 import com.swyp.firsttodo.domain.model.sticker.WeeklyStickersModel
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
@@ -28,9 +29,6 @@ import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
 import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
-import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheet
-import com.swyp.firsttodo.presentation.todo.component.ScheduleList
-import com.swyp.firsttodo.presentation.todo.component.ScheduleUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodayTodoUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodoBanner
 import com.swyp.firsttodo.presentation.todo.component.TodoBottomSheet
@@ -44,11 +42,17 @@ fun TodoRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
+    val activity = LocalContext.current as? Activity
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             is TodoSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
+            TodoSideEffect.FinishApp -> activity?.finish()
         }
+    }
+
+    BackHandler {
+        viewModel.onBack()
     }
 
     if (uiState.showDeleteDialog) {
@@ -57,6 +61,7 @@ fun TodoRoute(
             onConfirm = viewModel::onDeleteConfirm,
             onCancel = viewModel::onDeleteCancel,
             onDismiss = viewModel::onDeleteCancel,
+            loadingState = uiState.deleteState,
         )
     }
 
@@ -76,21 +81,6 @@ fun TodoRoute(
         )
     }
 
-    if (uiState.showScheduleBottomSheet) {
-        ScheduleBottomSheet(
-            sheetType = uiState.scheduleBottomSheetType,
-            btnEnabled = uiState.editingSchedule.isBtnEnabled,
-            loadingStatus = uiState.scheduleBottomSheetState,
-            selectedCategory = uiState.editingSchedule.category,
-            titleFieldState = viewModel.scheduleTitleFieldState,
-            dateFieldState = viewModel.scheduleDateFieldState,
-            dateErrorText = uiState.editingSchedule.dateErrorText,
-            onBtnClick = viewModel::onScheduleBottomBtnClick,
-            onCategoryClick = viewModel::onScheduleCategoryClick,
-            onDismiss = viewModel::closeScheduleBottomSheet,
-        )
-    }
-
     TodoScreen(
         uiState = uiState,
         onCalenderPrevClick = viewModel::onCalenderPrevClick,
@@ -99,9 +89,6 @@ fun TodoRoute(
         onTodoCheckClick = viewModel::toggleCompleteTodo,
         onTodoEditClick = viewModel::openTodoEditBottomSheet,
         onTodoDeleteClick = viewModel::openTodoDialog,
-        onSchedulePlusClick = viewModel::openScheduleCreateBottomSheet,
-        onScheduleEditClick = viewModel::openScheduleEditBottomSheet,
-        onScheduleDeleteClick = viewModel::openScheduleDialog,
         modifier = modifier,
     )
 }
@@ -115,9 +102,6 @@ fun TodoScreen(
     onTodoCheckClick: (TodayTodoUiModel) -> Unit,
     onTodoEditClick: (TodayTodoUiModel) -> Unit,
     onTodoDeleteClick: (TodayTodoUiModel) -> Unit,
-    onSchedulePlusClick: () -> Unit,
-    onScheduleEditClick: (ScheduleUiModel) -> Unit,
-    onScheduleDeleteClick: (ScheduleUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -130,6 +114,8 @@ fun TodoScreen(
         TopBarArea()
 
         TodoBanner(
+            imageRes = uiState.characterImageRes,
+            bubbleText = uiState.bubbleText,
             remainTodo = uiState.remainTodoCount,
         )
 
@@ -151,22 +137,6 @@ fun TodoScreen(
                 onEditClick = onTodoEditClick,
                 onDeleteClick = onTodoDeleteClick,
                 modifier = Modifier.padding(horizontal = 16.dp),
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-                thickness = 0.8.dp,
-                color = HaebomTheme.colors.gray50,
-            )
-
-            ScheduleList(
-                schedules = uiState.schedules,
-                onPlusClick = onSchedulePlusClick,
-                onEditClick = onScheduleEditClick,
-                onDeleteClick = onScheduleDeleteClick,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 27.dp),
             )
         }
     }
@@ -233,46 +203,22 @@ private val previewTodos = listOf(
     ),
 )
 
-private val previewSchedules = listOf(
-    ScheduleUiModel(
-        scheduleId = 1L,
-        dDay = 3,
-        title = "기말고사",
-        date = "2026.03.20.금요일",
-        rawDate = "20260320",
-        category = ScheduleCategory.SCHOOL_EXAM,
-        isUrgent = true,
-    ),
-    ScheduleUiModel(
-        scheduleId = 2L,
-        dDay = 14,
-        title = "영어 말하기 대회",
-        date = "2026.03.31.화요일",
-        rawDate = "20260331",
-        category = ScheduleCategory.SCHOOL_EXAM,
-        isUrgent = false,
-    ),
-)
-
 private class TodoScreenPreviewProvider : PreviewParameterProvider<TodoUiState> {
     override val values = sequenceOf(
         TodoUiState(
             remainTodoCount = Async.Success(2),
             weeklyStickers = Async.Success(previewWeeklyStickers),
             todos = Async.Success(previewTodos),
-            schedules = Async.Success(previewSchedules),
         ),
         TodoUiState(
             remainTodoCount = Async.Success(0),
             weeklyStickers = Async.Success(previewWeeklyStickers),
             todos = Async.Empty,
-            schedules = Async.Empty,
         ),
         TodoUiState(
             remainTodoCount = Async.Loading(),
             weeklyStickers = Async.Loading(),
             todos = Async.Loading(),
-            schedules = Async.Loading(),
         ),
     )
 }
@@ -291,9 +237,6 @@ private fun TodoScreenPreview(
             onTodoCheckClick = {},
             onTodoEditClick = {},
             onTodoDeleteClick = {},
-            onSchedulePlusClick = {},
-            onScheduleEditClick = {},
-            onScheduleDeleteClick = {},
         )
     }
 }

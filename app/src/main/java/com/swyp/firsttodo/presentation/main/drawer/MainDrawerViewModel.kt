@@ -38,11 +38,11 @@ class MainDrawerViewModel
         }
 
         fun onFamilyClick() {
-            sendEffect(MainDrawerSideEffect.NavigateToFamily)
+            sendThrottledEffect(MainDrawerSideEffect.NavigateToFamily)
         }
 
         fun onShareClick() {
-            sendEffect(MainDrawerSideEffect.NavigateToShare)
+            sendThrottledEffect(MainDrawerSideEffect.NavigateToShare)
         }
 
         fun closeDialog() {
@@ -67,14 +67,19 @@ class MainDrawerViewModel
         }
 
         private fun onLogoutConfirm() {
+            if (uiState.value.dialogLoadingState is Async.Loading) return
+
+            updateState { copy(dialogLoadingState = Async.Loading()) }
+
             viewModelScope.launch {
                 logoutUseCase()
                     .onSuccess {
+                        updateState { copy(dialogLoadingState = Async.Success(Unit)) }
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("로그아웃 되었습니다."))
                     }
                     .onFailure {
-                        closeDialog()
+                        updateState { copy(dialogLoadingState = Async.Init) }
                         if (it is ApiError) sendEffect(MainDrawerSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }
@@ -91,14 +96,19 @@ class MainDrawerViewModel
         }
 
         private fun onWithdrawalConfirm() {
+            if (uiState.value.dialogLoadingState is Async.Loading) return
+
+            updateState { copy(dialogLoadingState = Async.Loading()) }
+
             viewModelScope.launch {
                 deleteAccountUseCase()
                     .onSuccess {
+                        updateState { copy(dialogLoadingState = Async.Success(Unit)) }
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("계정이 탈퇴되었습니다."))
                     }
                     .onFailure {
-                        closeDialog()
+                        updateState { copy(dialogLoadingState = Async.Init) }
                         if (it is ApiError) sendEffect(MainDrawerSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }

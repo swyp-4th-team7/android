@@ -12,19 +12,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
-import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.MediumStyle
+import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 
 @Composable
 fun HabitMainBanner(
+    description: String,
     onButtonClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -32,7 +30,7 @@ fun HabitMainBanner(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(screenHeightDp(132.dp))
-            .background(Color(0xFFFFFAC9))
+            .background(LabelColor.YELLOW.completedBackground)
             .padding(horizontal = screenWidthDp(16.dp))
             .padding(top = screenHeightDp(28.dp)),
     ) {
@@ -43,13 +41,13 @@ fun HabitMainBanner(
             Text(
                 text = "좋은 습관을 만들어 볼까요?",
                 color = HaebomTheme.colors.black,
-                style = BoldStyle.copy(fontSize = 20.sp),
+                style = HaebomTheme.typo.screen,
             )
 
             Text(
-                text = "가족과 보상을 정하고\n재미있는 습관을 실천해요!",
+                text = description,
                 color = HaebomTheme.colors.gray400,
-                style = MediumStyle.copy(fontSize = 14.sp),
+                style = HaebomTheme.typo.description,
             )
         }
 
@@ -69,7 +67,7 @@ fun HabitMainBanner(
                     )
                     .padding(horizontal = 18.dp, vertical = 6.dp),
                 color = HaebomTheme.colors.white,
-                style = BoldStyle.copy(fontSize = 14.sp),
+                style = HaebomTheme.typo.buttonM,
             )
         }
     }
@@ -80,6 +78,7 @@ fun HabitMainBanner(
 private fun HabitMainBannerPreview() {
     HaebomTheme {
         HabitMainBanner(
+            description = "가족과 보상을 정하고\n재미있는 습관을 실천해요!",
             onButtonClick = {},
         )
     }

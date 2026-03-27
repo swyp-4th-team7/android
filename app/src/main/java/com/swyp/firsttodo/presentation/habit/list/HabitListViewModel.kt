@@ -11,7 +11,6 @@ import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.domain.repository.HabitRepository
 import com.swyp.firsttodo.domain.throwable.HabitError
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
-import com.swyp.firsttodo.presentation.habit.component.HabitListType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,17 +22,14 @@ class HabitListViewModel
         sessionManager: SessionManager,
         private val habitRepository: HabitRepository,
     ) : BaseViewModel<HabitListUiState, HabitListSideEffect>(HabitListUiState()) {
-        private val role: Role = when (sessionManager.sessionState.value.userType) {
-            Role.PARENT.request -> Role.PARENT
-            else -> Role.CHILD
-        }
-
-        val listType = when (role) {
-            Role.PARENT -> HabitListType.PARENT
-            Role.CHILD -> HabitListType.CHILD
-        }
-
         init {
+            val role: Role = when (sessionManager.sessionState.value.userType) {
+                Role.PARENT.request -> Role.PARENT
+                else -> Role.CHILD
+            }
+
+            updateState { copy(role = role) }
+
             getHabits()
         }
 
@@ -63,7 +59,7 @@ class HabitListViewModel
         }
 
         fun onCreateClick() {
-            sendEffect(HabitListSideEffect.NavigateToHabitDetail(null))
+            sendThrottledEffect(HabitListSideEffect.NavigateToHabitDetail(null))
         }
 
         fun onCheckClick(habit: HabitModel) {
@@ -88,26 +84,28 @@ class HabitListViewModel
         }
 
         fun onEditClick(habit: HabitModel) {
-            sendEffect(HabitListSideEffect.NavigateToHabitDetail(habit))
+            sendThrottledEffect(HabitListSideEffect.NavigateToHabitDetail(habit))
         }
 
         fun onDeleteClick(habit: HabitModel) {
-            updateState { copy(delRequestedId = habit.habitId) }
+            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init) }
         }
 
         fun onDeleteConfirm() {
             val habitId = uiState.value.delRequestedId ?: return
 
+            updateState { copy(deleteState = Async.Loading()) }
+
             viewModelScope.launch {
                 habitRepository.deleteHabit(habitId)
                     .onSuccess {
-                        updateState { copy(delRequestedId = null) }
+                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
                         sendEffect(HabitListSideEffect.ShowSnackbar("습관이 삭제되었습니다."))
                         getHabits()
                     }.onFailure { throwable ->
                         when (throwable) {
                             is HabitError.HabitNotFound -> {
-                                updateState { copy(delRequestedId = null) }
+                                updateState { copy(delRequestedId = null, deleteState = Async.Init) }
                                 sendEffect(HabitListSideEffect.ShowSnackbar("이미 삭제된 습관입니다."))
                                 getHabits()
                             }

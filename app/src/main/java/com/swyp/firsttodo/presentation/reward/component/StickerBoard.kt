@@ -109,10 +109,10 @@ fun StickerBoard(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.img_sticker_default_clover),
+                    painter = painterResource(id = R.drawable.img_sticker_clover),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(92.dp, 96.dp)
+                        .size(92.dp)
                         .padding(bottom = 24.dp),
                     colorFilter = ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) }),
                 )
@@ -162,7 +162,7 @@ private fun EmptySticker(
 @Composable
 private fun Sticker(
     modifier: Modifier = Modifier,
-    @DrawableRes stickerRes: Int = R.drawable.img_sticker_default_clover,
+    @DrawableRes stickerRes: Int = R.drawable.img_sticker_clover,
 ) {
     Image(
         painter = painterResource(id = stickerRes),

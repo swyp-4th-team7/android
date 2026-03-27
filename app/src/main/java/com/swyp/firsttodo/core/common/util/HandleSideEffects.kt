@@ -6,6 +6,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 @Composable
 fun <T> HandleSideEffects(
@@ -18,7 +19,7 @@ fun <T> HandleSideEffects(
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
             sideEffectFlow.collect { effect ->
-                onSideEffect(effect)
+                launch { onSideEffect(effect) }
             }
         }
     }

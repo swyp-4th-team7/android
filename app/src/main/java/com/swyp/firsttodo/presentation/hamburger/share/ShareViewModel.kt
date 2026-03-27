@@ -49,7 +49,7 @@ class ShareViewModel
                         when (it) {
                             is FamilyError.OnboardingUncompleted -> {
                                 sendEffect(ShareSideEffect.ShowSnackbar("프로필 설정이 필요합니다."))
-                                sendEffect(ShareSideEffect.NavigateToOnboarding)
+                                sendThrottledEffect(ShareSideEffect.NavigateToOnboarding)
                             }
 
                             is ApiError -> sendEffect(ShareSideEffect.ShowSnackbar(it.snackbarMsg()))
@@ -131,11 +131,9 @@ class ShareViewModel
             }
         }
 
-        fun onInviteCodeCopy() {
-            sendEffect(ShareSideEffect.ShowSnackbar("클립보드에 복사되었습니다."))
-        }
+        fun onInviteCodeCopy() {}
 
         fun onDisconnectClick(member: ConnectedFamilyModel) {
-            updateState { copy(disconnectRequestMember = member) }
+            updateState { copy(disconnectRequestMember = member, disconnectState = Async.Init) }
         }
     }

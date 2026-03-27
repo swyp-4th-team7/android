@@ -20,6 +20,7 @@ data class MainDrawerUiState(
     val nickname: Async<String> = Async.Init,
     val showDialog: Boolean = false,
     val dialogType: DrawerDialogType = DrawerDialogType.LOGOUT,
+    val dialogLoadingState: Async<Unit> = Async.Init,
 ) : UiState
 
 sealed interface MainDrawerSideEffect : UiEffect {

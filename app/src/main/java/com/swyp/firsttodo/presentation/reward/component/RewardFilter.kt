@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -165,6 +166,10 @@ private fun <T : RewardFilterType> PopupContent(
         modifier = modifier
             .widthIn(min = 108.dp)
             .width(IntrinsicSize.Max)
+            .background(
+                color = HaebomTheme.colors.white,
+                shape = RoundedCornerShape(8.dp),
+            )
             .figmaDropShadow(
                 shape = RoundedCornerShape(8.dp),
                 dpOffset = DpOffset(0.dp, 0.dp),
@@ -193,15 +198,13 @@ private fun <T : RewardFilterType> PopupContent(
             Text(
                 text = type.displayName,
                 modifier = Modifier
+                    .clip(shape)
                     .clickable { onFilterClick(type) }
                     .fillMaxWidth()
-                    .background(
-                        color = backgroundColor,
-                        shape = shape,
-                    )
+                    .background(backgroundColor)
                     .drawBehind {
                         if (!isLast) {
-                            val strokeWidth = 0.4.dp.toPx()
+                            val strokeWidth = 0.8.dp.toPx()
                             val horizontalInset = 4.dp.toPx()
                             val y = size.height - strokeWidth / 2
                             drawLine(

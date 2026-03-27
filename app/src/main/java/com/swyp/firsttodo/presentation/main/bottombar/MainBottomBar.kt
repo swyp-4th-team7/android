@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.shadow.Shadow
@@ -60,7 +61,8 @@ fun MainBottomBar(
                         offset = DpOffset(0.dp, (-4).dp),
                         spread = 0.dp,
                     ),
-                ),
+                )
+                .clipToBounds(),
         ) {
             MainTab.entries.forEach { tab ->
                 BottomBarItem(

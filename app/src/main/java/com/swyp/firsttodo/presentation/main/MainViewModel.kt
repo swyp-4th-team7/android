@@ -15,8 +15,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -35,9 +37,9 @@ class MainViewModel
         val sideEffect: Flow<AuthSideEffect> = sessionManager.sideEffect
 
         val startDestination: StateFlow<Route?> = sessionManager.sessionState
+            .filter { it.isInitialized }
+            .take(1)
             .map { state ->
-                if (!state.isInitialized) return@map null
-
                 val dest = when {
                     !state.isLoggedIn -> AuthRoute.Login()
                     state.isLoggedIn && state.userType != null && state.isProfileCompleted -> TodoRoute.Todo
@@ -78,8 +80,5 @@ class MainViewModel
 
         fun onDrawerDismiss() {
             _showDrawer.update { false }
-        }
-
-        fun onAlarmClick() {
         }
     }

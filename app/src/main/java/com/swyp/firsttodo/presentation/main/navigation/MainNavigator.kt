@@ -7,8 +7,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.main.bottombar.MainTab
-import com.swyp.firsttodo.presentation.onboarding.navigation.OnboardingRoute
+import com.swyp.firsttodo.presentation.splash.navigation.SplashRoute
 
 class MainNavigator(
     val navController: NavHostController,
@@ -34,17 +35,15 @@ class MainNavigator(
         navController.navigate(tab.route, navOptions)
     }
 
-    fun navigateToTodo() {
-        navController.navigate(MainTab.TODO.route) {
-            popUpTo(0) {
-                inclusive = true
-            }
+    fun navigateFromSplash(route: Route) {
+        navController.navigate(route) {
+            popUpTo<SplashRoute> { inclusive = true }
             launchSingleTop = true
         }
     }
 
-    fun navigateToOnboarding() {
-        navController.navigate(OnboardingRoute.Onboarding) {
+    fun navigateToTodo() {
+        navController.navigate(MainTab.TODO.route) {
             popUpTo(0) {
                 inclusive = true
             }

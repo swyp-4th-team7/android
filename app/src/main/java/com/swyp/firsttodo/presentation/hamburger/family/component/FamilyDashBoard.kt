@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,11 +26,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
-import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.family.FamilyHabit
 import com.swyp.firsttodo.domain.model.family.FamilyInfo
@@ -40,7 +39,7 @@ private const val THIRD_COL_WEIGHT = 88f
 
 @Composable
 fun FamilyDashBoard(
-    familyInfos: Async<List<FamilyInfo>>,
+    familyInfos: List<FamilyInfo>,
     modifier: Modifier = Modifier,
 ) {
     val colors = HaebomTheme.colors
@@ -51,125 +50,108 @@ fun FamilyDashBoard(
                 color = HaebomTheme.colors.gray50,
                 shape = RoundedCornerShape(4.dp),
             )
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 18.dp, vertical = 8.dp),
     ) {
-        when (familyInfos) {
-            is Async.Success -> {
-                Column {
-                    Row(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                    ) {
-                        Spacer(Modifier.weight(FIRST_COL_WEIGHT))
+        Row(
+            modifier = Modifier.padding(vertical = 8.dp),
+        ) {
+            Spacer(Modifier.weight(FIRST_COL_WEIGHT))
 
-                        Text(
-                            text = "할 일",
-                            modifier = Modifier.weight(SECOND_COL_WEIGHT),
-                            color = HaebomTheme.colors.gray400,
-                            textAlign = TextAlign.Center,
-                            style = HaebomTheme.typo.caption,
-                        )
+            Text(
+                text = "할 일",
+                modifier = Modifier.weight(SECOND_COL_WEIGHT),
+                color = HaebomTheme.colors.gray400,
+                textAlign = TextAlign.Center,
+                style = HaebomTheme.typo.caption,
+            )
 
-                        Text(
-                            text = "습관",
-                            modifier = Modifier.weight(THIRD_COL_WEIGHT),
-                            color = HaebomTheme.colors.gray400,
-                            textAlign = TextAlign.Center,
-                            style = HaebomTheme.typo.caption,
-                        )
-                    }
+            Text(
+                text = "습관",
+                modifier = Modifier.weight(THIRD_COL_WEIGHT),
+                color = HaebomTheme.colors.gray400,
+                textAlign = TextAlign.Center,
+                style = HaebomTheme.typo.caption,
+            )
+        }
 
-                    familyInfos.data.forEachIndexed { index, info ->
-                        Row(
-                            modifier = Modifier
-                                .heightIn(min = 61.dp)
-                                .height(IntrinsicSize.Min)
-                                .drawBehind {
-                                    if (index < familyInfos.data.lastIndex) {
-                                        drawLine(
-                                            color = colors.gray200,
-                                            start = Offset(0f, size.height),
-                                            end = Offset(size.width, size.height),
-                                            strokeWidth = 2.dp.toPx(),
-                                        )
-                                    }
-                                },
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                text = info.nickname,
-                                modifier = Modifier
-                                    .weight(FIRST_COL_WEIGHT)
-                                    .fillMaxHeight()
-                                    .drawBehind {
-                                        drawLine(
-                                            color = colors.gray200,
-                                            start = Offset(size.width, 0f),
-                                            end = Offset(size.width, size.height),
-                                            strokeWidth = 2.dp.toPx(),
-                                        )
-                                    }
-                                    .padding(horizontal = 8.dp, vertical = 16.dp)
-                                    .wrapContentHeight(Alignment.CenterVertically),
-                                color = HaebomTheme.colors.gray500,
-                                style = HaebomTheme.typo.buttonM,
-                            )
-
-                            Text(
-                                text = "${info.todo.completedCount}/${info.todo.totalCount}",
-                                modifier = Modifier
-                                    .weight(SECOND_COL_WEIGHT)
-                                    .padding(horizontal = 5.dp, vertical = 16.dp)
-                                    .wrapContentSize(Alignment.Center),
-                                color = colors.gray500,
-                                style = HaebomTheme.typo.screen,
-                            )
-
-                            Icon(
-                                imageVector = ImageVector.vectorResource(
-                                    if (info.habit.completed) {
-                                        R.drawable.ic_check_filled
-                                    } else {
-                                        R.drawable.ic_check_unfilled
-                                    },
-                                ),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .weight(THIRD_COL_WEIGHT)
-                                    .padding(horizontal = 5.dp, vertical = 16.dp)
-                                    .wrapContentSize(Alignment.Center),
-                                tint = Color.Unspecified,
+        familyInfos.forEachIndexed { index, info ->
+            Row(
+                modifier = Modifier
+                    .heightIn(min = 61.dp)
+                    .height(IntrinsicSize.Min)
+                    .drawBehind {
+                        if (index < familyInfos.lastIndex) {
+                            drawLine(
+                                color = colors.gray200,
+                                start = Offset(0f, size.height),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 2.dp.toPx(),
                             )
                         }
-                    }
-                }
-            }
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = info.nickname,
+                    modifier = Modifier
+                        .weight(FIRST_COL_WEIGHT)
+                        .fillMaxHeight()
+                        .drawBehind {
+                            drawLine(
+                                color = colors.gray200,
+                                start = Offset(size.width, 0f),
+                                end = Offset(size.width, size.height),
+                                strokeWidth = 2.dp.toPx(),
+                            )
+                        }
+                        .padding(horizontal = 8.dp, vertical = 16.dp)
+                        .wrapContentHeight(Alignment.CenterVertically),
+                    color = HaebomTheme.colors.gray500,
+                    style = HaebomTheme.typo.buttonM,
+                )
 
-            else -> Unit
+                Text(
+                    text = "${info.todo.completedCount}/${info.todo.totalCount}",
+                    modifier = Modifier
+                        .weight(SECOND_COL_WEIGHT)
+                        .padding(horizontal = 5.dp, vertical = 16.dp)
+                        .wrapContentSize(Alignment.Center),
+                    color = colors.gray500,
+                    style = HaebomTheme.typo.screen,
+                )
+
+                Icon(
+                    imageVector = ImageVector.vectorResource(
+                        if (info.habit.completed) {
+                            R.drawable.ic_check_filled
+                        } else {
+                            R.drawable.ic_check_unfilled
+                        },
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .weight(THIRD_COL_WEIGHT)
+                        .padding(horizontal = 5.dp, vertical = 16.dp)
+                        .wrapContentSize(Alignment.Center),
+                    tint = Color.Unspecified,
+                )
+            }
         }
     }
 }
 
-private class FamilyDashBoardPreviewProvider : PreviewParameterProvider<Async<List<FamilyInfo>>> {
-    override val values = sequenceOf(
-        Async.Success(
-            listOf(
+@Preview(showBackground = true)
+@Composable
+private fun FamilyDashBoardPreview() {
+    HaebomTheme {
+        FamilyDashBoard(
+            familyInfos = listOf(
                 FamilyInfo(1L, "엄마는외계인", FamilyTodo(10, 3), FamilyHabit(completed = true)),
                 FamilyInfo(2L, "박영희영희영희영희영희", FamilyTodo(10, 10), FamilyHabit(completed = false)),
                 FamilyInfo(3L, "이민준", FamilyTodo(5, 0), FamilyHabit(completed = true)),
                 FamilyInfo(4L, "최서연서연서연서연서연서연서연서연서연서연서연서연", FamilyTodo(100, 99), FamilyHabit(completed = false)),
             ),
-        ),
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun FamilyDashBoardPreview(
-    @PreviewParameter(FamilyDashBoardPreviewProvider::class) familyInfos: Async<List<FamilyInfo>>,
-) {
-    HaebomTheme {
-        FamilyDashBoard(
-            familyInfos = familyInfos,
             modifier = Modifier.padding(16.dp),
         )
     }

@@ -1,12 +1,19 @@
+@file:Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
+
 package com.swyp.firsttodo.presentation.auth
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,7 +24,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
+import com.swyp.firsttodo.core.common.extension.widthForScreenPercentage
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
+import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.presentation.auth.component.GoogleLoginButton
@@ -87,30 +96,43 @@ fun LoginScreen(
     onPrivacyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        IntroPager()
+    val scrollState = rememberScrollState()
 
-        Spacer(Modifier.weight(1f))
-
-        GoogleLoginButton(
-            onClick = onGoogleLoginClick,
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = screenWidthDp(32.dp)),
-        )
+                .heightIn(min = maxHeight)
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceBetween,
+        ) {
+            IntroPager(
+                modifier = Modifier.widthForScreenPercentage(296.dp),
+            )
 
-        Spacer(Modifier.heightForScreenPercentage(12.dp))
+            Column(
+                modifier = Modifier.padding(top = screenHeightDp(59.dp)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                GoogleLoginButton(
+                    onClick = onGoogleLoginClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = screenWidthDp(32.dp)),
+                )
 
-        LegalLinks(
-            onTosClick = onTosClick,
-            onPrivacyClick = onPrivacyClick,
-            modifier = Modifier.padding(horizontal = screenWidthDp(32.dp)),
-        )
+                Spacer(Modifier.heightForScreenPercentage(12.dp))
 
-        Spacer(Modifier.heightForScreenPercentage(55.dp))
+                LegalLinks(
+                    onTosClick = onTosClick,
+                    onPrivacyClick = onPrivacyClick,
+                    modifier = Modifier.padding(horizontal = screenWidthDp(32.dp)),
+                )
+
+                Spacer(Modifier.heightForScreenPercentage(32.dp))
+            }
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component.task
+package com.swyp.firsttodo.presentation.common.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +18,7 @@ import com.swyp.firsttodo.core.designsystem.component.HaebomBasicTextField
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
-fun TaskTextField(
+fun HaebomMultiLineTextField(
     fieldState: TextFieldState,
     placeholder: String,
     modifier: Modifier = Modifier,
@@ -52,7 +52,7 @@ fun TaskTextField(
             borderColor = borderColor,
             keyboardOptions = keyboardOptions,
             onKeyboardAction = onKeyboardAction,
-            lineLimits = TextFieldLineLimits.SingleLine,
+            lineLimits = TextFieldLineLimits.MultiLine(),
             enabled = enabled,
         )
 

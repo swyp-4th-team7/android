@@ -5,6 +5,7 @@ import com.swyp.firsttodo.data.remote.datasource.FamilyDataSource
 import com.swyp.firsttodo.data.remote.dto.request.family.FamilyConnectRequestBody
 import com.swyp.firsttodo.data.remote.dto.response.family.ConnectedFamilyResponseDto
 import com.swyp.firsttodo.data.remote.dto.response.family.FamilyDashboardResponseDto
+import com.swyp.firsttodo.data.remote.dto.response.family.MyInviteCodeResponseDto
 import com.swyp.firsttodo.data.remote.service.FamilyService
 import javax.inject.Inject
 
@@ -25,5 +26,5 @@ class FamilyDataSourceImpl
         override suspend fun getFamilyDashboard(): BaseResponse<FamilyDashboardResponseDto> =
             familyService.getFamilyDashboard()
 
-        override suspend fun getMyInviteCode(): BaseResponse<String> = familyService.getMyInviteCode()
+        override suspend fun getMyInviteCode(): BaseResponse<MyInviteCodeResponseDto> = familyService.getMyInviteCode()
     }

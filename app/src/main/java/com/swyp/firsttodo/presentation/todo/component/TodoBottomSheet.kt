@@ -7,8 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,6 +22,7 @@ import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,28 +30,35 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
+import com.swyp.firsttodo.core.common.extension.skeleton
+import com.swyp.firsttodo.core.common.util.screenHeightDp
+import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
+import com.swyp.firsttodo.core.designsystem.component.HaebomBottomSheetHandle
+import com.swyp.firsttodo.core.designsystem.theme.BoldStyle
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
+import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
+import com.swyp.firsttodo.core.designsystem.theme.SemiBoldStyle
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
+import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
-import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
-import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
-import com.swyp.firsttodo.presentation.common.component.task.TaskTextField
+import com.swyp.firsttodo.presentation.main.snackbar.HaebomSnackbarHost
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 
 enum class TodoBottomSheetType(
     val title: String,
@@ -74,7 +87,7 @@ enum class TodoBottomSheetType(
     ),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun TodoBottomSheet(
     sheetType: TodoBottomSheetType,
@@ -92,7 +105,9 @@ fun TodoBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
-    val focusManager = LocalFocusManager.current
+    val snackbarHostState = LocalSnackbarHostState.current
+    val isLoading = loadingStatus is Async.Loading
+    val colors = HaebomTheme.colors
 
     LaunchedEffect(loadingStatus) {
         if (loadingStatus is Async.Success) {
@@ -106,86 +121,180 @@ fun TodoBottomSheet(
         sheetState = sheetState,
         modifier = modifier,
     ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp)
-                .verticalScroll(scrollState),
-        ) {
-            TaskSheetHeader(
-                title = sheetType.title,
-                description = sheetType.description,
-                onDismiss = onDismiss,
+        Box {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 28.dp),
-            )
-
-            TaskInputSection(
-                title = "할 일",
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 20.dp)
+                    .verticalScroll(scrollState),
             ) {
-                TaskTextField(
-                    fieldState = titleFieldState,
-                    placeholder = "할 일을 입력해 주세요.",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                    ),
-                    onKeyboardAction = { focusManager.moveFocus(FocusDirection.Next) },
-                )
-            }
+                HaebomBottomSheetHandle()
 
-            TaskInputSection(
-                title = "카테고리",
-            ) {
-                Column(
-                    modifier = Modifier.padding(bottom = 40.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom,
                 ) {
-                    TaskCategoryList(
-                        categories = categories,
-                        selectedCategory = selectedCategory,
-                        onCategoryClick = onCategoryClick,
-                        getDisplayName = { it.label },
+                    if (isLoading) {
+                        Spacer(Modifier.size(161.dp, 29.dp).skeleton())
+                    } else {
+                        Text(
+                            text = sheetType.title,
+                            color = colors.black,
+                            style = BoldStyle.copy(fontSize = 20.sp),
+                        )
+                    }
+
+                    Icon(
+                        imageVector = ImageVector.vectorResource(R.drawable.ic_close_24),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .noRippleClickable(onDismiss)
+                            .padding(all = 12.dp),
+                        tint = colors.black,
                     )
                 }
-            }
 
-            TaskInputSection(
-                title = "색상 선택",
-            ) {
-                @OptIn(ExperimentalLayoutApi::class)
+                if (isLoading) {
+                    Spacer(Modifier.height(2.dp))
+                    Spacer(Modifier.size(241.dp, 20.dp).skeleton())
+                } else {
+                    Text(
+                        text = sheetType.description,
+                        color = colors.gray400,
+                        style = RegularStyle.copy(fontSize = 14.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(28.dp))
+
+                if (isLoading) {
+                    Spacer(Modifier.size(56.dp, 26.dp).skeleton())
+                } else {
+                    Text(
+                        text = "할 일",
+                        color = colors.black,
+                        style = SemiBoldStyle.copy(fontSize = 18.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                if (isLoading) {
+                    Spacer(Modifier.fillMaxWidth().height(48.dp).skeleton())
+                    Spacer(Modifier.height(20.dp))
+                } else {
+                    HaebomMultiLineTextField(
+                        fieldState = titleFieldState,
+                        placeholder = "할 일을 입력해 주세요.",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    )
+                }
+
+                if (isLoading) {
+                    Spacer(Modifier.size(70.dp, 28.dp).skeleton())
+                } else {
+                    Text(
+                        text = "카테고리",
+                        color = colors.black,
+                        style = SemiBoldStyle.copy(fontSize = 18.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
+                if (isLoading) {
+                    FlowRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        categories.forEach { _ ->
+                            Spacer(Modifier.size(64.dp, 32.dp).skeleton())
+                        }
+                    }
+
+                    Spacer(Modifier.height(40.dp))
+                } else {
+                    Column(
+                        modifier = Modifier.padding(bottom = 40.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        TaskCategoryList(
+                            categories = categories,
+                            selectedCategory = selectedCategory,
+                            onCategoryClick = onCategoryClick,
+                            getDisplayName = { it.label },
+                        )
+                    }
+                }
+
+                if (isLoading) {
+                    Spacer(Modifier.size(70.dp, 26.dp).skeleton())
+                } else {
+                    Text(
+                        text = "색상 선택",
+                        color = colors.black,
+                        style = SemiBoldStyle.copy(fontSize = 18.sp),
+                    )
+                }
+
+                Spacer(Modifier.height(8.dp))
+
                 FlowRow(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 40.dp),
+                        .padding(bottom = 22.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     LabelColor.entries.forEach { labelColor ->
-                        LabelColorChip(
-                            labelColor = labelColor,
-                            selected = selectedLabelColor == labelColor,
-                            onClick = { onLabelColorClick(labelColor) },
-                        )
+                        if (isLoading) {
+                            Spacer(
+                                modifier = Modifier
+                                    .padding(4.dp)
+                                    .size(44.dp)
+                                    .skeleton(),
+                            )
+                        } else {
+                            LabelColorChip(
+                                labelColor = labelColor,
+                                selected = selectedLabelColor == labelColor,
+                                onClick = { onLabelColorClick(labelColor) },
+                            )
+                        }
                     }
+                }
+
+                if (isLoading) {
+                    Spacer(Modifier.fillMaxWidth().height(52.dp).skeleton())
+                } else {
+                    HaebomLargeButton(
+                        text = sheetType.btnText,
+                        onClick = onBtnClick,
+                        enabled = btnEnabled,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
             }
 
-            HaebomLargeButton(
-                text = sheetType.btnText,
-                onClick = onBtnClick,
-                enabled = btnEnabled && loadingStatus !is Async.Loading,
-                modifier = Modifier.fillMaxWidth(),
+            HaebomSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .navigationBarsPadding()
+                    .padding(bottom = screenHeightDp(40.dp))
+                    .padding(horizontal = screenWidthDp(16.dp)),
             )
         }
     }
 }
 
 @Composable
-fun LabelColorChip(
+private fun LabelColorChip(
     labelColor: LabelColor,
     selected: Boolean,
     onClick: () -> Unit,
@@ -222,25 +331,41 @@ fun LabelColorChip(
     }
 }
 
-private class TodoBottomSheetPreviewProvider : PreviewParameterProvider<TodoBottomSheetType> {
-    override val values = sequenceOf(*TodoBottomSheetType.entries.toTypedArray())
+private data class TodoBottomSheetPreviewParam(
+    val sheetType: TodoBottomSheetType,
+    val loadingStatus: Async<Unit>,
+)
+
+private class TodoBottomSheetPreviewProvider : PreviewParameterProvider<TodoBottomSheetPreviewParam> {
+    override val values = sequenceOf(
+        *TodoBottomSheetType.entries.map { TodoBottomSheetPreviewParam(it, Async.Init) }.toTypedArray(),
+        TodoBottomSheetPreviewParam(TodoBottomSheetType.PARENT_CREATE, Async.Loading()),
+    )
 }
 
 @Preview
 @Composable
 private fun TodoBottomSheetPreview(
-    @PreviewParameter(TodoBottomSheetPreviewProvider::class) sheetType: TodoBottomSheetType,
+    @PreviewParameter(TodoBottomSheetPreviewProvider::class) param: TodoBottomSheetPreviewParam,
 ) {
     var selectedCategory by remember { mutableStateOf<TodoCategoryModel?>(null) }
     var selectedLabelColor by remember { mutableStateOf<LabelColor?>(null) }
     val titleFieldState = rememberTextFieldState()
-    val categories = listOf(TodoCategoryModel("공부", "공부"))
+    val categories = listOf(
+        TodoCategoryModel("공부", "공부"),
+        TodoCategoryModel("숙제", "숙제"),
+        TodoCategoryModel("운동", "운동"),
+        TodoCategoryModel("정리", "정리"),
+        TodoCategoryModel("독서", "독서"),
+        TodoCategoryModel("집안일", "집안일"),
+        TodoCategoryModel("창의활동", "창의활동"),
+    )
 
     HaebomTheme {
         TodoBottomSheet(
-            sheetType = sheetType,
+            sheetType = param.sheetType,
             btnEnabled = titleFieldState.text.isNotBlank() && selectedCategory != null && selectedLabelColor != null,
-            loadingStatus = Async.Init,
+            loadingStatus = param.loadingStatus,
             categories = categories,
             selectedCategory = selectedCategory,
             selectedLabelColor = selectedLabelColor,

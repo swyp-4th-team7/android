@@ -30,6 +30,6 @@ fun RewardDetailTextBox(
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .wrapContentHeight(Alignment.CenterVertically),
         color = HaebomTheme.colors.black,
-        style = HaebomTheme.typo.buttonL,
+        style = HaebomTheme.typo.description,
     )
 }

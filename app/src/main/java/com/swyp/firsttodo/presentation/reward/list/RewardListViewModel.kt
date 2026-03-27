@@ -35,8 +35,6 @@ class RewardListViewModel
             }
 
             updateState { copy(role = role) }
-
-            initStickerTab()
         }
 
         private fun initStickerTab() {
@@ -49,8 +47,8 @@ class RewardListViewModel
 
         private fun initRewardTab() {
             when (uiState.value.role) {
-                Role.PARENT -> initParentRewardTab()
-                Role.CHILD -> initChildRewardTab()
+                Role.PARENT -> loadParentRewardTab(uiState.value.selectedFilter)
+                Role.CHILD -> loadChildRewardTab(uiState.value.selectedFilter)
                 null -> Unit
             }
         }
@@ -60,7 +58,7 @@ class RewardListViewModel
             viewModelScope.launch {
                 stickerRepository.getChildrenStickerList()
                     .onSuccess {
-                        updateState { copy(parentStickers = Async.Success(it)) }
+                        updateState { copy(parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
                     }.onFailure { throwable ->
                         uiState.value.parentStickers.getDataOrNull()?.let { prevData ->
                             updateState { copy(parentStickers = Async.Success(prevData)) }
@@ -102,9 +100,9 @@ class RewardListViewModel
             }
         }
 
-        private fun initParentRewardTab() {
+        private fun loadParentRewardTab(filter: RewardFilterType) {
             viewModelScope.launch {
-                rewardRepository.getRewards(uiState.value.selectedFilter.request)
+                rewardRepository.getRewards(filter.request)
                     .onSuccess {
                         val newData = it.map { model ->
                             ParentRewardUiModel(
@@ -131,9 +129,9 @@ class RewardListViewModel
             }
         }
 
-        private fun initChildRewardTab() {
+        private fun loadChildRewardTab(filter: RewardFilterType) {
             viewModelScope.launch {
-                rewardRepository.getRewards(uiState.value.childSelectedFilterType.request)
+                rewardRepository.getRewards(filter.request)
                     .onSuccess {
                         val newData = it.map { model ->
                             ChildRewardUiModel(
@@ -174,12 +172,12 @@ class RewardListViewModel
             when (uiState.value.role) {
                 Role.PARENT -> if (filterType is ParentRewardFilterType) {
                     updateState { copy(parentSelectedFilterType = filterType) }
-                    initParentRewardTab()
+                    loadParentRewardTab(filterType)
                 }
 
                 Role.CHILD -> if (filterType is ChildRewardFilterType) {
                     updateState { copy(childSelectedFilterType = filterType) }
-                    initChildRewardTab()
+                    loadChildRewardTab(filterType)
                 }
 
                 null -> Unit
@@ -199,7 +197,14 @@ class RewardListViewModel
         }
 
         fun onCreateHabitBtnClick() {
-            sendEffect(RewardListSideEffect.NavigateToHabit)
+            sendThrottledEffect(RewardListSideEffect.NavigateToHabit)
+        }
+
+        fun refresh() {
+            when (uiState.value.currentTab) {
+                RewardHeaderTabType.STICKER -> initStickerTab()
+                RewardHeaderTabType.REWARD -> initRewardTab()
+            }
         }
 
         fun onDetailResult(message: String?) {

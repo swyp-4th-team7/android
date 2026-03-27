@@ -3,6 +3,7 @@ package com.swyp.firsttodo.presentation.auth
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.swyp.firsttodo.BuildConfig
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.domain.model.SocialType
@@ -22,7 +23,14 @@ class LoginViewModel
         private val socialLoginUseCase: SocialLoginUseCase,
     ) :
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
-        val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
+        private val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
+        private val baseUrl = BuildConfig.BASE_URL
+
+        init {
+            if (isSessionExpired) {
+                sendEffect(LoginSideEffect.ShowSnackbar("로그인이 만료되었어요. 다시 로그인 해주세요."))
+            }
+        }
 
         fun onBack() {
             if (isSessionExpired) return
@@ -34,7 +42,7 @@ class LoginViewModel
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
                     title = "이용약관",
-                    url = "https://www.naver.com/",
+                    url = "$baseUrl/terms",
                 ),
             )
         }
@@ -43,7 +51,7 @@ class LoginViewModel
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
                     title = "개인정보 처리방침",
-                    url = "https://www.google.com/",
+                    url = "$baseUrl/privacy",
                 ),
             )
         }
@@ -94,9 +102,8 @@ class LoginViewModel
                     updateState { copy(loginState = Async.Success(Unit)) }
 
                     when {
-                        isSessionExpired -> sendEffect(LoginSideEffect.PopBackStack)
-                        isProfileComplete -> sendEffect(LoginSideEffect.NavigateToHome)
-                        else -> sendEffect(LoginSideEffect.NavigateToOnboarding)
+                        isProfileComplete -> sendThrottledEffect(LoginSideEffect.NavigateToHome)
+                        else -> sendThrottledEffect(LoginSideEffect.NavigateToOnboarding)
                     }
                 }.onFailure {
                     updateState { copy(loginState = Async.Init) }

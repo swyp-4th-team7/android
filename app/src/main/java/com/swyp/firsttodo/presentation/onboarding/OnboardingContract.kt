@@ -13,6 +13,7 @@ enum class OnboardingStep {
 data class OnboardingUiState(
     val currentStep: OnboardingStep = OnboardingStep.ROLE_SELECT,
     val selectedRole: Role? = null,
+    val nicknameErrorText: String? = null,
 ) : UiState {
     val topBarTitle = when (currentStep) {
         OnboardingStep.ROLE_SELECT -> "역할 선택"

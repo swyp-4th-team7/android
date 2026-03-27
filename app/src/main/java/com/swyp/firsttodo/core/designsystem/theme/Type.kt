@@ -72,7 +72,7 @@ val defaultHaebomTypography = HaebomTypography(
     dDay = ExtraBoldStyle.copy(fontSize = 16.sp, letterSpacing = 0.em),
     button = BoldStyle.copy(fontSize = 16.sp),
     placeholder = MediumStyle.copy(fontSize = 14.sp),
-    caption = BoldStyle.copy(fontSize = 12.sp),
+    caption = ExtraBoldStyle.copy(fontSize = 12.sp),
     helperText = MediumStyle.copy(fontSize = 12.sp),
     bottomNavbar = SemiBoldStyle.copy(fontSize = 12.sp),
     buttonM = BoldStyle.copy(fontSize = 14.sp),

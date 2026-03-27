@@ -2,10 +2,9 @@ package com.swyp.firsttodo.presentation.hamburger.family
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +21,7 @@ import com.swyp.firsttodo.domain.model.family.FamilyInfo
 import com.swyp.firsttodo.domain.model.family.FamilyTodo
 import com.swyp.firsttodo.presentation.common.component.HaebomTopBar
 import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyDashBoard
+import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyDashBoardEmpty
 import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyHeader
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
@@ -54,8 +54,6 @@ fun FamilyScreen(
     onPopBackStack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
-
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -67,17 +65,28 @@ fun FamilyScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .verticalScroll(scrollState)
+                .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 40.dp),
+                .padding(horizontal = 16.dp)
+                .padding(top = 40.dp, bottom = 22.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             FamilyHeader()
 
-            FamilyDashBoard(
-                familyInfos = uiState.familyInfos,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            if (uiState.familyInfos is Async.Empty) {
+                FamilyDashBoardEmpty(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                )
+            } else {
+                uiState.familyData?.let { data ->
+                    FamilyDashBoard(
+                        familyInfos = data,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
         }
     }
 }
