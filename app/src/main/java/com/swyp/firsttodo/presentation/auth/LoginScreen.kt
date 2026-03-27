@@ -16,7 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.swyp.firsttodo.core.common.extension.widthForScreenPercentage
+import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -88,32 +88,29 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(screenWidthDp(32.dp)),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(Modifier.weight(110f))
+        IntroPager()
 
-        IntroPager(
-            modifier = Modifier.widthForScreenPercentage(296.dp),
-        )
-
-        Spacer(Modifier.weight(123f))
+        Spacer(Modifier.weight(1f))
 
         GoogleLoginButton(
             onClick = onGoogleLoginClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 12.dp),
+                .padding(horizontal = screenWidthDp(32.dp)),
         )
+
+        Spacer(Modifier.heightForScreenPercentage(12.dp))
 
         LegalLinks(
             onTosClick = onTosClick,
             onPrivacyClick = onPrivacyClick,
+            modifier = Modifier.padding(horizontal = screenWidthDp(32.dp)),
         )
 
-        Spacer(Modifier.weight(55f))
+        Spacer(Modifier.heightForScreenPercentage(55.dp))
     }
 }
 
