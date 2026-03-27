@@ -13,6 +13,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -29,6 +31,19 @@ class OnboardingViewModel
         private var lastBackPressTime = 0L
 
         private val validNicknameRegex = Regex("^[가-힣]{1,12}$")
+
+        init {
+            snapshotFlow { nickNameFieldState.text.toString() }
+                .onEach { nickname ->
+                    val errorText = if (nickname.isNotEmpty() && !isValidNickname(nickname)) {
+                        "닉네임은 1~12자의 한글만 사용해 주세요."
+                    } else {
+                        null
+                    }
+                    updateState { copy(nicknameErrorText = errorText) }
+                }
+                .launchIn(viewModelScope)
+        }
 
         private fun isValidNickname(nickname: String) = validNicknameRegex.matches(nickname)
 
@@ -67,7 +82,7 @@ class OnboardingViewModel
 
             viewModelScope.launch {
                 saveOnboardingProfile(nickname, role)
-                    .onSuccess { sendEffect(OnboardingSideEffect.NavigateToTodo) }
+                    .onSuccess { sendThrottledEffect(OnboardingSideEffect.NavigateToTodo) }
                     .onFailure { throwable ->
                         Timber.e(throwable, "save onboarding profile error")
 
