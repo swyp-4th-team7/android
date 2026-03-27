@@ -49,8 +49,8 @@ class RewardListViewModel
 
         private fun initRewardTab() {
             when (uiState.value.role) {
-                Role.PARENT -> initParentRewardTab()
-                Role.CHILD -> initChildRewardTab()
+                Role.PARENT -> loadParentRewardTab(uiState.value.selectedFilter)
+                Role.CHILD -> loadChildRewardTab(uiState.value.selectedFilter)
                 null -> Unit
             }
         }
@@ -102,9 +102,9 @@ class RewardListViewModel
             }
         }
 
-        private fun initParentRewardTab() {
+        private fun loadParentRewardTab(filter: RewardFilterType) {
             viewModelScope.launch {
-                rewardRepository.getRewards(uiState.value.selectedFilter.request)
+                rewardRepository.getRewards(filter.request)
                     .onSuccess {
                         val newData = it.map { model ->
                             ParentRewardUiModel(
@@ -131,9 +131,9 @@ class RewardListViewModel
             }
         }
 
-        private fun initChildRewardTab() {
+        private fun loadChildRewardTab(filter: RewardFilterType) {
             viewModelScope.launch {
-                rewardRepository.getRewards(uiState.value.childSelectedFilterType.request)
+                rewardRepository.getRewards(filter.request)
                     .onSuccess {
                         val newData = it.map { model ->
                             ChildRewardUiModel(
@@ -174,12 +174,12 @@ class RewardListViewModel
             when (uiState.value.role) {
                 Role.PARENT -> if (filterType is ParentRewardFilterType) {
                     updateState { copy(parentSelectedFilterType = filterType) }
-                    initParentRewardTab()
+                    loadParentRewardTab(filterType)
                 }
 
                 Role.CHILD -> if (filterType is ChildRewardFilterType) {
                     updateState { copy(childSelectedFilterType = filterType) }
-                    initChildRewardTab()
+                    loadChildRewardTab(filterType)
                 }
 
                 null -> Unit
