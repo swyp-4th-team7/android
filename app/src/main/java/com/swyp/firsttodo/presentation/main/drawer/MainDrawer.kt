@@ -109,6 +109,7 @@ fun MainDrawer(
                 onDismiss = viewModel::closeDialog,
                 onCancel = viewModel::closeDialog,
                 onConfirm = viewModel::onDialogConfirmBtnClick,
+                loadingState = uiState.dialogLoadingState,
             )
         }
     }
