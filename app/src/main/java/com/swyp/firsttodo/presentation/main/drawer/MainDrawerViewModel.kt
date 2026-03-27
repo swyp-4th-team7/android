@@ -38,11 +38,11 @@ class MainDrawerViewModel
         }
 
         fun onFamilyClick() {
-            sendEffect(MainDrawerSideEffect.NavigateToFamily)
+            sendThrottledEffect(MainDrawerSideEffect.NavigateToFamily)
         }
 
         fun onShareClick() {
-            sendEffect(MainDrawerSideEffect.NavigateToShare)
+            sendThrottledEffect(MainDrawerSideEffect.NavigateToShare)
         }
 
         fun closeDialog() {

@@ -199,7 +199,7 @@ class RewardListViewModel
         }
 
         fun onCreateHabitBtnClick() {
-            sendEffect(RewardListSideEffect.NavigateToHabit)
+            sendThrottledEffect(RewardListSideEffect.NavigateToHabit)
         }
 
         fun onDetailResult(message: String?) {

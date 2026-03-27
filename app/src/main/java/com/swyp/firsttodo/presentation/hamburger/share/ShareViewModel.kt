@@ -49,7 +49,7 @@ class ShareViewModel
                         when (it) {
                             is FamilyError.OnboardingUncompleted -> {
                                 sendEffect(ShareSideEffect.ShowSnackbar("프로필 설정이 필요합니다."))
-                                sendEffect(ShareSideEffect.NavigateToOnboarding)
+                                sendThrottledEffect(ShareSideEffect.NavigateToOnboarding)
                             }
 
                             is ApiError -> sendEffect(ShareSideEffect.ShowSnackbar(it.snackbarMsg()))

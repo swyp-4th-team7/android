@@ -100,9 +100,9 @@ class LoginViewModel
                     updateState { copy(loginState = Async.Success(Unit)) }
 
                     when {
-                        isSessionExpired -> sendEffect(LoginSideEffect.NavigateToHome)
-                        isProfileComplete -> sendEffect(LoginSideEffect.NavigateToHome)
-                        else -> sendEffect(LoginSideEffect.NavigateToOnboarding)
+                        isSessionExpired -> sendThrottledEffect(LoginSideEffect.NavigateToHome)
+                        isProfileComplete -> sendThrottledEffect(LoginSideEffect.NavigateToHome)
+                        else -> sendThrottledEffect(LoginSideEffect.NavigateToOnboarding)
                     }
                 }.onFailure {
                     updateState { copy(loginState = Async.Init) }

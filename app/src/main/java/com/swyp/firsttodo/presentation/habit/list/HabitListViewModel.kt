@@ -59,7 +59,7 @@ class HabitListViewModel
         }
 
         fun onCreateClick() {
-            sendEffect(HabitListSideEffect.NavigateToHabitDetail(null))
+            sendThrottledEffect(HabitListSideEffect.NavigateToHabitDetail(null))
         }
 
         fun onCheckClick(habit: HabitModel) {
@@ -84,7 +84,7 @@ class HabitListViewModel
         }
 
         fun onEditClick(habit: HabitModel) {
-            sendEffect(HabitListSideEffect.NavigateToHabitDetail(habit))
+            sendThrottledEffect(HabitListSideEffect.NavigateToHabitDetail(habit))
         }
 
         fun onDeleteClick(habit: HabitModel) {

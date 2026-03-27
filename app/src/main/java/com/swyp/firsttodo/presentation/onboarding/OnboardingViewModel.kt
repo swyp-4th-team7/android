@@ -55,7 +55,7 @@ class OnboardingViewModel
             when (uiState.value.currentStep) {
                 OnboardingStep.ROLE_SELECT -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
                 OnboardingStep.PROFILE -> saveProfile()
-                OnboardingStep.DONE -> sendEffect(OnboardingSideEffect.NavigateToTodo)
+                OnboardingStep.DONE -> sendThrottledEffect(OnboardingSideEffect.NavigateToTodo)
             }
         }
 
