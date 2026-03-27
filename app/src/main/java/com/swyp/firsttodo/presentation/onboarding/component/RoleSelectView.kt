@@ -33,13 +33,13 @@ fun RoleSelectView(
 
         Text(
             text = "당신의 역할을 선택해주세요.",
-            modifier = Modifier.padding(bottom = 50.dp),
+            modifier = Modifier.padding(bottom = 56.dp),
             color = HaebomTheme.colors.gray500,
             style = HaebomTheme.typo.description,
         )
 
         RoleSelectButton(
-            text = "부모입니다.",
+            btnType = RoleSelectButtonType.PARENT,
             onClick = { onRoleClick(Role.PARENT) },
             selected = selectedRole == Role.PARENT,
             modifier = Modifier
@@ -48,7 +48,7 @@ fun RoleSelectView(
         )
 
         RoleSelectButton(
-            text = "자녀입니다.",
+            btnType = RoleSelectButtonType.CHILD,
             onClick = { onRoleClick(Role.CHILD) },
             selected = selectedRole == Role.CHILD,
             modifier = Modifier.fillMaxWidth(),

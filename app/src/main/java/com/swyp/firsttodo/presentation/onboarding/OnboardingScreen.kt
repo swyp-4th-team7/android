@@ -2,13 +2,9 @@ package com.swyp.firsttodo.presentation.onboarding
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -17,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -83,13 +78,6 @@ fun OnboardingScreen(
     onRoleClick: (Role) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val imeVisible = WindowInsets.isImeVisible
-    val bottomPadding by animateDpAsState(
-        targetValue = if (imeVisible) 4.dp else screenHeightDp(32.dp),
-        label = "bottomPadding",
-    )
-
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -102,16 +90,12 @@ fun OnboardingScreen(
             if (uiState.showButton) {
                 HaebomLargeButton(
                     text = uiState.bottomBtnText,
-                    onClick = {
-                        keyboardController?.hide()
-                        onBottomBtnClick()
-                    },
+                    onClick = onBottomBtnClick,
                     enabled = bottomBtnEnabled,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .imePadding()
                         .padding(horizontal = screenWidthDp(32.dp))
-                        .padding(bottom = bottomPadding),
+                        .padding(bottom = screenHeightDp(32.dp)),
                 )
             }
         },
@@ -124,16 +108,17 @@ fun OnboardingScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(horizontal = screenWidthDp(32.dp))
-                    .padding(top = screenHeightDp(60.dp)),
+                    .padding(top = screenHeightDp(80.dp)),
             )
 
             OnboardingStep.PROFILE -> ProfileView(
-                nickNameFieldState = nickNameFieldState,
+                fieldState = nickNameFieldState,
+                errorText = uiState.nicknameErrorText,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(horizontal = screenWidthDp(32.dp))
-                    .padding(top = screenHeightDp(60.dp)),
+                    .padding(top = screenHeightDp(80.dp)),
             )
 
             OnboardingStep.DONE -> DoneView(

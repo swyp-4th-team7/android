@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -18,7 +19,8 @@ import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 
 @Composable
 fun ProfileView(
-    nickNameFieldState: TextFieldState,
+    fieldState: TextFieldState,
+    errorText: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -26,33 +28,28 @@ fun ProfileView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "닉네임 설정",
+            text = "가족과 공유할\n당신의 이름을 적어 주세요.",
             modifier = Modifier.padding(bottom = 12.dp),
             color = HaebomTheme.colors.gray800,
+            textAlign = TextAlign.Center,
             style = HaebomTheme.typo.hero,
         )
 
         Text(
-            text = "해봄이 불러줄 당신의 이름",
-            modifier = Modifier.padding(bottom = 4.dp),
-            color = HaebomTheme.colors.gray500,
-            style = HaebomTheme.typo.description,
-        )
-
-        Text(
             text = "한글 최대 12자 /영문,숫자,특수기호 불가",
-            modifier = Modifier.padding(bottom = 52.dp),
+            modifier = Modifier.padding(bottom = 56.dp),
             color = HaebomTheme.colors.gray300,
             style = HaebomTheme.typo.helperText,
         )
 
         HaebomMultiLineTextField(
-            fieldState = nickNameFieldState,
-            placeholder = "이름을 입력해주세요.",
+            fieldState = fieldState,
+            placeholder = "닉네임을 입력해 주세요.",
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
             ),
+            errorText = errorText,
         )
     }
 }
@@ -62,7 +59,8 @@ fun ProfileView(
 private fun ProfileViewPreview() {
     HaebomTheme {
         ProfileView(
-            nickNameFieldState = rememberTextFieldState(),
+            fieldState = rememberTextFieldState(),
+            errorText = "아아",
         )
     }
 }
