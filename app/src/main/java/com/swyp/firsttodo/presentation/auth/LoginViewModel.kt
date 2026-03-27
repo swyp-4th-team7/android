@@ -3,6 +3,7 @@ package com.swyp.firsttodo.presentation.auth
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.swyp.firsttodo.BuildConfig
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.domain.model.SocialType
@@ -22,7 +23,8 @@ class LoginViewModel
         private val socialLoginUseCase: SocialLoginUseCase,
     ) :
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
-        val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
+        private val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
+        private val baseUrl = BuildConfig.BASE_URL
 
         init {
             if (isSessionExpired) {
@@ -40,7 +42,7 @@ class LoginViewModel
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
                     title = "이용약관",
-                    url = "https://www.naver.com/",
+                    url = "$baseUrl/terms",
                 ),
             )
         }
@@ -49,7 +51,7 @@ class LoginViewModel
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
                     title = "개인정보 처리방침",
-                    url = "https://www.google.com/",
+                    url = "$baseUrl/privacy",
                 ),
             )
         }
