@@ -35,8 +35,6 @@ class RewardListViewModel
             }
 
             updateState { copy(role = role) }
-
-            initStickerTab()
         }
 
         private fun initStickerTab() {
@@ -200,6 +198,13 @@ class RewardListViewModel
 
         fun onCreateHabitBtnClick() {
             sendThrottledEffect(RewardListSideEffect.NavigateToHabit)
+        }
+
+        fun refresh() {
+            when (uiState.value.currentTab) {
+                RewardHeaderTabType.STICKER -> initStickerTab()
+                RewardHeaderTabType.REWARD -> initRewardTab()
+            }
         }
 
         fun onDetailResult(message: String?) {
