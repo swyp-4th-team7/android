@@ -13,8 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -32,19 +30,6 @@ class OnboardingViewModel
 
         private val validNicknameRegex = Regex("^[가-힣]{1,12}$")
 
-        init {
-            snapshotFlow { nickNameFieldState.text.toString() }
-                .onEach { nickname ->
-                    val errorText = if (nickname.isNotEmpty() && !isValidNickname(nickname)) {
-                        "닉네임은 1~12자의 한글만 사용해 주세요."
-                    } else {
-                        null
-                    }
-                    updateState { copy(nicknameErrorText = errorText) }
-                }
-                .launchIn(viewModelScope)
-        }
-
         private fun isValidNickname(nickname: String) = validNicknameRegex.matches(nickname)
 
         val bottomBtnEnabled: StateFlow<Boolean> = combine(
@@ -54,7 +39,6 @@ class OnboardingViewModel
             when (state.currentStep) {
                 OnboardingStep.ROLE_SELECT -> state.selectedRole != null
                 OnboardingStep.PROFILE -> isValidNickname(nickname)
-                OnboardingStep.DONE -> false
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
@@ -62,7 +46,6 @@ class OnboardingViewModel
             when (uiState.value.currentStep) {
                 OnboardingStep.ROLE_SELECT -> handleDoubleBackPressToExit()
                 OnboardingStep.PROFILE -> updateState { copy(currentStep = OnboardingStep.ROLE_SELECT) }
-                OnboardingStep.DONE -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
             }
         }
 
@@ -70,7 +53,6 @@ class OnboardingViewModel
             when (uiState.value.currentStep) {
                 OnboardingStep.ROLE_SELECT -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
                 OnboardingStep.PROFILE -> saveProfile()
-                OnboardingStep.DONE -> sendThrottledEffect(OnboardingSideEffect.NavigateToTodo)
             }
         }
 
@@ -85,7 +67,7 @@ class OnboardingViewModel
 
             viewModelScope.launch {
                 saveOnboardingProfile(nickname, role)
-                    .onSuccess { updateState { copy(currentStep = OnboardingStep.DONE) } }
+                    .onSuccess { sendEffect(OnboardingSideEffect.NavigateToTodo) }
                     .onFailure { throwable ->
                         Timber.e(throwable, "save onboarding profile error")
 
