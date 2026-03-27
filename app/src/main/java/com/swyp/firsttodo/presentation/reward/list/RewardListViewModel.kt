@@ -58,7 +58,7 @@ class RewardListViewModel
             viewModelScope.launch {
                 stickerRepository.getChildrenStickerList()
                     .onSuccess {
-                        updateState { copy(parentStickers = Async.Success(it)) }
+                        updateState { copy(parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
                     }.onFailure { throwable ->
                         uiState.value.parentStickers.getDataOrNull()?.let { prevData ->
                             updateState { copy(parentStickers = Async.Success(prevData)) }
