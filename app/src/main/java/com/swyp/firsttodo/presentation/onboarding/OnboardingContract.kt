@@ -7,7 +7,6 @@ import com.swyp.firsttodo.domain.model.Role
 enum class OnboardingStep {
     ROLE_SELECT,
     PROFILE,
-    DONE,
 }
 
 data class OnboardingUiState(
@@ -18,18 +17,13 @@ data class OnboardingUiState(
     val topBarTitle = when (currentStep) {
         OnboardingStep.ROLE_SELECT -> "역할 선택"
         OnboardingStep.PROFILE -> "닉네임 설정"
-        OnboardingStep.DONE -> "회원가입 완료!"
     }
 
-    val showButton = when (currentStep) {
-        OnboardingStep.DONE -> false
-        else -> true
-    }
+    val showButton = true
 
     val bottomBtnText = when (currentStep) {
         OnboardingStep.ROLE_SELECT -> "다음으로"
         OnboardingStep.PROFILE -> "시작하기"
-        OnboardingStep.DONE -> ""
     }
 }
 
