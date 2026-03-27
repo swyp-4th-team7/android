@@ -270,9 +270,9 @@ class TodoViewModel
             viewModelScope.launch {
                 todoRepository.deleteTodo(todoId)
                     .onSuccess {
-                        getTodos()
                         updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
                         sendEffect(TodoSideEffect.ShowSnackbar("할 일이 삭제되었습니다."))
+                        getTodos()
                     }
                     .onFailure { throwable ->
                         val message = when (throwable) {
