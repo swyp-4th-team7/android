@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.habit.detail
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -110,6 +111,7 @@ fun HabitDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
+                    .background(HaebomTheme.colors.white)
                     .padding(horizontal = screenWidthDp(16.dp))
                     .padding(vertical = screenHeightDp(20.dp)),
             )
