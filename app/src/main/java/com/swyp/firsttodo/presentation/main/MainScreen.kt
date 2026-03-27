@@ -29,10 +29,11 @@ import com.swyp.firsttodo.presentation.main.navigation.MainNavigator
 import com.swyp.firsttodo.presentation.main.snackbar.HaebomSnackbarHost
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.topbar.MainTopBar
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MainScreen(
-    startDestination: Route,
+    startDestination: StateFlow<Route?>,
     navigator: MainNavigator,
     snackbarState: SnackbarHostState,
     viewModel: MainViewModel = hiltViewModel(),
@@ -67,7 +68,7 @@ fun MainScreen(
                     MainNavHost(
                         navigator = navigator,
                         paddingValues = innerPadding,
-                        startDestination = startDestination,
+                        resolvedDestination = startDestination,
                     )
 
                     MainTopBar(

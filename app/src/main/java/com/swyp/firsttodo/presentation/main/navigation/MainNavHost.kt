@@ -15,25 +15,32 @@ import com.swyp.firsttodo.presentation.hamburger.navigation.hamburgerNavGraph
 import com.swyp.firsttodo.presentation.main.bottombar.MainTab
 import com.swyp.firsttodo.presentation.onboarding.navigation.onboardingNavGraph
 import com.swyp.firsttodo.presentation.reward.navigation.rewardNavGraph
+import com.swyp.firsttodo.presentation.splash.navigation.SplashRoute
+import com.swyp.firsttodo.presentation.splash.navigation.splashNavGraph
 import com.swyp.firsttodo.presentation.todo.navigation.todoNavGraph
 import com.swyp.firsttodo.presentation.webview.navigation.webViewNavGraph
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MainNavHost(
     navigator: MainNavigator,
     paddingValues: PaddingValues,
-    startDestination: Route,
+    resolvedDestination: StateFlow<Route?>,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
         navController = navigator.navController,
-        startDestination = startDestination,
+        startDestination = SplashRoute,
         modifier = modifier.fillMaxSize(),
         enterTransition = { slideInHorizontally { it } },
         exitTransition = { slideOutHorizontally { -it / 3 } },
         popEnterTransition = { slideInHorizontally { -it / 3 } },
         popExitTransition = { slideOutHorizontally { it } },
     ) {
+        splashNavGraph(
+            resolvedDestination = resolvedDestination,
+            onNavigate = navigator::navigateFromSplash,
+        )
         authNavGraph(
             navController = navigator.navController,
             navigateToTodo = navigator::navigateToTodo,

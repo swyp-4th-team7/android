@@ -13,7 +13,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -27,30 +26,24 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val splashScreen = installSplashScreen()
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        splashScreen.setKeepOnScreenCondition {
-            viewModel.startDestination.value == null
-        }
 
         askNotificationPermission()
         checkGooglePlayServices()
 
         setContent {
-            val startDestination = viewModel.startDestination.collectAsStateWithLifecycle()
             val mainNavigator = rememberHaebomNavigator()
             val snackbarHostState = remember { SnackbarHostState() }
 
             HaebomTheme {
-                startDestination.value?.let { dest ->
-                    MainScreen(
-                        startDestination = dest,
-                        navigator = mainNavigator,
-                        snackbarState = snackbarHostState,
-                    )
-                }
+                MainScreen(
+                    startDestination = viewModel.startDestination,
+                    navigator = mainNavigator,
+                    snackbarState = snackbarHostState,
+                )
             }
         }
     }
