@@ -6,6 +6,7 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
+import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.sticker.WeeklyStickersModel
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
@@ -23,6 +24,7 @@ data class EditingTodo(
 
 @Immutable
 data class TodoUiState(
+    val role: Role? = null,
     val categories: List<TodoCategoryModel> = emptyList(),
     val progressPercent: Async<Int> = Async.Init,
     val remainTodoCount: Async<Int> = Async.Init,
@@ -53,9 +55,23 @@ data class TodoUiState(
 
     val bubbleText = if (progressPercent is Async.Success) {
         when {
-            progressPercent.data == 100 -> "완전 대단해!!"
-            progressPercent.data in 50..99 -> "잘하고 있어! 힘내!!"
-            else -> "뭐하고 있어! 빨리 해야해!!"
+            progressPercent.data == 100 -> if (role == Role.CHILD) {
+                "완전 대단해!!"
+            } else {
+                "완전 대단해요!!"
+            }
+
+            progressPercent.data in 50..99 -> if (role == Role.CHILD) {
+                "잘하고 있어! 힘내!!"
+            } else {
+                "잘하고 있습니다!"
+            }
+
+            else -> if (role == Role.CHILD) {
+                "뭐하고 있어! 빨리 해야해!!"
+            } else {
+                "빨리 해야해요!!"
+            }
         }
     } else {
         null
