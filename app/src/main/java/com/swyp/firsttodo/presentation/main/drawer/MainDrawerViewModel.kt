@@ -46,7 +46,7 @@ class MainDrawerViewModel
         }
 
         fun closeDialog() {
-            updateState { copy(showDialog = false, currentDrawer = null) }
+            updateState { copy(showDialog = false, currentDrawer = null, dialogLoadingState = Async.Init) }
         }
 
         fun onDialogConfirmBtnClick() {
