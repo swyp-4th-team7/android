@@ -42,7 +42,7 @@ class LoginViewModel
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
                     title = "이용약관",
-                    url = "$baseUrl/terms",
+                    url = "$baseUrl/terms.html",
                 ),
             )
         }
@@ -51,7 +51,7 @@ class LoginViewModel
             sendEffect(
                 LoginSideEffect.NavigateToWebView(
                     title = "개인정보 처리방침",
-                    url = "$baseUrl/privacy",
+                    url = "$baseUrl/privacy.html",
                 ),
             )
         }
