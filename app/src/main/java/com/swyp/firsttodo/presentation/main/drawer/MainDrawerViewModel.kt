@@ -74,7 +74,7 @@ class MainDrawerViewModel
             viewModelScope.launch {
                 logoutUseCase()
                     .onSuccess {
-                        updateState { copy(dialogLoadingState = Async.Success(Unit)) }
+                        updateState { copy(dialogLoadingState = Async.Success(Unit), nickname = Async.Init) }
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("로그아웃 되었습니다."))
                     }
@@ -103,7 +103,7 @@ class MainDrawerViewModel
             viewModelScope.launch {
                 deleteAccountUseCase()
                     .onSuccess {
-                        updateState { copy(dialogLoadingState = Async.Success(Unit)) }
+                        updateState { copy(dialogLoadingState = Async.Success(Unit), nickname = Async.Init) }
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("계정이 탈퇴되었습니다."))
                     }
