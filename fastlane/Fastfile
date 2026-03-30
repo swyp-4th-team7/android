@@ -10,7 +10,12 @@ platform :android do
 
     # 1. 릴리즈 노트 읽기 및 versionCode 자동 증가
     release_notes = File.read("release_notes.txt")
-    increment_version_code(gradle_file_path: "app/build.gradle.kts")
+
+    gradle_file = "../app/build.gradle.kts"
+    content = File.read(gradle_file)
+    new_content = content.gsub(/versionCode = (\d+)/) { "versionCode = #{$1.to_i + 1}" }
+    File.open(gradle_file, "w") { |file| file.puts new_content }
+    UI.message("🚀 versionCode를 #{content.match(/versionCode = (\d+)/)[1].to_i + 1}로 올렸습니다!")
 
     # 2. APK 빌드
     UI.message("📦 1. APK 빌드를 시작합니다...")
