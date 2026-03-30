@@ -156,6 +156,14 @@ private fun MarkedDate(
         )
 
         when {
+            stickerCode != null -> Image(
+                painter = painterResource(R.drawable.img_sticker_clover),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(40.dp)
+                    .wrapContentSize(Alignment.Center),
+            )
+
             isToday -> Text(
                 text = day.toString(),
                 modifier = Modifier
@@ -167,14 +175,6 @@ private fun MarkedDate(
                     .wrapContentSize(Alignment.Center),
                 color = HaebomTheme.colors.white,
                 style = BoldStyle.copy(fontSize = 20.sp),
-            )
-
-            stickerCode != null -> Image(
-                painter = painterResource(R.drawable.img_sticker_clover),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(40.dp)
-                    .wrapContentSize(Alignment.Center),
             )
 
             else -> Text(

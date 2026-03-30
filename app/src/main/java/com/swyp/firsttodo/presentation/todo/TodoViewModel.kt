@@ -183,6 +183,7 @@ class TodoViewModel
                     completed = !todoUiModel.completed,
                 ).onSuccess {
                     getTodos()
+                    getWeeklyStickers()
                 }.onFailure { throwable ->
                     val message = when (throwable) {
                         is TodoError.IdNotFound -> {
