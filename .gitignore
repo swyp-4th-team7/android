@@ -10,3 +10,7 @@
 local.properties
 google-services.json
 CLAUDE.md
+/app/release.jks
+.env
+/fastlane/report.xml
+/fastlane/release_notes.txt

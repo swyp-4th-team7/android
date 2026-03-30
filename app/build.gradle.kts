@@ -22,6 +22,15 @@ android {
         version = release(36)
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("release.jks")
+            storePassword = properties["KEYSTORE_PASSWORD"]?.toString() ?: ""
+            keyAlias = properties["KEY_ALIAS"]?.toString() ?: ""
+            keyPassword = properties["KEY_PASSWORD"]?.toString() ?: ""
+        }
+    }
+
     defaultConfig {
         applicationId = "com.swyp.firsttodo"
         minSdk = 24
@@ -39,6 +48,9 @@ android {
         }
 
         release {
+            signingConfig = signingConfigs.getByName("release")
+            buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+            buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties["google.web.client.id"]}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
