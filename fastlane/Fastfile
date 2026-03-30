@@ -1,23 +1,57 @@
 default_platform(:android)
 
+require 'net/http'
+require 'uri'
+require 'json'
+
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
+  desc "QA 빌드 생성, Firebase 배포 및 디스코드 알림 전송"
+  lane :qa do
 
-  desc "Submit a new Beta Build to Crashlytics Beta"
-  lane :beta do
+    # 1. 릴리즈 노트 입력 받기
+    release_notes = UI.input("📝 이번 QA 빌드의 릴리즈 노트를 입력해 주세요: ")
+
+    # 2. APK 빌드
+    UI.message("📦 1. APK 빌드를 시작합니다...")
     gradle(task: "clean assembleRelease")
-    crashlytics
 
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
-  end
+    # 3. Firebase App Distribution 등록
+    UI.message("🔥 2. Firebase App Distribution에 업로드합니다...")
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      groups: "swyp",
+      release_notes: release_notes
+    )
 
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+    # 4. Discord 알림 전송
+    UI.message("💬 3. 디스코드로 알림을 전송합니다...")
+
+    webhook_url = ENV["DISCORD_WEBHOOK_URL"]
+    uri = URI(webhook_url)
+
+    # 디스코드에 보낼 메시지 포맷
+    tags = ENV["DISCORD_USERS_TAG_ID"]
+
+    payload = {
+      content: "🚀 **Android QA 앱이 새로 배포되었습니다!** #{tags}",
+      embeds: [
+        {
+          title: "📱 Firebase App Distribution",
+          description: "등록된 테스터 기기의 `App Tester` 앱 또는 메일함을 확인해 주세요.",
+          color: 3447003, # 파란색
+          fields: [
+            {
+              name: "📝 릴리즈 노트",
+              value: release_notes
+            }
+          ]
+        }
+      ]
+    }
+
+    # HTTP 통신으로 디스코드에 쏘기
+    Net::HTTP.post(uri, payload.to_json, "Content-Type" => "application/json")
+
+    UI.success("🎉 QA 배포 및 디스코드 알림 전송이 완료되었습니다!")
   end
 end
