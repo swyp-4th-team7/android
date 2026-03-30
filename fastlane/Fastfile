@@ -9,7 +9,7 @@ platform :android do
   lane :qa do
 
     # 1. 릴리즈 노트 입력 받기
-    release_notes = UI.input("📝 이번 QA 빌드의 릴리즈 노트를 입력해 주세요: ")
+    release_notes = File.read("release_notes.txt")
 
     # 2. APK 빌드
     UI.message("📦 1. APK 빌드를 시작합니다...")
@@ -38,7 +38,7 @@ platform :android do
         {
           title: "📱 Firebase App Distribution",
           description: "등록된 테스터 기기의 `App Tester` 앱 또는 메일함을 확인해 주세요.",
-          color: 3447003, # 파란색
+          color: 9739627,
           fields: [
             {
               name: "📝 릴리즈 노트",
