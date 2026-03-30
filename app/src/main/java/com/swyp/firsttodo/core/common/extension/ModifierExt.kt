@@ -1,5 +1,6 @@
 package com.swyp.firsttodo.core.common.extension
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -40,6 +41,7 @@ inline fun Modifier.noRippleClickable(
         }
     }
 
+@OptIn(ExperimentalFoundationApi::class)
 inline fun Modifier.noRippleLongClickable(
     crossinline onLongClick: () -> Unit,
     enabled: Boolean = true,
