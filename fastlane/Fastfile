@@ -8,8 +8,9 @@ platform :android do
   desc "QA 빌드 생성, Firebase 배포 및 디스코드 알림 전송"
   lane :qa do
 
-    # 1. 릴리즈 노트 입력 받기
+    # 1. 릴리즈 노트 읽기 및 versionCode 자동 증가
     release_notes = File.read("release_notes.txt")
+    increment_version_code(gradle_file_path: "app/build.gradle.kts")
 
     # 2. APK 빌드
     UI.message("📦 1. APK 빌드를 시작합니다...")
