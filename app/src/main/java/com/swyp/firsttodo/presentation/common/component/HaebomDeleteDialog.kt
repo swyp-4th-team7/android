@@ -40,8 +40,8 @@ sealed class DeleteDialogType(
     )
 
     data object Habit : DeleteDialogType(
-        title = "선택한 할 일을 삭제할까요?",
-        description = "입력한 할 일이 사라져요!",
+        title = "선택한 습관을 삭제할까요?",
+        description = "입력한 습관이 사라져요!",
     )
 
     class Disconnect(nickname: String) : DeleteDialogType(
