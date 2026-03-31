@@ -27,8 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
-import com.swyp.firsttodo.core.common.util.screenHeightDp
-import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
@@ -112,8 +110,8 @@ fun HabitDetailScreen(
                     .fillMaxWidth()
                     .navigationBarsPadding()
                     .background(HaebomTheme.colors.white)
-                    .padding(horizontal = screenWidthDp(16.dp))
-                    .padding(vertical = screenHeightDp(20.dp)),
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 20.dp),
             )
         },
     ) { innerPadding ->
@@ -121,7 +119,7 @@ fun HabitDetailScreen(
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .padding(innerPadding)
-                .padding(horizontal = screenWidthDp(16.dp)),
+                .padding(horizontal = 16.dp),
         ) {
             HabitDetailHeader(
                 title = uiState.title,

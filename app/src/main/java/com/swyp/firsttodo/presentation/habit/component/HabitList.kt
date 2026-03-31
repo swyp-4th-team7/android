@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.extension.noRippleLongClickable
-import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
@@ -134,7 +133,7 @@ private fun ListItem(
                     color = HaebomTheme.colors.white,
                     shape = RoundedCornerShape(4.dp),
                 )
-                .padding(horizontal = screenWidthDp(12.dp)),
+                .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
