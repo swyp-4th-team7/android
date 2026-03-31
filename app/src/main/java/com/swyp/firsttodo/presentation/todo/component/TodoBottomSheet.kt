@@ -67,7 +67,7 @@ enum class TodoBottomSheetType(
 ) {
     CHILD_CREATE(
         title = "추가 할 일 작성 하기",
-        description = "해야 할 일을 추가하고 하나씩 완료해보세요.",
+        description = "해야 할 일을 추가하고 하나씩 완료해 보세요.",
         btnText = "추가하기",
     ),
     CHILD_EDIT(
@@ -77,7 +77,7 @@ enum class TodoBottomSheetType(
     ),
     PARENT_CREATE(
         title = "추가 할 일 작성",
-        description = "해야 할 일을 추가하고 하나씩 완료해보세요.",
+        description = "해야 할 일을 추가하고 하나씩 완료해 보세요.",
         btnText = "추가하기",
     ),
     PARENT_EDIT(

@@ -55,7 +55,7 @@ fun ParentRewardManageList(
     when (rewards) {
         Async.Empty -> ParentRewardEmptyView(
             title = "아직 관리할 보상이 없습니다.",
-            description = "자녀의 습관을 만들어주세요.",
+            description = "자녀의 습관을 만들어 주세요.",
         )
 
         else -> {

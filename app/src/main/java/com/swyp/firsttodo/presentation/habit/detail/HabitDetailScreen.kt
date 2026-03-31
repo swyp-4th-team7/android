@@ -133,7 +133,7 @@ fun HabitDetailScreen(
             ) {
                 HaebomMultiLineTextField(
                     fieldState = titleFieldState,
-                    placeholder = "습관을 작성해주세요.",
+                    placeholder = "습관을 작성해 주세요.",
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(
                         imeAction = if (screenType == HabitDetailScreenType.CHILD) ImeAction.Next else ImeAction.Done,
