@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
+import com.swyp.firsttodo.core.common.util.isExpandedScreen
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
@@ -127,8 +128,7 @@ private fun MainDrawerContent(
 ) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    val screenHeight = configuration.screenHeightDp.dp
-    val drawerWidth = if (screenWidth.value / screenHeight.value >= 0.75f) screenWidth / 2 else screenWidthDp(280.dp)
+    val drawerWidth = if (isExpandedScreen()) screenWidth / 2 else screenWidthDp(280.dp)
 
     Column(
         modifier = Modifier
