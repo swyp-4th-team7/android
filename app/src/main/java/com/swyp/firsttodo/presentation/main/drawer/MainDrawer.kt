@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,8 +35,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
-import com.swyp.firsttodo.core.common.extension.widthForScreenPercentage
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
+import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
@@ -123,9 +125,14 @@ private fun MainDrawerContent(
     onLogoutClick: () -> Unit,
     onWithdrawClick: () -> Unit,
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
+    val drawerWidth = if (screenWidth.value / screenHeight.value >= 0.75f) screenWidth / 2 else screenWidthDp(280.dp)
+
     Column(
         modifier = Modifier
-            .widthForScreenPercentage(280.dp)
+            .width(drawerWidth)
             .fillMaxHeight()
             .background(HaebomTheme.colors.white),
     ) {
