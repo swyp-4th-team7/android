@@ -158,7 +158,7 @@ fun DialogButton(
         text = text,
         modifier = modifier
             .clickable(onClick = onClick)
-            .heightIn(screenHeightDp(43.dp))
+            .heightIn(screenHeightDp(44.dp))
             .background(backgroundColor)
             .padding(all = 10.dp)
             .wrapContentSize(Alignment.Center),
