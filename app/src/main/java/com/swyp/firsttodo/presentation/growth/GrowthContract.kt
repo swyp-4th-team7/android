@@ -53,16 +53,24 @@ data class GrowthUiState(
 ) : UiState {
     val currentStarCount = when (currentTab) {
         GrowthHeaderTabType.TODO -> when (role) {
-            Role.PARENT -> childrenGrowth.getDataOrNull()?.let { data ->
-                runCatching { data[selectedChildIdx].todoStarCount }.getOrNull()
+            Role.PARENT -> if (childrenGrowth is Async.Empty) {
+                0
+            } else {
+                childrenGrowth.getDataOrNull()?.let { data ->
+                    runCatching { data[selectedChildIdx].todoStarCount }.getOrNull()
+                }
             }
 
             else -> todoGrowth.getDataOrNull()?.starCount
         }
 
         GrowthHeaderTabType.HABIT -> when (role) {
-            Role.PARENT -> childrenGrowth.getDataOrNull()?.let { data ->
-                runCatching { data[selectedChildIdx].habitStarCount }.getOrNull()
+            Role.PARENT -> if (childrenGrowth is Async.Empty) {
+                0
+            } else {
+                childrenGrowth.getDataOrNull()?.let { data ->
+                    runCatching { data[selectedChildIdx].habitStarCount }.getOrNull()
+                }
             }
 
             else -> habitGrowth.getDataOrNull()?.starCount
