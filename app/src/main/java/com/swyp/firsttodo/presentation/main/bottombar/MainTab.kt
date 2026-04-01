@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.navigation.Route
+import com.swyp.firsttodo.presentation.growth.navigation.GrowthRoute
 import com.swyp.firsttodo.presentation.habit.navigation.HabitRoute
 import com.swyp.firsttodo.presentation.reward.navigation.RewardRoute
 import com.swyp.firsttodo.presentation.todo.navigation.TodoRoute
@@ -31,5 +32,11 @@ enum class MainTab(
         defaultIconRes = R.drawable.ic_reward_default,
         label = R.string.bottom_nav_reward,
         route = RewardRoute.Reward,
+    ),
+    GROWTH(
+        selectedIconRes = R.drawable.ic_growth_selected,
+        defaultIconRes = R.drawable.ic_growth_default,
+        label = R.string.bottom_nav_growth,
+        route = GrowthRoute.Growth,
     ),
 }
