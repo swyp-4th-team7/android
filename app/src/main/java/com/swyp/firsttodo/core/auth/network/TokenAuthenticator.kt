@@ -40,7 +40,7 @@ class TokenAuthenticator
 
             // 먼저 발생한 요청이 이미 토큰 갱신 완료했다면 리이슈 하지 않음
             val requestToken = response.request.header(AUTHORIZATION)
-            val storedToken = runBlocking { sessionDataSource.getAccessToken() } ?: abortWithLogout()
+            val storedToken = runBlocking { sessionDataSource.getAccessToken() } ?: return abortWithLogout()
 
             if (requestToken != "$BEARER $storedToken") {
                 return response.request.newBuilder()
