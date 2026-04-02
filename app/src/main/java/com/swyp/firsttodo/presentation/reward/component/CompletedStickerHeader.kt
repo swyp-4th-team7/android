@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 @Composable
@@ -25,9 +26,9 @@ fun CompletedStickerHeader(
     completedSticker: Async<Int>,
     modifier: Modifier = Modifier,
 ) {
-    val count = when (completedSticker) {
-        is Async.Empty -> 0
-        is Async.Success -> completedSticker.data
+    val count = when {
+        completedSticker is Async.Empty -> 0
+        completedSticker.getDataOrNull() != null -> completedSticker.getDataOrNull()
         else -> "  "
     }
 

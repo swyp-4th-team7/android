@@ -9,6 +9,7 @@ data class RewardModel(
     val duration: HabitDuration,
     val reward: String,
     val status: RewardStatus,
+    val isCompleted: Boolean,
 )
 
 enum class RewardStatus {

@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.data.remote.dto.request.reward
+package com.swyp.firsttodo.data.remote.dto.response.reward
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -23,4 +23,6 @@ data class RewardResponseBody(
     val reward: String,
     @SerialName("status")
     val status: String,
+    @SerialName("isCompleted")
+    val isCompleted: Boolean,
 )

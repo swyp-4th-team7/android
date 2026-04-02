@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,11 +23,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.base.Async
-import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.extension.skeleton
-import com.swyp.firsttodo.core.common.util.screenHeightDp
-import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicDialog
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
@@ -67,7 +65,7 @@ fun HaebomDeleteDialog(
 
     HaebomBasicDialog(
         onDismiss = onDismiss,
-        modifier = modifier.padding(horizontal = screenWidthDp(20.dp)),
+        modifier = modifier.padding(horizontal = 20.dp),
     ) {
         val isLoading = loadingState is Async.Loading
 
@@ -93,7 +91,7 @@ fun DialogContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(all = screenWidthDp(24.dp)),
+            .padding(all = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (isLoading) {
@@ -111,7 +109,7 @@ fun DialogContent(
             )
         }
 
-        Spacer(Modifier.heightForScreenPercentage(8.dp))
+        Spacer(Modifier.height(8.dp))
 
         if (isLoading) {
             Spacer(
@@ -128,11 +126,11 @@ fun DialogContent(
             )
         }
 
-        Spacer(Modifier.heightForScreenPercentage(10.dp))
+        Spacer(Modifier.height(16.dp))
 
         Row(
-            modifier = Modifier.padding(vertical = screenHeightDp(4.dp)),
-            horizontalArrangement = Arrangement.spacedBy(screenWidthDp(8.dp)),
+            modifier = Modifier.padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             DialogButton(
                 text = cancelBtnLabel,
@@ -174,9 +172,8 @@ private fun DialogButton(
                 shape = RoundedCornerShape(4.dp),
             )
             .padding(8.dp)
-            .wrapContentHeight(Alignment.CenterVertically),
+            .wrapContentSize(Alignment.Center),
         color = textColor,
-        textAlign = TextAlign.Center,
         style = HaebomTheme.typo.buttonM,
     )
 }

@@ -38,13 +38,13 @@ fun ParentRewardEmptyView(
         Text(
             text = title,
             color = HaebomTheme.colors.gray400,
-            style = HaebomTheme.typo.buttonL,
+            style = HaebomTheme.typo.card,
         )
 
         Text(
             text = description,
-            color = HaebomTheme.colors.gray400,
-            style = HaebomTheme.typo.subtitle,
+            color = HaebomTheme.colors.gray300,
+            style = HaebomTheme.typo.description,
         )
     }
 }
