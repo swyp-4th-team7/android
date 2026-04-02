@@ -27,14 +27,16 @@ class GrowthViewModel
 
             updateState { copy(role = role) }
 
-            when (role) {
-                Role.PARENT -> loadChildrenGrowth()
-
-                Role.CHILD -> {
-                    loadTodoGrowth()
-                    loadHabitGrowth()
-                }
+            if (role == Role.CHILD) {
+                loadTodoGrowth()
+                loadHabitGrowth()
             }
+        }
+
+        fun refresh() {
+            if (uiState.value.role != Role.PARENT) return
+            updateState { copy(selectedChildIdx = 0) }
+            loadChildrenGrowth()
         }
 
         private fun loadChildrenGrowth() {
