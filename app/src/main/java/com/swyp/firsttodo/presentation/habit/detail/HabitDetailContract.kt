@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.habit.detail
 
 import androidx.compose.runtime.Immutable
+import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
@@ -22,6 +23,7 @@ data class HabitDetailUiState(
     val habitId: Long? = null,
     val duration: HabitDuration? = null,
     val isCompleted: Boolean? = null,
+    val loadingState: Async<Unit> = Async.Init,
 ) : UiState {
     val title = when (screenState) {
         HabitDetailScreenState.IDLE -> ""
