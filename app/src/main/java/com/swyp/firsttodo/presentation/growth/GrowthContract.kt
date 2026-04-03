@@ -118,19 +118,19 @@ data class GrowthUiState(
         1 -> if (role == Role.PARENT) {
             "지난 주 ${selectedChild?.nickname}(은)는 별 1개!\n오늘 한 가지만 같이 해보자고 격려해 주세요."
         } else {
-            "이번 주는 별 1개!\n다음 주엔 더 해낼 수 있어요."
+            "지난 주는 별 1개!\n이번 주엔 더 해낼 수 있어요."
         }
 
         2 -> if (role == Role.PARENT) {
             "지난 주 ${selectedChild?.nickname}(은)는 별 2개!\n조금만 더 해볼 수 있도록 응원해 주세요."
         } else {
-            "이번 주는 별 2개!\n우리 조금만 더 힘내봐요!"
+            "지난 주는 별 2개!\n우리 조금만 더 힘내봐요!"
         }
 
         3 -> if (role == Role.PARENT) {
             "지난 주 ${selectedChild?.nickname}(은)는 별 3개!\n노력한 우리 아이에게 꼭 칭찬해 주세요. \uD83C\uDF89"
         } else {
-            "이번 주는 별 3개!\n다음 주도 기대할게요. \uD83C\uDF89"
+            "지난 주는 별 3개!\n이번 주도 기대할게요. \uD83C\uDF89"
         }
 
         else -> ""
