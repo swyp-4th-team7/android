@@ -1,9 +1,7 @@
 package com.swyp.firsttodo.core.common.extension
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -39,21 +37,6 @@ inline fun Modifier.noRippleClickable(
         ) {
             onClick()
         }
-    }
-
-@OptIn(ExperimentalFoundationApi::class)
-inline fun Modifier.noRippleLongClickable(
-    crossinline onLongClick: () -> Unit,
-    enabled: Boolean = true,
-): Modifier =
-    composed {
-        combinedClickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() },
-            enabled = enabled,
-            onLongClick = { onLongClick() },
-            onClick = {},
-        )
     }
 
 fun Modifier.figmaDropShadow(

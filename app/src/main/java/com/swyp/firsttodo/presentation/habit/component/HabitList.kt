@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
-import com.swyp.firsttodo.core.common.extension.noRippleLongClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
@@ -141,7 +140,7 @@ private fun ListItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .noRippleLongClickable({ showPopup = true })
+                    .noRippleClickable({ showPopup = true })
                     .background(
                         color = HaebomTheme.colors.white,
                         shape = RoundedCornerShape(4.dp),
