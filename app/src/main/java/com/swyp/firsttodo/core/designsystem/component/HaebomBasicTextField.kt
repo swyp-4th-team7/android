@@ -94,7 +94,7 @@ fun HaebomBasicTextField(
 private class HaebomTextFieldPreviewProvider : PreviewParameterProvider<Pair<TextFieldState, String>> {
     override val values = sequenceOf(
         (TextFieldState() to "MM/DD/YYYY"),
-        (TextFieldState("하루에 책 10장 읽기") to "습관을 작성해주세요. (최대 12자)"),
+        (TextFieldState("하루에 책 10장 읽기") to "습관을 작성해 주세요. (최대 12자)"),
     )
 }
 

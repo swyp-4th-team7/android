@@ -31,7 +31,7 @@ data class HabitDetailUiState(
 
     val description = when (screenState) {
         HabitDetailScreenState.IDLE -> ""
-        HabitDetailScreenState.CREATE -> "습관을 만들고 매일 실천해보세요!"
+        HabitDetailScreenState.CREATE -> "습관을 만들고 매일 실천해 보세요!"
         HabitDetailScreenState.EDIT -> "습관 정보를 수정하고 업데이트하세요."
     }
 
