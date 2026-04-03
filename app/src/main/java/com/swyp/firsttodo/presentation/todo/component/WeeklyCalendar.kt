@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -21,11 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.dashedCircleBorder
@@ -144,6 +143,9 @@ private fun MarkedDate(
     stickerCode: String?,
     modifier: Modifier = Modifier,
 ) {
+    val weekDayFontSize = with(LocalDensity.current) { 12.dp.toSp() }
+    val dayFontSize = with(LocalDensity.current) { 20.dp.toSp() }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -152,7 +154,7 @@ private fun MarkedDate(
         Text(
             text = weekDay,
             color = HaebomTheme.colors.black,
-            style = MediumStyle.copy(fontSize = 12.sp),
+            style = MediumStyle.copy(fontSize = weekDayFontSize),
         )
 
         when {
@@ -167,27 +169,27 @@ private fun MarkedDate(
             isToday -> Text(
                 text = day.toString(),
                 modifier = Modifier
-                    .sizeIn(40.dp, 40.dp)
+                    .size(40.dp)
                     .background(
                         color = HaebomTheme.colors.orange400,
                         shape = CircleShape,
                     )
                     .wrapContentSize(Alignment.Center),
                 color = HaebomTheme.colors.white,
-                style = BoldStyle.copy(fontSize = 20.sp),
+                style = BoldStyle.copy(fontSize = dayFontSize),
             )
 
             else -> Text(
                 text = day.toString(),
                 modifier = Modifier
-                    .sizeIn(40.dp, 40.dp)
+                    .size(40.dp)
                     .dashedCircleBorder(
                         color = HaebomTheme.colors.gray200,
                         strokeWidth = 2.dp,
                     )
                     .wrapContentSize(Alignment.Center),
                 color = HaebomTheme.colors.gray200,
-                style = BoldStyle.copy(fontSize = 20.sp),
+                style = BoldStyle.copy(fontSize = dayFontSize),
             )
         }
     }
