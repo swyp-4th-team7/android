@@ -3,8 +3,10 @@ package com.swyp.firsttodo.presentation.common.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -129,7 +131,10 @@ fun DialogContent(
         Spacer(Modifier.height(16.dp))
 
         Row(
-            modifier = Modifier.padding(vertical = 4.dp),
+            modifier = Modifier
+                .heightIn(min = 48.dp)
+                .padding(vertical = 4.dp)
+                .height(IntrinsicSize.Max),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             DialogButton(
@@ -139,7 +144,7 @@ fun DialogContent(
                 onClick = onCancel,
                 modifier = Modifier
                     .weight(1f)
-                    .heightIn(40.dp),
+                    .fillMaxHeight(),
             )
 
             DialogButton(
@@ -149,7 +154,7 @@ fun DialogContent(
                 onClick = onConfirm,
                 modifier = Modifier
                     .weight(1f)
-                    .heightIn(40.dp),
+                    .fillMaxHeight(),
             )
         }
     }
@@ -171,9 +176,10 @@ private fun DialogButton(
                 color = backgroundColor,
                 shape = RoundedCornerShape(4.dp),
             )
-            .padding(8.dp)
+            .padding(10.dp)
             .wrapContentSize(Alignment.Center),
         color = textColor,
+        textAlign = TextAlign.Center,
         style = HaebomTheme.typo.buttonM,
     )
 }

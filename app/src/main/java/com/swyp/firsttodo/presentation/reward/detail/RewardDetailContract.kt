@@ -30,7 +30,7 @@ data class RewardDetailUiState(
     }
 
     val description = when (screenType) {
-        RewardDetailScreenType.ACCEPT -> "자녀 습관 보상을 확인하고 조율해보세요."
+        RewardDetailScreenType.ACCEPT -> "자녀 습관 보상을 확인하고 조율해 보세요."
         RewardDetailScreenType.DELIVER -> "습관을 완료한 자녀에게 약속된 보상을 전달하셨나요?"
         null -> ""
     }
