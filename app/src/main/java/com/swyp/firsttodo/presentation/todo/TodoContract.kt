@@ -58,7 +58,7 @@ data class TodoUiState(
             progressPercent.data == 100 -> if (role == Role.CHILD) {
                 "완전 대단해!!"
             } else {
-                "완전 대단해요!!"
+                "오늘도 수고하셨습니다!"
             }
 
             progressPercent.data in 50..99 -> if (role == Role.CHILD) {
