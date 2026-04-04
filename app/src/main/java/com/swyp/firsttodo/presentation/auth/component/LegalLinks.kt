@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ fun LegalLinks(
         Text(
             text = "로그인하시면 아래 내용에 동의하는 것으로 간주됩니다.",
             color = HaebomTheme.colors.gray300,
+            textAlign = TextAlign.Center,
             style = MediumStyle.copy(fontSize = 10.sp),
         )
 

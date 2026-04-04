@@ -118,7 +118,7 @@ class ShareViewModel
                             is FamilyError.InviteCodeEmpty, is FamilyError.InviteCodeInvalid,
                             is FamilyError.InviteCodeMySelf,
                             -> {
-                                updateState { copy(codeErrorText = "올바르지 않은 초대 코드예요. 다시 확인해 주세요.") }
+                                updateState { copy(codeErrorText = "올바르지 않은 초대코드예요. 다시 확인해 주세요.") }
                             }
 
                             is ApiError -> {

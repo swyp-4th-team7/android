@@ -28,7 +28,7 @@ class LoginViewModel
 
         init {
             if (isSessionExpired) {
-                sendEffect(LoginSideEffect.ShowSnackbar("로그인이 만료되었어요. 다시 로그인 해주세요."))
+                sendEffect(LoginSideEffect.ShowSnackbar("로그인이 만료되었어요. 다시 로그인해 주세요."))
             }
         }
 
