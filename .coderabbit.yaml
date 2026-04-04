@@ -1,0 +1,216 @@
+language: ko-KR
+
+tone_instructions: "한국어 존댓말로, 안드로이드 최신 권장 사항(Modern Android Development)에 기반하여 리뷰해줘."
+
+reviews:
+    high_level_summary: true
+    review_status: true
+    poem: true
+
+    auto_review:
+        enabled: true
+        drafts: false
+
+    path_instructions:
+        - path: "**/*.kt"
+          instructions: |
+              코드를 리뷰할 때 다음 Kotlin 및 Jetpack Compose 모범 사례를 중점적으로 확인해줘.
+
+              ---
+
+              ## 1. Jetpack Compose 성능 및 UI 최적화
+
+              - **Recomposition 방지**: 불필요한 리컴포지션을 유발하는 코드를 지적해줘. 특히 `LazyColumn` 등 리스트에서 `key` 파라미터 누락 여부를 확인해줘.
+              - **스마트한 계산**: 비용이 높은 계산 로직은 `remember`나 `derivedStateOf`로 감싸져 있는지 확인해줘.
+              - **안정성(Stability)**: `List`나 일반 클래스를 State로 사용할 때 `@Immutable` 또는 `@Stable` 어노테이션 사용을 제안해줘.
+              - **Modifier 규칙**: `Modifier`는 항상 컴포저블 함수의 첫 번째 선택적 파라미터로 외부에서 주입받아야 해.
+              - **접근성 예외**: `Icon`이나 `Image` 컴포저블의 `contentDescription`이 `null`인 경우는 장식용 이미지로 간주하고 지적하지 마.
+
+              ---
+
+              ## 2. 아키텍처 패턴 — UDF 기반 MVVM
+
+              본 프로젝트는 **Google 권장 아키텍처**와 **UDF(단방향 데이터 흐름) 기반 MVVM** 패턴을 사용해.
+              레이어 구성은 `UI Layer → Data Layer` 를 기본으로 하며, 비즈니스 로직이 복잡한 경우 `Domain Layer`를 선택적으로 추가해.
+              의존성 방향은 `UI Layer → (Domain Layer →) Data Layer` 를 준수해야 해.
+
+              ### 2-1. 패키지 구조
+              feature 하위 패키지는 반드시 다음 구조를 따라야 해:
+              ```
+              feature/
+                ㄴ component/
+                ㄴ navigation/
+                ㄴ ${Feature}Contract.kt
+                ㄴ ${Feature}Screen.kt
+                ㄴ ${Feature}ViewModel.kt
+              ```
+
+              ### 2-2. Contract (`${Feature}Contract.kt`)
+              - `UiState`는 반드시 `data class` + `val` 프로퍼티로 구성되어야 해.
+              - ViewModel에서 **비동기로 로드하는 데이터**는 반드시 `Async<T>`로 래핑하고, 초기값은 `Async.Init`이어야 해.
+              ```
+                sealed interface Async<out T> {
+                    data object Empty : Async<Nothing>
+                    data class Loading<out T>(val data: T?) : Async<T>
+                    data class Success<out T>(val data: T) : Async<T>
+                    data class Failure(val message: String) : Async<Nothing>
+                    data object Init : Async<Nothing>
+                }
+              ```
+              - `UiEffect`는 `sealed interface`로 정의하며, 네이밍 규칙은 다음을 따라야 해:
+                - 모달: `Show{이름(optional)_타입}` (e.g. `ShowEditDialog`, `ShowBottomSheet`)
+                - 특정 화면 이동: `NavigateTo{화면}`
+                - 뒤로가기: `PopBackStack`
+                - 토스트/스낵바: `Show{타입}` (e.g. `ShowToast`)
+              - 위 네이밍 규칙을 어긴 `UiEffect` 선언을 지적해줘.
+
+              ### 2-3. ViewModel
+              - 모든 ViewModel은 반드시 `BaseViewModel<S : UiState, E : UiEffect>`를 상속받아야 해.
+              - `BaseViewModel`의 구조:
+              ```
+                abstract class BaseViewModel<S : UiState, E : UiEffect>(
+                    initialState: S,
+                ) : ViewModel() {
+                    private val _uiState = MutableStateFlow(initialState)
+                    val uiState: StateFlow<S> = _uiState.asStateFlow()
+
+                    private val _sideEffect = Channel<E>()
+                    val sideEffect: Flow<E> = _sideEffect.receiveAsFlow()
+
+                    protected fun updateState(reducer: S.() -> S) {
+                        _uiState.update { it.reducer() }
+                    }
+
+                    protected fun sendEffect(effect: E) {
+                        viewModelScope.launch {
+                            _sideEffect.send(effect)
+                        }
+                    }
+                }
+              ```
+              - `UiState` 업데이트는 반드시 `updateState { copy(...) }` 패턴을 사용해야 해. 직접 `MutableStateFlow`의 value를 수정하는 것을 지적해줘.
+              - `UiEffect` 발송은 반드시 `sendEffect()`를 사용해야 해.
+              - `@HiltViewModel` 및 생성자 `@Inject` 어노테이션이 올바르게 적용되어 있는지 확인해줘.
+              - Screen에서 호출되지 않는 메소드는 반드시 `private` 접근 제한자를 붙여야 해. 누락된 경우 지적해줘.
+              - `GlobalScope` 사용을 금지하고, `viewModelScope` 사용을 권장해줘.
+              - `Dispatchers.IO` 등을 하드코딩하지 말고, 테스트 용이성을 위해 생성자 주입을 권장해줘.
+              - Coroutine 실행 시 `runCatching`이나 `CoroutineExceptionHandler`를 통한 예외 처리가 누락되지 않았는지 확인해줘.
+
+              ### 2-4. Screen (`${Feature}Screen.kt`)
+              - 화면은 반드시 **Route 컴포저블**과 **Screen 컴포저블**로 분리되어야 해.
+                - `Route`: ViewModel 주입, `uiState` 구독, `SideEffect` 처리, `Screen` 호출을 담당해.
+                - `Screen`: UI 렌더링에만 집중해. 비즈니스 로직이 포함되면 지적해줘.
+              - Screen이 Route 없이 직접 ViewModel을 참조하거나, Screen 컴포저블 내부에서 Flow를 직접 수집하면 지적해줘.
+              - `uiState`는 반드시 `collectAsStateWithLifecycle()`로 수집해야 해. `collectAsState()` 사용을 지적해줘.
+              - **SideEffect 처리**는 반드시 아래 `HandleSideEffects` 함수를 사용해야 해. 직접 `LaunchedEffect`로 Flow를 수집하는 방식을 지적해줘.
+              ```
+                @Composable
+                fun <T> HandleSideEffects(
+                    sideEffectFlow: Flow<T>,
+                    lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
+                    onSideEffect: (T) -> Unit,
+                ) {
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    LaunchedEffect(sideEffectFlow, lifecycleOwner) {
+                        lifecycleOwner.lifecycle.repeatOnLifecycle(lifecycleState) {
+                            sideEffectFlow.collect { effect ->
+                                onSideEffect(effect)
+                            }
+                        }
+                    }
+                }
+              ```
+
+              ### 2-5. Navigation (`navigation/` 패키지)
+              - `navigation/` 패키지에는 해당 feature의 화면에 대한 navigation 로직만 작성해야 해.
+              - 구성 요소:
+                - Route 정의: `sealed interface`
+                - NavGraph 정의: `NavGraphBuilder` 확장함수
+                - 목적 화면으로의 이동: `NavController` 확장함수 (`NavigateTo{화면}` 네이밍)
+              - 위 구조를 벗어난 navigation 코드를 지적해줘.
+
+              ---
+
+              ## 3. Google 권장 아키텍처 — 레이어 간 의존성
+
+              본 프로젝트는 Google 권장 아키텍처를 따르며, 레이어 구성은 다음과 같아.
+
+              ### 3-1. 레이어 구성
+              - **UI Layer**: 화면 렌더링 및 사용자 이벤트 처리를 담당해. ViewModel을 통해 Data Layer 또는 Domain Layer에 접근해.
+              - **Domain Layer (선택)**: 비즈니스 로직이 복잡하거나 여러 Data Source를 조합해야 할 때만 도입해. 도입 시 순수 Kotlin 코드로만 구성되어야 하며, `android.*`나 `R` 클래스 등 안드로이드 의존성을 가져서는 안 돼.
+              - **Data Layer**: 앱의 데이터를 생성·저장·변경하는 역할을 담당해. Repository 패턴을 통해 데이터 소스(네트워크, 로컬 DB 등)를 추상화해야 해.
+
+              ### 3-2. 의존성 방향 규칙
+              - 의존성 방향: `UI Layer → (Domain Layer →) Data Layer`
+              - UI Layer가 Data Layer를 직접 참조하는 것은, Domain Layer가 없는 경우에만 허용해.
+              - Data Layer의 DTO(`@Entity`, `@SerializedName` 등)가 UI Layer 또는 Domain Layer로 직접 노출되면 안 돼. 반드시 Mapper를 통해 변환해야 해.
+
+              ### 3-3. Domain Layer 도입 시 추가 규칙
+              Domain Layer를 사용하는 경우 아래 규칙을 추가로 확인해줘.
+              - **UseCase 규칙**: UseCase는 단일 책임(SRP)만 수행해야 하며, 클래스 이름은 동사로 시작해야 해 (예: `FetchUserUseCase`).
+              - **Repository 분리**: Repository는 Domain의 Interface와 Data의 구현체(`Impl`)로 분리되어 있는지 확인해줘.
+              - **Domain 순수성**: `domain` 패키지 내 코드는 순수 Kotlin으로만 작성되어야 해. 안드로이드 의존성이 포함되면 지적해줘.
+
+              ---
+
+              ## 4. Data Layer — 데이터 흐름 및 SafeApiCall
+
+              데이터 흐름은 반드시 다음 방향을 따라야 해:
+              ```
+              Service (BaseResponse<T>)
+                👆
+              DataSource (BaseResponse<T>)
+                👆
+              Repository (Result<T>)
+              ```
+
+              ### 4-1. 각 계층 역할
+              - **Service**: API 호출 로직 추상화만 담당해.
+              - **DataSource**: Service를 통한 API 호출만 담당해.
+              - **Repository**: 반드시 `safeApiCall`을 사용해야 해. `safeApiCall`을 사용하지 않고 직접 try-catch로 API를 호출하면 지적해줘.
+
+              ### 4-2. safeApiCall 동작 규약
+              Repository 구현 시 `safeApiCall`은 다음 규약에 따라 동작함을 인지하고 리뷰해줘:
+              - 내부적으로 `suspendRunCatching` 적용:
+                - Throwable 없음 → `handleResponse`로 처리 후 `Success` 반환
+                - `CancellationException` → rethrow
+                - 그 외 Throwable → `Failure`로 감싸 반환
+              - **`handleResponse`** 동작:
+                - `serverCode`가 성공 → `data`를 `Success`로 반환 (data가 null이면 `ServerError` throw)
+                - `serverCode`가 에러 → 서버 규약에 따른 `ApiError`로 분기해 throw
+              - **Throwable 발생 시** 분기:
+                - `HttpException` → `parseHttpException`으로 `serverCode`를 읽어 `ApiError`로 매핑
+                - `UnknownHostException`, `SocketTimeoutException` → `NetworkError`
+                - `ApiError` → `handleResponse`에서 이미 매핑 완료, 그대로 throw
+                - 그 외 → `Unknown` 처리
+
+              ### 4-3. BadRequest 세부 분기 처리
+              - 특정 API에만 적용되는 BadRequest 분기가 필요한 경우:
+                - `safeApiCall`에 `recoverCatching`을 체이닝하여 `serverCode`에 따라 분기해야 해.
+                - 분기 규약은 해당 API 전용 `sealed interface`로 직접 정의해야 해.
+                - 이 분기 로직을 공통 `ApiError`에 추가하거나 ViewModel/UseCase에서 처리하면 지적해줘.
+
+              ### 4-4. ApiResponseHandler
+              - `parseHttpException` 등 JSON 파싱이 필요한 로직은 Hilt에 의해 싱글톤으로 관리되는 `ApiResponseHandler` 클래스 내부에 위치해야 해.
+              - `Json` 객체를 Repository나 DataSource에서 직접 생성하거나 하드코딩하면 지적해줘.
+
+              ---
+
+              ## 5. Kotlin 안전성 및 컨벤션
+
+              - **Null-Safety**: 불필요한 `!!` 연산자 사용을 지적하고, `?.` 또는 `?:` 사용을 권장해줘.
+              - **가독성**: 복잡한 `if-else`나 중첩이 깊은 로직은 얼리 리턴(Early Return)이나 함수 분리를 제안해줘.
+              - **불변성**: `var` 대신 `val` 사용을 권장하고, 가변 컬렉션이 불필요하게 노출되지 않는지 확인해줘.
+
+    path_filters:
+        - "!**/build/**"
+        - "!**/.gradle/**"
+        - "!**/.idea/**"
+        - "!**/*.json"
+        - "!**/generated/**"
+        - "!**/res/drawable*/**"
+        - "!**/res/mipmap*/**"
+        - "!**/*.png"
+        - "!**/*.jpg"
+        - "!**/*.webp"
+        - "!**/*.pro"

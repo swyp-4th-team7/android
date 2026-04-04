@@ -1,0 +1,354 @@
+package com.swyp.firsttodo.presentation.reward.list
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.swyp.firsttodo.R
+import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.util.HandleSideEffects
+import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
+import com.swyp.firsttodo.domain.model.Role
+import com.swyp.firsttodo.domain.model.habit.HabitDuration
+import com.swyp.firsttodo.domain.model.reward.RewardStatus
+import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
+import com.swyp.firsttodo.presentation.common.component.HaebomHeaderTab
+import com.swyp.firsttodo.presentation.common.component.TopBarArea
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
+import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
+import com.swyp.firsttodo.presentation.reward.component.ChildRewardList
+import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
+import com.swyp.firsttodo.presentation.reward.component.CompletedStickerHeader
+import com.swyp.firsttodo.presentation.reward.component.ParentRewardManageList
+import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
+import com.swyp.firsttodo.presentation.reward.component.ParentStickerList
+import com.swyp.firsttodo.presentation.reward.component.RewardFilter
+import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
+import com.swyp.firsttodo.presentation.reward.component.RewardHeader
+import com.swyp.firsttodo.presentation.reward.component.StickerBoard
+import com.swyp.firsttodo.presentation.reward.component.StickerBoardCompleteDialog
+import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
+
+@Composable
+fun RewardListRoute(
+    navigateToHabit: () -> Unit,
+    navigateToRewardDetail: (RewardDetailScreenType, Long, String, String, String) -> Unit,
+    rewardDetailResult: String?,
+    onDetailResultConsumed: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: RewardListViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHost = LocalSnackbarHostState.current
+
+    LifecycleResumeEffect(Unit) {
+        viewModel.refresh()
+        onPauseOrDispose { }
+    }
+
+    LaunchedEffect(rewardDetailResult) {
+        viewModel.onDetailResult(rewardDetailResult)
+        onDetailResultConsumed()
+    }
+
+    HandleSideEffects(viewModel.sideEffect) { effect ->
+        when (effect) {
+            RewardListSideEffect.NavigateToHabit -> navigateToHabit()
+            is RewardListSideEffect.NavigateToRewardDetail -> navigateToRewardDetail(
+                effect.screenType,
+                effect.habitId,
+                effect.habit,
+                effect.duration,
+                effect.reward,
+            )
+            is RewardListSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
+        }
+    }
+
+    if (uiState.showStickerCompleteDialog) {
+        StickerBoardCompleteDialog(
+            onDismiss = viewModel::onBoardCompleteBtnClick,
+            onCompleteBtnClick = viewModel::onBoardCompleteBtnClick,
+        )
+    }
+
+    RewardListScreen(
+        uiState = uiState,
+        onTabClick = viewModel::onTabClick,
+        onFilterTypeClick = viewModel::onFilterTypeClick,
+        onHabitCreateBtnClick = viewModel::onCreateHabitBtnClick,
+        onRewardLabelClick = viewModel::onRewardLabelClick,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun RewardListScreen(
+    uiState: RewardListUiState,
+    onTabClick: (RewardHeaderTabType) -> Unit,
+    onFilterTypeClick: (RewardFilterType) -> Unit,
+    onHabitCreateBtnClick: () -> Unit,
+    onRewardLabelClick: (ParentRewardUiModel) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = modifier
+            .verticalScroll(scrollState)
+            .fillMaxSize()
+            .background(HaebomTheme.colors.white),
+    ) {
+        TopBarArea()
+
+        HaebomHeaderTab(
+            currentTab = uiState.currentTab,
+            tabs = uiState.tabs,
+            onTabClick = onTabClick,
+            modifier = Modifier,
+        )
+
+        RewardHeader(
+            title = uiState.title,
+            description = uiState.description,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 32.dp),
+        )
+
+        when (uiState.currentTab) {
+            RewardHeaderTabType.STICKER -> {
+                when (uiState.role) {
+                    Role.PARENT -> ParentStickerList(
+                        stickers = uiState.parentStickers,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 40.dp),
+                    )
+
+                    Role.CHILD -> Column(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(top = 20.dp),
+                        verticalArrangement = Arrangement.spacedBy(20.dp),
+                    ) {
+                        CompletedStickerHeader(
+                            completedSticker = uiState.childCompletedSticker,
+                        )
+
+                        StickerBoard(
+                            completedSticker = uiState.childCompletedSticker,
+                        )
+                    }
+
+                    null -> Unit
+                }
+            }
+
+            RewardHeaderTabType.REWARD -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    RewardFilter(
+                        allFilters = uiState.filters,
+                        selectedFilterType = uiState.selectedFilter,
+                        onFilterClick = onFilterTypeClick,
+                        modifier = Modifier.align(Alignment.End),
+                    )
+
+                    when (uiState.role) {
+                        Role.PARENT -> ParentRewardManageList(
+                            rewards = uiState.parentRewards,
+                            onLabelClick = onRewardLabelClick,
+                        )
+
+                        Role.CHILD -> ChildRewardList(
+                            rewards = uiState.childRewards,
+                            onCreateHabitBtnClick = onHabitCreateBtnClick,
+                        )
+
+                        null -> Unit
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(40.dp))
+    }
+}
+
+// region Preview
+
+private val sampleParentStickers = listOf(
+    ChildStickerModel(
+        childId = 1L,
+        nickname = "해봄이",
+        boardNumber = 2,
+        filledSlots = 15,
+        boardSize = 30,
+        startDate = "2026.03.17 (화)",
+    ),
+    ChildStickerModel(
+        childId = 2L,
+        nickname = "봄이",
+        boardNumber = 1,
+        filledSlots = 3,
+        boardSize = 30,
+        startDate = "2026.03.17 (화)",
+    ),
+)
+
+private val sampleParentRewards = listOf(
+    ParentRewardUiModel(
+        id = 1L,
+        title = "수학 공부하기",
+        habit = "매일 수학 문제 풀기",
+        duration = HabitDuration.SEVEN_DAYS,
+        reward = "치킨 사주기",
+        rewardState = RewardStatus.IN_PROGRESS,
+        habitIconRes = R.drawable.ic_habit_day_7,
+    ),
+    ParentRewardUiModel(
+        id = 2L,
+        title = "영어 단어 외우기",
+        habit = "매일 영어 단어 20개",
+        duration = HabitDuration.THREE_DAYS,
+        reward = "게임 1시간",
+        rewardState = RewardStatus.REWARD_CHECKING,
+        habitIconRes = R.drawable.ic_habit_day_3,
+    ),
+    ParentRewardUiModel(
+        id = 3L,
+        title = "독서하기",
+        habit = "하루 30분 독서",
+        duration = HabitDuration.SEVEN_DAYS,
+        reward = "문화상품권",
+        rewardState = RewardStatus.REWARD_CHECKING,
+        habitIconRes = R.drawable.ic_habit_day_7,
+    ),
+    ParentRewardUiModel(
+        id = 4L,
+        title = "운동하기",
+        habit = "줄넘기 100개",
+        duration = HabitDuration.FOURTEEN_DAYS,
+        reward = "아이스크림",
+        rewardState = RewardStatus.COMPLETE,
+        habitIconRes = R.drawable.ic_habit_day_7,
+    ),
+)
+
+private val sampleChildRewards = listOf(
+    ChildRewardUiModel(
+        rewardId = 1L,
+        title = "하루 10분 명상하기",
+        reward = "아이스크림 사주기",
+        iconRes = R.drawable.ic_habit_day_3,
+        rewardState = RewardStatus.COMPLETE,
+    ),
+    ChildRewardUiModel(
+        rewardId = 2L,
+        title = "매일 아침 스트레칭",
+        reward = "영화 보러 가기",
+        iconRes = R.drawable.ic_habit_day_3,
+        rewardState = RewardStatus.COMPLETE,
+    ),
+    ChildRewardUiModel(
+        rewardId = 3L,
+        title = "취침 전 일기 쓰기",
+        reward = "좋아하는 카페 가기",
+        iconRes = R.drawable.ic_habit_day_3,
+        rewardState = RewardStatus.COMPLETE,
+    ),
+)
+
+private class RewardListScreenPreviewProvider : PreviewParameterProvider<RewardListUiState> {
+    override val values: Sequence<RewardListUiState> = sequenceOf(
+        // Child - 스티커 탭 (Success)
+        RewardListUiState(
+            role = Role.CHILD,
+            currentTab = RewardHeaderTabType.STICKER,
+            childCompletedSticker = Async.Success(10),
+        ),
+        // Child - 스티커 탭 (Empty)
+        RewardListUiState(
+            role = Role.CHILD,
+            currentTab = RewardHeaderTabType.STICKER,
+            childCompletedSticker = Async.Empty,
+        ),
+        // Child - 보상 탭 (Success)
+        RewardListUiState(
+            role = Role.CHILD,
+            currentTab = RewardHeaderTabType.REWARD,
+            childRewards = Async.Success(sampleChildRewards),
+        ),
+        // Child - 보상 탭 (Empty)
+        RewardListUiState(
+            role = Role.CHILD,
+            currentTab = RewardHeaderTabType.REWARD,
+            childRewards = Async.Empty,
+        ),
+        // Parent - 스티커 탭 (Success)
+        RewardListUiState(
+            role = Role.PARENT,
+            currentTab = RewardHeaderTabType.STICKER,
+            parentStickers = Async.Success(sampleParentStickers),
+        ),
+        // Parent - 스티커 탭 (Empty)
+        RewardListUiState(
+            role = Role.PARENT,
+            currentTab = RewardHeaderTabType.STICKER,
+            parentStickers = Async.Empty,
+        ),
+        // Parent - 보상 탭 (Success)
+        RewardListUiState(
+            role = Role.PARENT,
+            currentTab = RewardHeaderTabType.REWARD,
+            parentRewards = Async.Success(sampleParentRewards),
+        ),
+        // Parent - 보상 탭 (Empty)
+        RewardListUiState(
+            role = Role.PARENT,
+            currentTab = RewardHeaderTabType.REWARD,
+            parentRewards = Async.Empty,
+        ),
+    )
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 800)
+@Composable
+private fun RewardListScreenPreview(
+    @PreviewParameter(RewardListScreenPreviewProvider::class) uiState: RewardListUiState,
+) {
+    HaebomTheme {
+        RewardListScreen(
+            uiState = uiState,
+            onTabClick = {},
+            onFilterTypeClick = {},
+            onHabitCreateBtnClick = {},
+            onRewardLabelClick = {},
+        )
+    }
+}

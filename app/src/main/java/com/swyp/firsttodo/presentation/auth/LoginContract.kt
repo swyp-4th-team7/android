@@ -1,0 +1,24 @@
+package com.swyp.firsttodo.presentation.auth
+
+import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.base.UiEffect
+import com.swyp.firsttodo.core.base.UiState
+
+data class LoginUiState(
+    val token: Async<String> = Async.Init,
+    val loginState: Async<Unit> = Async.Init,
+) : UiState
+
+sealed interface LoginSideEffect : UiEffect {
+    data object PopBackStack : LoginSideEffect
+
+    data object NavigateToHome : LoginSideEffect
+
+    data object NavigateToOnboarding : LoginSideEffect
+
+    data class NavigateToWebView(val title: String, val url: String) : LoginSideEffect
+
+    data object LaunchGoogleLogin : LoginSideEffect
+
+    data class ShowSnackbar(val message: String) : LoginSideEffect
+}

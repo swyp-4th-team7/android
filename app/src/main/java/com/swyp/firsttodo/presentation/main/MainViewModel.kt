@@ -1,0 +1,84 @@
+package com.swyp.firsttodo.presentation.main
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.core.auth.manager.AuthSideEffect
+import com.swyp.firsttodo.core.auth.manager.SessionManager
+import com.swyp.firsttodo.core.navigation.Route
+import com.swyp.firsttodo.domain.usecase.notification.SaveNotificationTokenUseCase
+import com.swyp.firsttodo.presentation.auth.navigation.AuthRoute
+import com.swyp.firsttodo.presentation.onboarding.navigation.OnboardingRoute
+import com.swyp.firsttodo.presentation.todo.navigation.TodoRoute
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import javax.inject.Inject
+
+@HiltViewModel
+class MainViewModel
+    @Inject
+    constructor(
+        private val sessionManager: SessionManager,
+        private val saveNotificationTokenUseCase: SaveNotificationTokenUseCase,
+    ) : ViewModel() {
+        private val _showDrawer = MutableStateFlow(false)
+        val showDrawer: StateFlow<Boolean> = _showDrawer.asStateFlow()
+
+        val sideEffect: Flow<AuthSideEffect> = sessionManager.sideEffect
+
+        val startDestination: StateFlow<Route?> = sessionManager.sessionState
+            .filter { it.isInitialized }
+            .take(1)
+            .map { state ->
+                val dest = when {
+                    !state.isLoggedIn -> AuthRoute.Login()
+                    state.isLoggedIn && state.userType != null && state.isProfileCompleted -> TodoRoute.Todo
+                    else -> OnboardingRoute.Onboarding
+                }
+
+                Timber.d("💗 Start Destination : $dest")
+
+                dest
+            }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = null,
+            )
+
+        init {
+            viewModelScope.launch {
+                sessionManager.initSession()
+                Timber.d("Session init complete → ${sessionManager.sessionState.value}")
+                saveNotificationTokenUseCase()
+            }
+
+            // 로그아웃/회원탈퇴 시 drawer close
+            viewModelScope.launch {
+                sessionManager.sessionState
+                    .collect { state ->
+                        if (!state.isLoggedIn) {
+                            onDrawerDismiss()
+                        }
+                    }
+            }
+        }
+
+        fun onMenuClick() {
+            _showDrawer.update { true }
+        }
+
+        fun onDrawerDismiss() {
+            _showDrawer.update { false }
+        }
+    }
