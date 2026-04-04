@@ -1,7 +1,9 @@
 package com.swyp.firsttodo.core.designsystem.component
 
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetDefaults
@@ -20,6 +22,7 @@ fun HaebomBasicBottomSheet(
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
     properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
+    contentWindowInsets: @Composable () -> WindowInsets = { BottomSheetDefaults.windowInsets },
     content: @Composable (ColumnScope.() -> Unit),
 ) {
     ModalBottomSheet(
@@ -27,6 +30,7 @@ fun HaebomBasicBottomSheet(
         modifier = modifier,
         sheetState = sheetState,
         properties = properties,
+        contentWindowInsets = contentWindowInsets,
         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         containerColor = HaebomTheme.colors.white,
         scrimColor = HaebomTheme.colors.black.copy(alpha = 0.5f),
