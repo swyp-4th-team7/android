@@ -9,16 +9,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -69,68 +72,75 @@ fun GrowthScreen(
     onChildChipClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        TopBarArea()
+    val originalDensity = LocalDensity.current
+    val fixedFontDensity = Density(density = originalDensity.density, fontScale = 1f)
 
-        HaebomHeaderTab(
-            currentTab = uiState.currentTab,
-            tabs = GrowthHeaderTabType.entries,
-            onTabClick = onTabClick,
-        )
+    CompositionLocalProvider(LocalDensity provides fixedFontDensity) {
+        Column(
+            modifier = modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            TopBarArea()
 
-        uiState.childrenGrowth.getDataOrNull()?.let {
-            ChildrenNicknameChipList(
-                childrenGrowth = it,
-                selectedChildIdx = uiState.selectedChildIdx,
-                onChildChipClick = onChildChipClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 24.dp, bottom = 12.dp),
+            HaebomHeaderTab(
+                currentTab = uiState.currentTab,
+                tabs = GrowthHeaderTabType.entries,
+                onTabClick = onTabClick,
             )
-        } ?: Spacer(Modifier.weight(74f))
 
-        uiState.currentStarCount?.let { count ->
-            uiState.bubbleImageRes?.let { imageRes ->
-                CharacterBubble(
-                    starCount = count,
-                    bubbleImageRes = imageRes,
-                    text = uiState.bubbleText,
-                    modifier = Modifier.height(157.dp),
+            uiState.childrenGrowth.getDataOrNull()?.let {
+                CompositionLocalProvider(LocalDensity provides originalDensity) {
+                    ChildrenNicknameChipList(
+                        childrenGrowth = it,
+                        selectedChildIdx = uiState.selectedChildIdx,
+                        onChildChipClick = onChildChipClick,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 24.dp, bottom = 12.dp),
+                    )
+                }
+            } ?: Spacer(Modifier.weight(74f))
+
+            uiState.currentStarCount?.let { count ->
+                uiState.bubbleImageRes?.let { imageRes ->
+                    CharacterBubble(
+                        starCount = count,
+                        bubbleImageRes = imageRes,
+                        text = uiState.bubbleText,
+                        modifier = Modifier.height(157.dp),
+                    )
+                }
+            }
+
+            uiState.characterImageRes?.let {
+                Image(
+                    painter = painterResource(it),
+                    contentDescription = null,
+                    modifier = Modifier.weight(154f),
                 )
             }
-        }
 
-        uiState.characterImageRes?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier.weight(154f),
-            )
-        }
+            Spacer(Modifier.weight(8f))
 
-        Spacer(Modifier.weight(8f))
-
-        Text(
-            text = uiState.description,
-            color = uiState.growthTextType.color(),
-            textAlign = TextAlign.Center,
-            style = HaebomTheme.typo.section,
-        )
-
-        Spacer(Modifier.weight(16f))
-
-        uiState.weekRange?.let {
             Text(
-                text = it,
-                color = Color(0xFF929292),
+                text = uiState.description,
+                color = uiState.growthTextType.color(),
+                textAlign = TextAlign.Center,
                 style = HaebomTheme.typo.section,
             )
 
-            Spacer(Modifier.weight(41f))
-        } ?: Spacer(Modifier.weight(76f))
+            Spacer(Modifier.weight(16f))
+
+            uiState.weekRange?.let {
+                Text(
+                    text = it,
+                    color = Color(0xFF929292),
+                    style = HaebomTheme.typo.section,
+                )
+
+                Spacer(Modifier.weight(41f))
+            } ?: Spacer(Modifier.weight(76f))
+        }
     }
 }
 
