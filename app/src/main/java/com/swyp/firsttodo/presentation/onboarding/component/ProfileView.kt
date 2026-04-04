@@ -36,7 +36,7 @@ fun ProfileView(
         )
 
         Text(
-            text = "한글 최대 12자 /영문, 숫자, 특수기호 불가",
+            text = "한글 최대 12자 / 영문, 숫자, 특수기호 불가",
             modifier = Modifier.padding(bottom = 56.dp),
             color = HaebomTheme.colors.gray300,
             textAlign = TextAlign.Center,
