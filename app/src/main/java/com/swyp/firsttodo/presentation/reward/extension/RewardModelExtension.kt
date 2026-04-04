@@ -8,6 +8,7 @@ import com.swyp.firsttodo.domain.model.reward.RewardStatus
 val RewardModel.durationIconRes: Int
     get() {
         val completed = this.status == RewardStatus.COMPLETE
+
         return when (this.duration) {
             HabitDuration.THREE_DAYS -> {
                 if (completed) R.drawable.ic_habit_day_3_completed else R.drawable.ic_habit_day_3

@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.graphics.toColorInt
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.swyp.firsttodo.R
@@ -77,7 +78,9 @@ class PushNotificationService : FirebaseMessagingService() {
         }
 
         val notification = NotificationCompat.Builder(this, DEFAULT_CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_stat_name)
+            .setColor("#FDB022".toColorInt())
+            .setColorized(true)
             .setContentTitle(title)
             .setContentText(body)
             .apply { pendingIntent?.let { setContentIntent(it) } }

@@ -28,7 +28,6 @@ import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
 import com.swyp.firsttodo.presentation.common.component.HaebomTopBar
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
-import com.swyp.firsttodo.presentation.onboarding.component.DoneView
 import com.swyp.firsttodo.presentation.onboarding.component.ProfileView
 import com.swyp.firsttodo.presentation.onboarding.component.RoleSelectView
 
@@ -120,12 +119,6 @@ fun OnboardingScreen(
                     .padding(horizontal = screenWidthDp(32.dp))
                     .padding(top = screenHeightDp(80.dp)),
             )
-
-            OnboardingStep.DONE -> DoneView(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            )
         }
     }
 }
@@ -134,7 +127,6 @@ private class OnboardingScreenPreviewProvider : PreviewParameterProvider<Onboard
     override val values = sequenceOf(
         OnboardingUiState(currentStep = OnboardingStep.ROLE_SELECT),
         OnboardingUiState(currentStep = OnboardingStep.PROFILE),
-        OnboardingUiState(currentStep = OnboardingStep.DONE),
     )
 }
 

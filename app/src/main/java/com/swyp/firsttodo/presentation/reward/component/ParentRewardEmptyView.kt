@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.reward.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
@@ -32,17 +34,20 @@ fun ParentRewardEmptyView(
             )
             .wrapContentSize(Alignment.Center),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             text = title,
             color = HaebomTheme.colors.gray400,
-            style = HaebomTheme.typo.buttonL,
+            textAlign = TextAlign.Center,
+            style = HaebomTheme.typo.card,
         )
 
         Text(
             text = description,
-            color = HaebomTheme.colors.gray400,
-            style = HaebomTheme.typo.subtitle,
+            color = HaebomTheme.colors.gray300,
+            textAlign = TextAlign.Center,
+            style = HaebomTheme.typo.description,
         )
     }
 }
@@ -53,7 +58,7 @@ private fun ParentRewardEmptyViewPreview() {
     HaebomTheme {
         ParentRewardEmptyView(
             title = "아직 관리할 스티커가 없습니다.",
-            description = "자녀의 할 일을 만들어주세요.",
+            description = "자녀의 할 일을 만들어 주세요.",
             modifier = Modifier.padding(all = 16.dp),
         )
     }

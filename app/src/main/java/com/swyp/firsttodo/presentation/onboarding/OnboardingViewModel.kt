@@ -54,7 +54,6 @@ class OnboardingViewModel
             when (state.currentStep) {
                 OnboardingStep.ROLE_SELECT -> state.selectedRole != null
                 OnboardingStep.PROFILE -> isValidNickname(nickname)
-                OnboardingStep.DONE -> false
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
@@ -62,7 +61,6 @@ class OnboardingViewModel
             when (uiState.value.currentStep) {
                 OnboardingStep.ROLE_SELECT -> handleDoubleBackPressToExit()
                 OnboardingStep.PROFILE -> updateState { copy(currentStep = OnboardingStep.ROLE_SELECT) }
-                OnboardingStep.DONE -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
             }
         }
 
@@ -70,7 +68,6 @@ class OnboardingViewModel
             when (uiState.value.currentStep) {
                 OnboardingStep.ROLE_SELECT -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
                 OnboardingStep.PROFILE -> saveProfile()
-                OnboardingStep.DONE -> sendThrottledEffect(OnboardingSideEffect.NavigateToTodo)
             }
         }
 
@@ -85,7 +82,7 @@ class OnboardingViewModel
 
             viewModelScope.launch {
                 saveOnboardingProfile(nickname, role)
-                    .onSuccess { updateState { copy(currentStep = OnboardingStep.DONE) } }
+                    .onSuccess { sendThrottledEffect(OnboardingSideEffect.NavigateToTodo) }
                     .onFailure { throwable ->
                         Timber.e(throwable, "save onboarding profile error")
 

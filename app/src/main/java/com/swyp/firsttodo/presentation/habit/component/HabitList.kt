@@ -32,7 +32,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
-import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
@@ -106,18 +105,12 @@ private fun ListItem(
 
     val durationIconRes = remember(habit.duration, habit.isCompleted) {
         when (habit.duration) {
-            HabitDuration.THREE_DAYS ->
-                if (habit.isCompleted) R.drawable.ic_habit_day_3_completed else R.drawable.ic_habit_day_3
-            HabitDuration.SEVEN_DAYS ->
-                if (habit.isCompleted) R.drawable.ic_habit_day_7_completed else R.drawable.ic_habit_day_7
-            HabitDuration.FOURTEEN_DAYS ->
-                if (habit.isCompleted) R.drawable.ic_habit_day_14_completed else R.drawable.ic_habit_day_14
-            HabitDuration.TWENTYONE_DAYS ->
-                if (habit.isCompleted) R.drawable.ic_habit_day_21_completed else R.drawable.ic_habit_day_21
-            HabitDuration.SIXTYSIX_DAYS ->
-                if (habit.isCompleted) R.drawable.ic_habit_day_66_completed else R.drawable.ic_habit_day_66
-            HabitDuration.NINETYNINE_DAYS ->
-                if (habit.isCompleted) R.drawable.ic_habit_day_99_completed else R.drawable.ic_habit_day_99
+            HabitDuration.THREE_DAYS -> R.drawable.ic_habit_day_3
+            HabitDuration.SEVEN_DAYS -> R.drawable.ic_habit_day_7
+            HabitDuration.FOURTEEN_DAYS -> R.drawable.ic_habit_day_14
+            HabitDuration.TWENTYONE_DAYS -> R.drawable.ic_habit_day_21
+            HabitDuration.SIXTYSIX_DAYS -> R.drawable.ic_habit_day_66
+            HabitDuration.NINETYNINE_DAYS -> R.drawable.ic_habit_day_99
         }
     }
 
@@ -133,7 +126,7 @@ private fun ListItem(
                     color = HaebomTheme.colors.white,
                     shape = RoundedCornerShape(4.dp),
                 )
-                .padding(horizontal = screenWidthDp(12.dp)),
+                .padding(horizontal = 12.dp),
             contentAlignment = Alignment.Center,
         ) {
             Icon(

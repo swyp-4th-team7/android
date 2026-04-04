@@ -32,7 +32,7 @@ fun ParentStickerList(
     when (stickers) {
         Async.Empty -> ParentRewardEmptyView(
             title = "아직 관리할 스티커가 없습니다.",
-            description = "자녀의 할 일을 만들어주세요.",
+            description = "자녀의 할 일을 만들어 주세요.",
             modifier = modifier,
         )
 

@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,7 +69,7 @@ enum class TodoBottomSheetType(
 ) {
     CHILD_CREATE(
         title = "추가 할 일 작성 하기",
-        description = "해야 할 일을 추가하고 하나씩 완료해보세요.",
+        description = "해야 할 일을 추가하고 하나씩 완료해 보세요.",
         btnText = "추가하기",
     ),
     CHILD_EDIT(
@@ -77,7 +79,7 @@ enum class TodoBottomSheetType(
     ),
     PARENT_CREATE(
         title = "추가 할 일 작성",
-        description = "해야 할 일을 추가하고 하나씩 완료해보세요.",
+        description = "해야 할 일을 추가하고 하나씩 완료해 보세요.",
         btnText = "추가하기",
     ),
     PARENT_EDIT(
@@ -119,13 +121,13 @@ fun TodoBottomSheet(
     HaebomBasicBottomSheet(
         onDismiss = onDismiss,
         sheetState = sheetState,
+        contentWindowInsets = { WindowInsets(0) },
         modifier = modifier,
     ) {
-        Box {
+        Box(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBarsIgnoringVisibility)) {
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 20.dp)
                     .verticalScroll(scrollState),
             ) {
                 HaebomBottomSheetHandle()
@@ -279,13 +281,14 @@ fun TodoBottomSheet(
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
+
+                Spacer(Modifier.height(20.dp))
             }
 
             HaebomSnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
                     .padding(bottom = screenHeightDp(40.dp))
                     .padding(horizontal = screenWidthDp(16.dp)),
             )

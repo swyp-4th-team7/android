@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.core.designsystem.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -41,7 +42,9 @@ fun HaebomBasicDialog(
         }
 
         Surface(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .widthIn(max = 640.dp),
             shape = RoundedCornerShape(16.dp),
             color = HaebomTheme.colors.white,
         ) {

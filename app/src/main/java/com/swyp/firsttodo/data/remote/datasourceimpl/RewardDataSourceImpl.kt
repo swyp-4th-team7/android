@@ -2,8 +2,8 @@ package com.swyp.firsttodo.data.remote.datasourceimpl
 
 import com.swyp.firsttodo.core.network.model.BaseResponse
 import com.swyp.firsttodo.data.remote.datasource.RewardDataSource
-import com.swyp.firsttodo.data.remote.dto.request.reward.RewardListResponseBody
 import com.swyp.firsttodo.data.remote.dto.request.reward.RewardRequestBody
+import com.swyp.firsttodo.data.remote.dto.response.reward.RewardListResponseBody
 import com.swyp.firsttodo.data.remote.service.RewardService
 import javax.inject.Inject
 

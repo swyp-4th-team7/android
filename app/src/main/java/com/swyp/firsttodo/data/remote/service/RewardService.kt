@@ -1,8 +1,8 @@
 package com.swyp.firsttodo.data.remote.service
 
 import com.swyp.firsttodo.core.network.model.BaseResponse
-import com.swyp.firsttodo.data.remote.dto.request.reward.RewardListResponseBody
 import com.swyp.firsttodo.data.remote.dto.request.reward.RewardRequestBody
+import com.swyp.firsttodo.data.remote.dto.response.reward.RewardListResponseBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH

@@ -1,7 +1,7 @@
 package com.swyp.firsttodo.data.mapper
 
-import com.swyp.firsttodo.data.remote.dto.request.reward.RewardListResponseBody
-import com.swyp.firsttodo.data.remote.dto.request.reward.RewardResponseBody
+import com.swyp.firsttodo.data.remote.dto.response.reward.RewardListResponseBody
+import com.swyp.firsttodo.data.remote.dto.response.reward.RewardResponseBody
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.reward.RewardModel
 import com.swyp.firsttodo.domain.model.reward.RewardStatus
@@ -16,4 +16,5 @@ fun RewardResponseBody.toModel(): RewardModel =
         duration = runCatching { HabitDuration.valueOf(this.duration) }.getOrDefault(HabitDuration.SEVEN_DAYS),
         reward = this.reward,
         status = runCatching { RewardStatus.valueOf(this.status) }.getOrDefault(RewardStatus.IN_PROGRESS),
+        isCompleted = this.isCompleted,
     )

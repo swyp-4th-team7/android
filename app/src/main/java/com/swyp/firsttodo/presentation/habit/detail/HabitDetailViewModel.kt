@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.swyp.firsttodo.core.auth.manager.SessionManager
+import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
@@ -131,6 +132,7 @@ class HabitDetailViewModel
         }
 
         private fun createHabit() {
+            if (uiState.value.loadingState is Async.Loading) return
             if (!validateAllField()) return
 
             val inputTitle = titleState.text.toString()
@@ -140,6 +142,8 @@ class HabitDetailViewModel
                 HabitDetailScreenType.PARENT -> null
             }
 
+            updateState { copy(loadingState = Async.Loading()) }
+
             viewModelScope.launch {
                 habitRepository.createHabit(
                     title = inputTitle,
@@ -147,6 +151,7 @@ class HabitDetailViewModel
                     reward = inputReward,
                 ).onSuccess {
                     sendEffect(HabitDetailSideEffect.PopBackStack("습관이 추가되었습니다."))
+                    updateState { copy(loadingState = Async.Success(Unit)) }
                 }.onFailure { throwable ->
                     val message = when (throwable) {
                         is HabitError.TitleEmpty -> "습관 제목을 입력해주세요"
@@ -155,11 +160,13 @@ class HabitDetailViewModel
                         else -> return@launch
                     }
                     sendEffect(HabitDetailSideEffect.ShowSnackbar(message))
+                    updateState { copy(loadingState = Async.Init) }
                 }
             }
         }
 
         private fun editHabit() {
+            if (uiState.value.loadingState is Async.Loading) return
             if (!validateAllField()) return
 
             val habitId = uiState.value.habitId ?: return
@@ -171,6 +178,8 @@ class HabitDetailViewModel
             }
             val completed = uiState.value.isCompleted ?: return
 
+            updateState { copy(loadingState = Async.Loading()) }
+
             viewModelScope.launch {
                 habitRepository.editHabit(
                     habitId = habitId,
@@ -181,6 +190,7 @@ class HabitDetailViewModel
                 )
                     .onSuccess {
                         sendEffect(HabitDetailSideEffect.PopBackStack("습관이 수정되었습니다."))
+                        updateState { copy(loadingState = Async.Success(Unit)) }
                     }
                     .onFailure { throwable ->
                         when (throwable) {
@@ -190,6 +200,7 @@ class HabitDetailViewModel
 
                             is ApiError -> sendEffect(HabitDetailSideEffect.ShowSnackbar(throwable.snackbarMsg()))
                         }
+                        updateState { copy(loadingState = Async.Init) }
                     }
             }
         }

@@ -15,7 +15,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
-import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
@@ -94,10 +93,7 @@ fun HabitListScreen(
 
         when {
             uiState.habits is Async.Empty -> HabitListEmpty(
-                modifier = Modifier
-                    .padding(
-                        horizontal = screenWidthDp(16.dp),
-                    ),
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
 
             uiState.habitsData != null -> HabitList(
@@ -108,7 +104,7 @@ fun HabitListScreen(
                 habits = uiState.habitsData,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = screenWidthDp(16.dp)),
+                    .padding(horizontal = 16.dp),
             )
 
             else -> Unit

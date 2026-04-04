@@ -37,12 +37,14 @@ class TodoViewModel
         val todoFieldState = TextFieldState()
         private var lastBackPressedTime = 0L
 
-        private val role: Role = when (sessionManager.sessionState.value.userType) {
-            Role.PARENT.request -> Role.PARENT
-            else -> Role.CHILD
-        }
-
         init {
+            val role: Role = when (sessionManager.sessionState.value.userType) {
+                Role.PARENT.request -> Role.PARENT
+                else -> Role.CHILD
+            }
+
+            updateState { copy(role = role) }
+
             viewModelScope.launch {
                 getTodoCategories()
                 getTodos()
@@ -181,6 +183,7 @@ class TodoViewModel
                     completed = !todoUiModel.completed,
                 ).onSuccess {
                     getTodos()
+                    getWeeklyStickers()
                 }.onFailure { throwable ->
                     val message = when (throwable) {
                         is TodoError.IdNotFound -> {
@@ -197,9 +200,9 @@ class TodoViewModel
         }
 
         fun openTodoCreateBottomSheet() {
-            val sheetType = when (role) {
+            val sheetType = when (uiState.value.role) {
                 Role.PARENT -> TodoBottomSheetType.PARENT_CREATE
-                Role.CHILD -> TodoBottomSheetType.CHILD_CREATE
+                else -> TodoBottomSheetType.CHILD_CREATE
             }
 
             clearEditingTodo()
@@ -213,9 +216,9 @@ class TodoViewModel
         }
 
         fun openTodoEditBottomSheet(todoUiModel: TodayTodoUiModel) {
-            val sheetType = when (role) {
+            val sheetType = when (uiState.value.role) {
                 Role.PARENT -> TodoBottomSheetType.PARENT_EDIT
-                Role.CHILD -> TodoBottomSheetType.CHILD_EDIT
+                else -> TodoBottomSheetType.CHILD_EDIT
             }
 
             clearEditingTodo()

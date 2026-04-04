@@ -24,3 +24,10 @@ fun screenWidthDp(width: Dp): Dp {
     val ratio = screenWidth / figmaScreenWidth
     return width * ratio
 }
+
+@SuppressLint("ConfigurationScreenWidthHeight")
+@Composable
+fun isExpandedScreen(): Boolean {
+    val configuration = LocalConfiguration.current
+    return configuration.screenWidthDp.toFloat() / configuration.screenHeightDp.toFloat() >= 0.75f
+}
