@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.dashedCircleBorder
@@ -143,7 +144,6 @@ private fun MarkedDate(
     stickerCode: String?,
     modifier: Modifier = Modifier,
 ) {
-    val weekDayFontSize = with(LocalDensity.current) { 12.dp.toSp() }
     val dayFontSize = with(LocalDensity.current) { 20.dp.toSp() }
 
     Column(
@@ -154,7 +154,7 @@ private fun MarkedDate(
         Text(
             text = weekDay,
             color = HaebomTheme.colors.black,
-            style = MediumStyle.copy(fontSize = weekDayFontSize),
+            style = MediumStyle.copy(fontSize = 12.sp),
         )
 
         when {
