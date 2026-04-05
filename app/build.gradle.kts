@@ -35,8 +35,8 @@ android {
         applicationId = "com.swyp.firsttodo"
         minSdk = 24
         targetSdk = 36
-        versionCode = 7
-        versionName = "1.0.0"
+        versionCode = 12
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

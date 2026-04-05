@@ -144,12 +144,16 @@ data class GrowthUiState(
         else -> ""
     }
 
-    val weekRange = when (role) {
-        Role.PARENT -> selectedChild?.weekRange
+    val weekRange = if (currentStarCount == 0) {
+        null
+    } else {
+        when (role) {
+            Role.PARENT -> selectedChild?.weekRange
 
-        else -> when (currentTab) {
-            GrowthHeaderTabType.TODO -> todoGrowth.getDataOrNull()?.weekRange
-            GrowthHeaderTabType.HABIT -> habitGrowth.getDataOrNull()?.weekRange
+            else -> when (currentTab) {
+                GrowthHeaderTabType.TODO -> todoGrowth.getDataOrNull()?.weekRange
+                GrowthHeaderTabType.HABIT -> habitGrowth.getDataOrNull()?.weekRange
+            }
         }
     }
 }

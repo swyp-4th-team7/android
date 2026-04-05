@@ -102,7 +102,7 @@ data class RewardListUiState(
             null -> ""
         }
 
-        RewardHeaderTabType.REWARD -> "가족과 함께 정한 보상들을 확인해보세요."
+        RewardHeaderTabType.REWARD -> "가족과 함께 정한 보상들을 확인해 보세요."
     }
 
     val filters: List<RewardFilterType> = when (role) {
