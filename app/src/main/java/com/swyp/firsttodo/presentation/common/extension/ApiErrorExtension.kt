@@ -11,5 +11,5 @@ fun ApiError.snackbarMsg(): String =
         is ApiError.Conflict -> serverMsg
         is ApiError.ServerError -> "오류가 발생했어요!"
         is ApiError.NetworkConnection -> "네트워크 상태가 불안정해요. 다시 시도해 주세요."
-        is ApiError.Unknown -> "오류가 발생했어요! "
+        is ApiError.Unknown -> "오류가 발생했어요!"
     }
