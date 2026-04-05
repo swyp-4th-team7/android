@@ -57,7 +57,7 @@ private val Green800 = Color(0xFF335015)
 // Semantic
 private val SemanticYellow = Color(0xFFFFD738)
 private val SemanticRed = Color(0xFFE7534B)
-private val SemanticGreen = Color(0xFF65DB73)
+private val SemanticGreen = Color(0xFF66B30A)
 private val SemanticBlue = Color(0xFF4C85F2)
 
 // Etc
