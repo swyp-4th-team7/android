@@ -33,7 +33,6 @@ import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
-import com.swyp.firsttodo.core.common.extension.noRippleLongClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
@@ -131,7 +130,7 @@ private fun TodoItem(
         Box {
             Row(
                 modifier = Modifier
-                    .noRippleLongClickable({ showPopup = true })
+                    .noRippleClickable({ showPopup = true })
                     .background(
                         color = HaebomTheme.colors.white,
                         shape = RoundedCornerShape(4.dp),
