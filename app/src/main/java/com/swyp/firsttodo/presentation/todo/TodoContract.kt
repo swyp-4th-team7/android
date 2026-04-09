@@ -64,21 +64,21 @@ data class TodoUiState(
     } else if (progressPercent is Async.Success) {
         when {
             progressPercent.data == 100 -> if (role == Role.CHILD) {
-                "완전 대단해!!"
+                "오늘도 최고야!"
             } else {
                 "오늘도 수고하셨습니다!"
             }
 
             progressPercent.data in 50..99 -> if (role == Role.CHILD) {
-                "잘하고 있어! 힘내!!"
+                "잘하고 있어~ 조금만 더!"
             } else {
-                "잘하고 있습니다!"
+                "잘하고 있어요~ 조금만 더!"
             }
 
             else -> if (role == Role.CHILD) {
-                "뭐하고 있어! 빨리 해야해!!"
+                "오늘 안에 할 수 있지?"
             } else {
-                "빨리 해야해요!!"
+                "아직 남은 할 일이 있어요!"
             }
         }
     } else {
