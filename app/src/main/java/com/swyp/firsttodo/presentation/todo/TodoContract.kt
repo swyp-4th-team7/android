@@ -43,7 +43,9 @@ data class TodoUiState(
 
     val showDeleteDialog = delRequestedId != null
 
-    val characterImageRes = if (progressPercent is Async.Success) {
+    val characterImageRes = if (todos is Async.Empty) {
+        R.drawable.img_todo_empty_176
+    } else if (progressPercent is Async.Success) {
         when {
             progressPercent.data == 100 -> R.drawable.img_todo_perfect_176
             progressPercent.data in 50..99 -> R.drawable.img_todo_cheer_176
@@ -53,7 +55,13 @@ data class TodoUiState(
         null
     }
 
-    val bubbleText = if (progressPercent is Async.Success) {
+    val bubbleText = if (todos is Async.Empty) {
+        if (role == Role.CHILD) {
+            "할 일을 추가해 볼까?"
+        } else {
+            "할 일을 추가해 볼까요?"
+        }
+    } else if (progressPercent is Async.Success) {
         when {
             progressPercent.data == 100 -> if (role == Role.CHILD) {
                 "완전 대단해!!"
