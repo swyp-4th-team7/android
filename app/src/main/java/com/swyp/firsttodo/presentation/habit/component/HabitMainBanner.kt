@@ -21,7 +21,6 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 
 @Composable
 fun HabitMainBanner(
@@ -37,7 +36,7 @@ fun HabitMainBanner(
             modifier = modifier
                 .fillMaxWidth()
                 .heightIn(screenHeightDp(132.dp))
-                .background(LabelColor.YELLOW.completedBackground)
+                .background(HaebomTheme.colors.yellow100)
                 .padding(horizontal = screenWidthDp(16.dp))
                 .padding(top = screenHeightDp(28.dp)),
         ) {

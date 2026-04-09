@@ -40,7 +40,6 @@ import com.swyp.firsttodo.core.common.extension.heightForScreenPercentage
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 
 @Composable
 fun TodoBanner(
@@ -56,7 +55,7 @@ fun TodoBanner(
         Box(
             modifier = modifier
                 .heightForScreenPercentage(132.dp)
-                .background(LabelColor.YELLOW.completedBackground)
+                .background(HaebomTheme.colors.yellow100)
                 .clipToBounds(),
         ) {
             val text = remember(remainTodo) {
