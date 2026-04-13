@@ -2,7 +2,6 @@ package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.remote.service.AuthService
 import com.swyp.firsttodo.data.remote.service.FamilyService
-import com.swyp.firsttodo.data.remote.service.GrowthService
 import com.swyp.firsttodo.data.remote.service.HabitService
 import com.swyp.firsttodo.data.remote.service.NotificationService
 import com.swyp.firsttodo.data.remote.service.RewardService
@@ -73,10 +72,4 @@ object ServiceModule {
     fun providesRewardService(
         @WithToken retrofit: Retrofit,
     ): RewardService = retrofit.create(RewardService::class.java)
-
-    @Provides
-    @Singleton
-    fun providesGrowthService(
-        @WithToken retrofit: Retrofit,
-    ): GrowthService = retrofit.create(GrowthService::class.java)
 }

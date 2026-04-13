@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.swyp.firsttodo.core.navigation.Route
 import com.swyp.firsttodo.presentation.auth.navigation.authNavGraph
-import com.swyp.firsttodo.presentation.growth.navigation.growthNavGraph
 import com.swyp.firsttodo.presentation.habit.navigation.habitNavGraph
 import com.swyp.firsttodo.presentation.hamburger.navigation.hamburgerNavGraph
 import com.swyp.firsttodo.presentation.main.bottombar.MainTab
@@ -62,10 +61,6 @@ fun MainNavHost(
             paddingValues = paddingValues,
             navController = navigator.navController,
             navigateToHabit = { navigator.navigate(MainTab.HABIT) },
-        )
-        growthNavGraph(
-            paddingValues = paddingValues,
-            navController = navigator.navController,
         )
         webViewNavGraph(
             paddingValues = paddingValues,
