@@ -29,8 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -95,8 +95,8 @@ fun ScheduleBottomSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
-    val focusManager = LocalFocusManager.current
     val snackbarHostState = LocalSnackbarHostState.current
+    val dateFocusRequester = remember { FocusRequester() }
 
     LaunchedEffect(loadingStatus) {
         if (loadingStatus is Async.Success) {
@@ -140,7 +140,7 @@ fun ScheduleBottomSheet(
                         keyboardOptions = KeyboardOptions(
                             imeAction = ImeAction.Next,
                         ),
-                        onKeyboardAction = { focusManager.moveFocus(FocusDirection.Next) },
+                        onKeyboardAction = { dateFocusRequester.requestFocus() },
                     )
                 }
 
@@ -152,7 +152,8 @@ fun ScheduleBottomSheet(
                         placeholder = "년/월/일",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 40.dp),
+                            .padding(bottom = 40.dp)
+                            .focusRequester(dateFocusRequester),
                         errorText = dateErrorText,
                         inputTransformation = InputTransformation {
                             if (length > 8) delete(8, length)
