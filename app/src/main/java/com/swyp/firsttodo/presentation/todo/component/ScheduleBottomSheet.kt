@@ -115,7 +115,6 @@ fun ScheduleBottomSheet(
             Column(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 20.dp)
                     .verticalScroll(scrollState),
             ) {
                 TaskSheetHeader(
@@ -202,7 +201,9 @@ fun ScheduleBottomSheet(
                     text = sheetType.btnText,
                     onClick = onBtnClick,
                     enabled = btnEnabled && loadingStatus !is Async.Loading,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
                 )
             }
 
