@@ -160,8 +160,6 @@ class TodoViewModel
                 }
 
         suspend fun getTodos() {
-            updateState { copy(todos = Async.Loading(this.todos.getDataOrNull())) }
-
             todoRepository.getTodos()
                 .onSuccess { data ->
                     val categories = uiState.value.categories
@@ -200,8 +198,6 @@ class TodoViewModel
         }
 
         fun getSchedules() {
-            updateState { copy(schedules = Async.Loading(this.schedules.getDataOrNull())) }
-
             viewModelScope.launch {
                 scheduleRepository.getSchedules()
                     .onSuccess { list ->
