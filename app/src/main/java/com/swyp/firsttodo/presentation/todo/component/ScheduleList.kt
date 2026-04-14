@@ -55,6 +55,8 @@ fun ScheduleList(
     TodoCard(
         title = "다가오는 일정",
         onPlusClick = onPlusClick,
+        // TODO: Focus 구현
+        onHelpClick = {},
         modifier = modifier,
     ) {
         Column(
