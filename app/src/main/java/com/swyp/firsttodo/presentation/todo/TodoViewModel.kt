@@ -291,6 +291,9 @@ class TodoViewModel
                         title = todoUiModel.title,
                         category = todoUiModel.category,
                         labelColor = todoUiModel.labelColor,
+                        originalTitle = todoUiModel.title,
+                        originalCategory = todoUiModel.category,
+                        originalLabelColor = todoUiModel.labelColor,
                     ),
                 )
             }
@@ -328,7 +331,12 @@ class TodoViewModel
                     scheduleBottomSheetState = Async.Init,
                     editingSchedule = editingSchedule.copy(
                         scheduleId = scheduleUiModel.scheduleId,
+                        title = scheduleUiModel.title,
+                        date = scheduleUiModel.rawDate,
                         category = scheduleUiModel.category,
+                        originalTitle = scheduleUiModel.title,
+                        originalDate = scheduleUiModel.rawDate,
+                        originalCategory = scheduleUiModel.category,
                     ),
                 )
             }
@@ -379,6 +387,7 @@ class TodoViewModel
         }
 
         fun onDeleteConfirm() {
+            if (uiState.value.deleteState is Async.Loading) return
             when (uiState.value.delRequestedType) {
                 DeleteDialogType.Todo -> deleteTodo()
                 DeleteDialogType.Schedule -> deleteSchedule()
@@ -416,7 +425,10 @@ class TodoViewModel
                                 throwable.snackbarMsg()
                             }
 
-                            else -> return@onFailure
+                            else -> {
+                                updateState { copy(deleteState = Async.Init) }
+                                return@onFailure
+                            }
                         }
 
                         sendEffect(TodoSideEffect.ShowSnackbar(message))
@@ -454,7 +466,10 @@ class TodoViewModel
                                 throwable.snackbarMsg()
                             }
 
-                            else -> return@launch
+                            else -> {
+                                updateState { copy(deleteState = Async.Init) }
+                                return@launch
+                            }
                         }
                         sendEffect(TodoSideEffect.ShowSnackbar(message))
                     }
@@ -663,7 +678,10 @@ class TodoViewModel
                                 throwable.snackbarMsg()
                             }
 
-                            else -> return@launch
+                            else -> {
+                                updateState { copy(scheduleBottomSheetState = Async.Init) }
+                                return@launch
+                            }
                         }
                         sendEffect(TodoSideEffect.ShowSnackbar(message))
                     }
