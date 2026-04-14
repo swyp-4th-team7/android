@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -65,11 +66,13 @@ fun ScheduleList(
         ) {
             when (schedules) {
                 is Async.Success -> schedules.data.forEach { schedule ->
-                    ScheduleItem(
-                        schedule = schedule,
-                        onEditClick = { onEditClick(schedule) },
-                        onDeleteClick = { onDeleteClick(schedule) },
-                    )
+                    key(schedule.scheduleId) {
+                        ScheduleItem(
+                            schedule = schedule,
+                            onEditClick = { onEditClick(schedule) },
+                            onDeleteClick = { onDeleteClick(schedule) },
+                        )
+                    }
                 }
 
                 is Async.Empty -> TodoCardEmptyContent(
