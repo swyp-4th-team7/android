@@ -1,11 +1,16 @@
 package com.swyp.firsttodo.presentation.todo.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsIgnoringVisibility
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
@@ -22,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -32,6 +38,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.util.screenHeightDp
+import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
@@ -40,6 +48,8 @@ import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
 import com.swyp.firsttodo.presentation.common.component.HaebomTag
 import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
 import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
+import com.swyp.firsttodo.presentation.main.snackbar.HaebomSnackbarHost
+import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 
 enum class ScheduleBottomSheetType(
     val title: String,
@@ -68,7 +78,7 @@ enum class ScheduleBottomSheetType(
     ),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ScheduleBottomSheet(
     sheetType: ScheduleBottomSheetType,
@@ -86,6 +96,7 @@ fun ScheduleBottomSheet(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
+    val snackbarHostState = LocalSnackbarHostState.current
 
     LaunchedEffect(loadingStatus) {
         if (loadingStatus is Async.Success) {
@@ -97,98 +108,109 @@ fun ScheduleBottomSheet(
     HaebomBasicBottomSheet(
         onDismiss = onDismiss,
         sheetState = sheetState,
+        contentWindowInsets = { WindowInsets(0) },
         modifier = modifier,
     ) {
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 20.dp)
-                .verticalScroll(scrollState),
-        ) {
-            TaskSheetHeader(
-                title = sheetType.title,
-                description = sheetType.description,
-                onDismiss = onDismiss,
+        Box(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBarsIgnoringVisibility)) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 28.dp),
-            )
-
-            TaskInputSection(
-                title = "일정",
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 20.dp)
+                    .verticalScroll(scrollState),
             ) {
-                HaebomMultiLineTextField(
-                    fieldState = titleFieldState,
-                    placeholder = "다가오는 일정을 입력해주세요.",
+                TaskSheetHeader(
+                    title = sheetType.title,
+                    description = sheetType.description,
+                    onDismiss = onDismiss,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 40.dp),
-                    sampleText = "예시: 영어 시험, 국어 시험, 논술 대회...",
-                    keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Next,
-                    ),
-                    onKeyboardAction = { focusManager.moveFocus(FocusDirection.Next) },
+                        .padding(bottom = 28.dp),
                 )
-            }
 
-            TaskInputSection(
-                title = "날짜",
-            ) {
-                HaebomMultiLineTextField(
-                    fieldState = dateFieldState,
-                    placeholder = "년/월/일",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 40.dp),
-                    errorText = dateErrorText,
-                    inputTransformation = InputTransformation {
-                        if (length > 8) delete(8, length)
-                        val digits = asCharSequence().filter { it.isDigit() }.toString()
-                        if (digits != asCharSequence().toString()) replace(0, length, digits)
-                    },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done,
-                    ),
-                    outputTransformation = OutputTransformation {
-                        if (length >= 5) replace(4, 4, "/")
-                        if (length >= 8) replace(7, 7, "/")
-                    },
-                )
-            }
-
-            TaskInputSection(
-                title = "카테고리",
-            ) {
-                Column(
-                    modifier = Modifier.padding(bottom = 40.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                TaskInputSection(
+                    title = "일정",
                 ) {
-                    ScheduleCategory.entries.chunked(3).forEach { rowItems ->
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(20.dp),
-                        ) {
-                            rowItems.forEach { category ->
-                                HaebomTag(
-                                    label = category.displayName,
-                                    onClick = { onCategoryClick(category) },
-                                    selected = selectedCategory == category,
-                                    modifier = Modifier.weight(1f),
-                                )
-                            }
-                            repeat(3 - rowItems.size) {
-                                Spacer(modifier = Modifier.weight(1f))
+                    HaebomMultiLineTextField(
+                        fieldState = titleFieldState,
+                        placeholder = "다가오는 일정을 입력해주세요.",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 40.dp),
+                        sampleText = "예시: 영어 시험, 국어 시험, 논술 대회...",
+                        keyboardOptions = KeyboardOptions(
+                            imeAction = ImeAction.Next,
+                        ),
+                        onKeyboardAction = { focusManager.moveFocus(FocusDirection.Next) },
+                    )
+                }
+
+                TaskInputSection(
+                    title = "날짜",
+                ) {
+                    HaebomMultiLineTextField(
+                        fieldState = dateFieldState,
+                        placeholder = "년/월/일",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 40.dp),
+                        errorText = dateErrorText,
+                        inputTransformation = InputTransformation {
+                            if (length > 8) delete(8, length)
+                            val digits = asCharSequence().filter { it.isDigit() }.toString()
+                            if (digits != asCharSequence().toString()) replace(0, length, digits)
+                        },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done,
+                        ),
+                        outputTransformation = OutputTransformation {
+                            if (length >= 5) replace(4, 4, "/")
+                            if (length >= 8) replace(7, 7, "/")
+                        },
+                    )
+                }
+
+                TaskInputSection(
+                    title = "카테고리",
+                ) {
+                    Column(
+                        modifier = Modifier.padding(bottom = 40.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        ScheduleCategory.entries.chunked(3).forEach { rowItems ->
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                            ) {
+                                rowItems.forEach { category ->
+                                    HaebomTag(
+                                        label = category.displayName,
+                                        onClick = { onCategoryClick(category) },
+                                        selected = selectedCategory == category,
+                                        modifier = Modifier.weight(1f),
+                                    )
+                                }
+                                repeat(3 - rowItems.size) {
+                                    Spacer(modifier = Modifier.weight(1f))
+                                }
                             }
                         }
                     }
                 }
+
+                HaebomLargeButton(
+                    text = sheetType.btnText,
+                    onClick = onBtnClick,
+                    enabled = btnEnabled && loadingStatus !is Async.Loading,
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
 
-            HaebomLargeButton(
-                text = sheetType.btnText,
-                onClick = onBtnClick,
-                enabled = btnEnabled && loadingStatus !is Async.Loading,
-                modifier = Modifier.fillMaxWidth(),
+            HaebomSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = screenHeightDp(40.dp))
+                    .padding(horizontal = screenWidthDp(16.dp)),
             )
         }
     }
