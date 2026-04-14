@@ -427,22 +427,32 @@ class TodoViewModel
         private fun deleteSchedule() {
             val scheduleId = uiState.value.delRequestedId ?: return
 
+            updateState { copy(deleteState = Async.Loading()) }
+
             viewModelScope.launch {
                 scheduleRepository.deleteSchedule(scheduleId)
                     .onSuccess {
-                        getSchedules()
-                        updateState { copy(delRequestedId = null) }
+                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
                         sendEffect(TodoSideEffect.ShowSnackbar("다가오는 일정이 삭제되었습니다."))
+                        getSchedules()
                     }
                     .onFailure { throwable ->
                         val message = when (throwable) {
                             is ScheduleError.ScheduleNotFound -> {
-                                updateState { copy(delRequestedId = null) }
+                                updateState {
+                                    copy(
+                                        delRequestedId = null,
+                                        deleteState = Async.Success(Unit),
+                                    )
+                                }
                                 getSchedules()
                                 "이미 삭제된 일정입니다."
                             }
 
-                            is ApiError -> throwable.snackbarMsg()
+                            is ApiError -> {
+                                updateState { copy(deleteState = Async.Init) }
+                                throwable.snackbarMsg()
+                            }
 
                             else -> return@launch
                         }
