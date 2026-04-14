@@ -23,8 +23,14 @@ data class EditingTodo(
     val title: String = "",
     val category: TodoCategoryModel? = null,
     val labelColor: LabelColor? = null,
+    val originalTitle: String? = null,
+    val originalCategory: TodoCategoryModel? = null,
+    val originalLabelColor: LabelColor? = null,
 ) {
-    val isBtnEnabled: Boolean = title.isNotBlank() && category != null && labelColor != null
+    private val isEditMode = todoId != null
+    private val hasChanges = title != originalTitle || category != originalCategory || labelColor != originalLabelColor
+    val isBtnEnabled: Boolean = title.isNotBlank() && category != null && labelColor != null &&
+        (!isEditMode || hasChanges)
 }
 
 data class EditingSchedule(
@@ -32,6 +38,9 @@ data class EditingSchedule(
     val title: String = "",
     val date: String = "",
     val category: ScheduleCategory? = null,
+    val originalTitle: String? = null,
+    val originalDate: String? = null,
+    val originalCategory: ScheduleCategory? = null,
 ) {
     val dateErrorText: String? = run {
         if (date.isEmpty()) return@run null
@@ -40,7 +49,10 @@ data class EditingSchedule(
         null
     }
 
-    val isBtnEnabled: Boolean = title.isNotBlank() && date.isNotEmpty() && dateErrorText == null && category != null
+    private val isEditMode = scheduleId != null
+    private val hasChanges = title != originalTitle || date != originalDate || category != originalCategory
+    val isBtnEnabled: Boolean = title.isNotBlank() && date.isNotEmpty() && dateErrorText == null && category != null &&
+        (!isEditMode || hasChanges)
 }
 
 @Immutable

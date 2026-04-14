@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -74,12 +75,14 @@ fun TodoList(
                     null -> Spacer(Modifier.height(56.dp))
 
                     else -> data.forEach { todo ->
-                        TodoItem(
-                            todo = todo,
-                            onCheckClick = { onCheckClick(todo) },
-                            onEditClick = { onEditClick(todo) },
-                            onDeleteClick = { onDeleteClick(todo) },
-                        )
+                        key(todo.todoId) {
+                            TodoItem(
+                                todo = todo,
+                                onCheckClick = { onCheckClick(todo) },
+                                onEditClick = { onEditClick(todo) },
+                                onDeleteClick = { onDeleteClick(todo) },
+                            )
+                        }
                     }
                 }
             }

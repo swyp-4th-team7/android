@@ -160,8 +160,6 @@ class TodoViewModel
                 }
 
         suspend fun getTodos() {
-            updateState { copy(todos = Async.Loading(this.todos.getDataOrNull())) }
-
             todoRepository.getTodos()
                 .onSuccess { data ->
                     val categories = uiState.value.categories
@@ -200,8 +198,6 @@ class TodoViewModel
         }
 
         fun getSchedules() {
-            updateState { copy(schedules = Async.Loading(this.schedules.getDataOrNull())) }
-
             viewModelScope.launch {
                 scheduleRepository.getSchedules()
                     .onSuccess { list ->
@@ -291,6 +287,9 @@ class TodoViewModel
                         title = todoUiModel.title,
                         category = todoUiModel.category,
                         labelColor = todoUiModel.labelColor,
+                        originalTitle = todoUiModel.title,
+                        originalCategory = todoUiModel.category,
+                        originalLabelColor = todoUiModel.labelColor,
                     ),
                 )
             }
@@ -328,7 +327,12 @@ class TodoViewModel
                     scheduleBottomSheetState = Async.Init,
                     editingSchedule = editingSchedule.copy(
                         scheduleId = scheduleUiModel.scheduleId,
+                        title = scheduleUiModel.title,
+                        date = scheduleUiModel.rawDate,
                         category = scheduleUiModel.category,
+                        originalTitle = scheduleUiModel.title,
+                        originalDate = scheduleUiModel.rawDate,
+                        originalCategory = scheduleUiModel.category,
                     ),
                 )
             }
@@ -379,6 +383,7 @@ class TodoViewModel
         }
 
         fun onDeleteConfirm() {
+            if (uiState.value.deleteState is Async.Loading) return
             when (uiState.value.delRequestedType) {
                 DeleteDialogType.Todo -> deleteTodo()
                 DeleteDialogType.Schedule -> deleteSchedule()
@@ -416,7 +421,10 @@ class TodoViewModel
                                 throwable.snackbarMsg()
                             }
 
-                            else -> return@onFailure
+                            else -> {
+                                updateState { copy(deleteState = Async.Init) }
+                                return@onFailure
+                            }
                         }
 
                         sendEffect(TodoSideEffect.ShowSnackbar(message))
@@ -427,24 +435,37 @@ class TodoViewModel
         private fun deleteSchedule() {
             val scheduleId = uiState.value.delRequestedId ?: return
 
+            updateState { copy(deleteState = Async.Loading()) }
+
             viewModelScope.launch {
                 scheduleRepository.deleteSchedule(scheduleId)
                     .onSuccess {
-                        getSchedules()
-                        updateState { copy(delRequestedId = null) }
+                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
                         sendEffect(TodoSideEffect.ShowSnackbar("다가오는 일정이 삭제되었습니다."))
+                        getSchedules()
                     }
                     .onFailure { throwable ->
                         val message = when (throwable) {
                             is ScheduleError.ScheduleNotFound -> {
-                                updateState { copy(delRequestedId = null) }
+                                updateState {
+                                    copy(
+                                        delRequestedId = null,
+                                        deleteState = Async.Success(Unit),
+                                    )
+                                }
                                 getSchedules()
                                 "이미 삭제된 일정입니다."
                             }
 
-                            is ApiError -> throwable.snackbarMsg()
+                            is ApiError -> {
+                                updateState { copy(deleteState = Async.Init) }
+                                throwable.snackbarMsg()
+                            }
 
-                            else -> return@launch
+                            else -> {
+                                updateState { copy(deleteState = Async.Init) }
+                                return@launch
+                            }
                         }
                         sendEffect(TodoSideEffect.ShowSnackbar(message))
                     }
@@ -653,7 +674,10 @@ class TodoViewModel
                                 throwable.snackbarMsg()
                             }
 
-                            else -> return@launch
+                            else -> {
+                                updateState { copy(scheduleBottomSheetState = Async.Init) }
+                                return@launch
+                            }
                         }
                         sendEffect(TodoSideEffect.ShowSnackbar(message))
                     }
