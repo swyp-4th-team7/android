@@ -4,8 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -34,6 +37,8 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
+import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
+import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopupType
 
 @Composable
 fun HabitRetryList(
@@ -142,48 +147,61 @@ private fun RetryItem(
         }
     }
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = HaebomTheme.colors.white,
-                shape = RoundedCornerShape(4.dp),
-            ),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        Column(
+    Box(modifier = modifier) {
+        Row(
             modifier = Modifier
-                .weight(1f)
-                .padding(vertical = 16.dp)
-                .padding(start = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+                .fillMaxWidth()
+                .height(IntrinsicSize.Max)
+                .background(
+                    color = HaebomTheme.colors.white,
+                    shape = RoundedCornerShape(4.dp),
+                ),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(
-                text = title,
-                color = HaebomTheme.colors.gray200,
-                style = HaebomTheme.typo.description,
-            )
-
-            reward?.let {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 16.dp)
+                    .padding(start = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
                 Text(
-                    text = "보상 : $it",
+                    text = title,
                     color = HaebomTheme.colors.gray200,
-                    style = HaebomTheme.typo.helperText,
+                    style = HaebomTheme.typo.description,
+                )
+
+                reward?.let {
+                    Text(
+                        text = "보상 : $it",
+                        color = HaebomTheme.colors.gray200,
+                        style = HaebomTheme.typo.helperText,
+                    )
+                }
+            }
+
+            Box(
+                modifier = Modifier
+                    .noRippleClickable({ showPopup = true })
+                    .width(102.dp)
+                    .fillMaxHeight()
+                    .padding(end = 8.dp),
+                contentAlignment = Alignment.TopEnd,
+            ) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(durationIconRes),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
                 )
             }
         }
 
-        Box(
-            modifier = Modifier
-                .noRippleClickable({ showPopup = true })
-                .width(102.dp)
-                .padding(end = 8.dp),
-            contentAlignment = Alignment.TopEnd,
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(durationIconRes),
-                contentDescription = null,
-                tint = Color.Unspecified,
+        if (showPopup) {
+            TaskItemPopup(
+                onFirstClick = onRetry,
+                onDeleteClick = onDelete,
+                onDismiss = { showPopup = false },
+                popupType = TaskItemPopupType.RETRY,
             )
         }
     }
@@ -238,7 +256,7 @@ private class HabitRetryListPreviewProvider : PreviewParameterProvider<Async<Lis
     )
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun HabitRetryListPreview(
     @PreviewParameter(HabitRetryListPreviewProvider::class) habits: Async<List<HabitModel>>,
@@ -248,7 +266,6 @@ private fun HabitRetryListPreview(
             habits = habits,
             onRetry = {},
             onDelete = {},
-            modifier = Modifier.padding(16.dp),
         )
     }
 }
