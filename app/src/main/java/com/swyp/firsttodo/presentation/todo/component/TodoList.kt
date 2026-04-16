@@ -38,7 +38,7 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
-import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
+import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 
 data class TodayTodoUiModel(
     val todoId: Long,
@@ -159,8 +159,8 @@ private fun TodoItem(
             }
 
             if (showPopup) {
-                TaskEditPopup(
-                    onEditClick = {
+                TaskItemPopup(
+                    onFirstClick = {
                         onEditClick()
                         showPopup = false
                     },

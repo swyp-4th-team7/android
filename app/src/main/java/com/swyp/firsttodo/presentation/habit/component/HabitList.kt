@@ -35,7 +35,7 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
-import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
+import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 
 enum class HabitListType {
     CHILD,
@@ -189,8 +189,8 @@ private fun ListItem(
             }
 
             if (showPopup) {
-                TaskEditPopup(
-                    onEditClick = {
+                TaskItemPopup(
+                    onFirstClick = {
                         onEditClick()
                         showPopup = false
                     },
