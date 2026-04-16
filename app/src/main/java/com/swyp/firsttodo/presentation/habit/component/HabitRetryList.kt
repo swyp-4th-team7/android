@@ -1,16 +1,21 @@
 package com.swyp.firsttodo.presentation.habit.component
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -22,14 +27,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
@@ -59,24 +75,27 @@ fun HabitRetryList(
             .padding(horizontal = 12.dp)
             .padding(bottom = 12.dp),
     ) {
-        Header(
-            onHelperClick = { showHelper = true },
-        )
+        Header(onHelperClick = { showHelper = true })
 
         if (habits == Async.Empty) {
-            EmptyItem()
+            EmptyItem(
+                showTutorial = showHelper,
+                onTutorialDismiss = { showHelper = false },
+            )
         } else {
             habits.getDataOrNull()?.let { datas ->
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    datas.forEach { habit ->
+                    datas.forEachIndexed { index, habit ->
                         RetryItem(
                             title = habit.title,
                             reward = habit.reward,
                             duration = habit.duration,
                             onRetry = { onRetry(habit) },
                             onDelete = { onDelete(habit) },
+                            showTutorial = index == 0 && showHelper,
+                            onTutorialDismiss = { showHelper = false },
                         )
                     }
                 }
@@ -113,21 +132,40 @@ private fun Header(
 }
 
 @Composable
-private fun EmptyItem(modifier: Modifier = Modifier) {
-    Text(
-        text = "실패한 습관이 없어요.",
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                color = HaebomTheme.colors.white,
-                shape = RoundedCornerShape(4.dp),
+private fun EmptyItem(
+    showTutorial: Boolean,
+    onTutorialDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var itemRect by remember { mutableStateOf(Rect.Zero) }
+
+    Box(
+        modifier = modifier.onGloballyPositioned { coordinates ->
+            itemRect = coordinates.boundsInRoot()
+        },
+    ) {
+        Text(
+            text = "실패한 습관이 없어요.",
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = HaebomTheme.colors.white,
+                    shape = RoundedCornerShape(4.dp),
+                )
+                .heightIn(min = 56.dp)
+                .padding(all = 16.dp),
+            color = HaebomTheme.colors.gray400,
+            textAlign = TextAlign.Center,
+            style = HaebomTheme.typo.subtitle,
+        )
+
+        if (showTutorial) {
+            RetryTutorialOverlay(
+                targetRect = itemRect,
+                onDismiss = onTutorialDismiss,
             )
-            .heightIn(56.dp)
-            .padding(all = 16.dp),
-        color = HaebomTheme.colors.gray400,
-        textAlign = TextAlign.Center,
-        style = HaebomTheme.typo.subtitle,
-    )
+        }
+    }
 }
 
 @Composable
@@ -137,9 +175,12 @@ private fun RetryItem(
     duration: HabitDuration,
     onRetry: () -> Unit,
     onDelete: () -> Unit,
+    showTutorial: Boolean,
+    onTutorialDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showPopup by remember { mutableStateOf(false) }
+    var itemRect by remember { mutableStateOf(Rect.Zero) }
 
     val durationIconRes = remember(duration) {
         when (duration) {
@@ -152,7 +193,11 @@ private fun RetryItem(
         }
     }
 
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.onGloballyPositioned { coordinates ->
+            itemRect = coordinates.boundsInRoot()
+        },
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -209,6 +254,80 @@ private fun RetryItem(
                 popupType = TaskItemPopupType.RETRY,
             )
         }
+
+        if (showTutorial) {
+            RetryTutorialOverlay(
+                targetRect = itemRect,
+                onDismiss = onTutorialDismiss,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RetryTutorialOverlay(
+    targetRect: Rect,
+    onDismiss: () -> Unit,
+) {
+    val density = LocalDensity.current
+
+    val statusBarHeightPx = WindowInsets.statusBars
+        .getTop(density)
+        .toFloat()
+
+    Popup(
+        onDismissRequest = onDismiss,
+        properties = PopupProperties(focusable = true),
+    ) {
+        val dimColor = HaebomTheme.colors.black.copy(alpha = 0.5f)
+
+        val correctedRect = Rect(
+            left = targetRect.left,
+            top = targetRect.top - statusBarHeightPx,
+            right = targetRect.right,
+            bottom = targetRect.bottom - statusBarHeightPx,
+        )
+
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize() // 이제 상태바 영역까지 확장됩니다.
+                .pointerInput(Unit) {
+                    detectTapGestures { onDismiss() }
+                },
+        ) {
+            val cornerRadiusPx = 4.dp.toPx()
+
+            val path = Path().apply {
+                addRect(Rect(0f, 0f, size.width, size.height))
+                addRoundRect(
+                    RoundRect(
+                        rect = correctedRect,
+                        radiusX = cornerRadiusPx,
+                        radiusY = cornerRadiusPx,
+                    ),
+                )
+                fillType = PathFillType.EvenOdd
+            }
+
+            drawPath(path = path, color = dimColor)
+        }
+
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.ic_retry_tooltip),
+            contentDescription = null,
+            tint = Color.Unspecified,
+            modifier = Modifier.layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+
+                val xPosition = constraints.maxWidth - placeable.width - 16.dp.roundToPx()
+
+                val yPosition = correctedRect.top.toInt() - placeable.height - 8.dp.roundToPx()
+
+                layout(placeable.width, placeable.height) {
+                    placeable.placeRelative(xPosition, yPosition)
+                }
+            },
+        )
     }
 }
 
@@ -271,6 +390,7 @@ private fun HabitRetryListPreview(
             habits = habits,
             onRetry = {},
             onDelete = {},
+            modifier = Modifier.padding(top = 200.dp),
         )
     }
 }
