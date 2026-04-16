@@ -47,6 +47,8 @@ fun HabitRetryList(
     onDelete: (HabitModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showHelper by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -57,7 +59,9 @@ fun HabitRetryList(
             .padding(horizontal = 12.dp)
             .padding(bottom = 12.dp),
     ) {
-        Header()
+        Header(
+            onHelperClick = { showHelper = true },
+        )
 
         if (habits == Async.Empty) {
             EmptyItem()
@@ -82,9 +86,10 @@ fun HabitRetryList(
 }
 
 @Composable
-private fun Header(modifier: Modifier = Modifier) {
-    var showHelper by remember { mutableStateOf(false) }
-
+private fun Header(
+    onHelperClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -99,7 +104,7 @@ private fun Header(modifier: Modifier = Modifier) {
             imageVector = ImageVector.vectorResource(R.drawable.ic_help_24),
             contentDescription = null,
             modifier = Modifier
-                .noRippleClickable({ showHelper = true })
+                .noRippleClickable(onHelperClick)
                 .padding(vertical = 12.dp)
                 .padding(start = 4.dp, end = 20.dp),
             tint = Color.Unspecified,
