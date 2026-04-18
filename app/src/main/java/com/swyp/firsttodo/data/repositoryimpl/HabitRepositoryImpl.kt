@@ -92,4 +92,9 @@ class HabitRepositoryImpl
             apiResponseHandler.safeApiCall {
                 habitDataSource.getHabitList()
             }.map { it.toModel() }
+
+        override suspend fun getFailedHabits(): Result<List<HabitModel>> =
+            apiResponseHandler.safeApiCall {
+                habitDataSource.getFailedHabitList()
+            }.map { it.toModel() }
     }

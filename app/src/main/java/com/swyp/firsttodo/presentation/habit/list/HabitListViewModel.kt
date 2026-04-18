@@ -31,6 +31,7 @@ class HabitListViewModel
             updateState { copy(role = role) }
 
             getHabits()
+            getFailedHabits()
         }
 
         fun getHabits() {
@@ -47,6 +48,18 @@ class HabitListViewModel
                             updateState { copy(habits = Async.Success(prevData)) }
                         }
 
+                        if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
+                    }
+            }
+        }
+
+        fun getFailedHabits() {
+            viewModelScope.launch {
+                habitRepository.getFailedHabits()
+                    .onSuccess {
+                        updateState { copy(failedHabits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                    }
+                    .onFailure {
                         if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }

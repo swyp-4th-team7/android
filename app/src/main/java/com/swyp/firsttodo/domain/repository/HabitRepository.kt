@@ -21,4 +21,6 @@ interface HabitRepository {
     suspend fun deleteHabit(habitId: Long): Result<Unit>
 
     suspend fun getHabits(): Result<List<HabitModel>>
+
+    suspend fun getFailedHabits(): Result<List<HabitModel>>
 }

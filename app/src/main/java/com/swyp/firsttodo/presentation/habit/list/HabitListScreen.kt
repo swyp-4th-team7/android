@@ -128,7 +128,7 @@ fun HabitListScreen(
         )
 
         HabitRetryList(
-            habits = uiState.retryHabits,
+            habits = uiState.failedHabits,
             onRetry = onRetryClick,
             onDelete = onDeleteClick,
             scrollState = scrollState,
@@ -153,7 +153,7 @@ private class HabitListScreenPreviewProvider : PreviewParameterProvider<HabitLis
     }
 
     override val values = sequenceOf(
-        HabitListUiState(habits = Async.Success(sampleHabits), retryHabits = Async.Empty),
+        HabitListUiState(habits = Async.Success(sampleHabits), failedHabits = Async.Empty),
         HabitListUiState(habits = Async.Success(emptyList())),
     )
 }
