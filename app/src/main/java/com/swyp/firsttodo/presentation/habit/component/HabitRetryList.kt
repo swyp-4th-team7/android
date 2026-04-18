@@ -290,7 +290,7 @@ private fun RetryTutorialOverlay(
 
         Canvas(
             modifier = Modifier
-                .fillMaxSize() // 이제 상태바 영역까지 확장됩니다.
+                .fillMaxSize()
                 .pointerInput(Unit) {
                     detectTapGestures { onDismiss() }
                 },
