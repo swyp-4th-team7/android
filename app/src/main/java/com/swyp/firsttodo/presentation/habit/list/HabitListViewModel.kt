@@ -119,4 +119,8 @@ class HabitListViewModel
         fun onDeleteCancel() {
             updateState { copy(delRequestedId = null) }
         }
+
+        fun onRetryClick(habit: HabitModel) {
+            sendThrottledEffect(HabitListSideEffect.NavigateToHabitRetry(habit))
+        }
     }

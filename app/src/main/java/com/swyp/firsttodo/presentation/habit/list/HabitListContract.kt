@@ -15,6 +15,7 @@ data class HabitListUiState(
     val habits: Async<List<HabitModel>> = Async.Init,
     val delRequestedId: Long? = null,
     val deleteState: Async<Unit> = Async.Init,
+    val retryHabits: Async<List<HabitModel>> = Async.Init,
 ) : UiState {
     val showDeleteDialog = delRequestedId != null
 
@@ -36,4 +37,6 @@ sealed interface HabitListSideEffect : UiEffect {
     data class ShowSnackbar(val message: String) : HabitListSideEffect
 
     data class NavigateToHabitDetail(val habit: HabitModel? = null) : HabitListSideEffect
+
+    data class NavigateToHabitRetry(val habit: HabitModel) : HabitListSideEffect
 }

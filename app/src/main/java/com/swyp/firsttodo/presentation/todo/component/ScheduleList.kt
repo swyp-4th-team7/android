@@ -33,7 +33,7 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
-import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
+import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 
 data class ScheduleUiModel(
     val scheduleId: Long,
@@ -160,15 +160,9 @@ private fun ScheduleItem(
         }
 
         if (showPopup) {
-            TaskEditPopup(
-                onEditClick = {
-                    onEditClick()
-                    showPopup = false
-                },
-                onDeleteClick = {
-                    onDeleteClick()
-                    showPopup = false
-                },
+            TaskItemPopup(
+                onFirstClick = onEditClick,
+                onDeleteClick = onDeleteClick,
                 onDismiss = { showPopup = false },
             )
         }

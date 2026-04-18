@@ -45,16 +45,19 @@ class HabitDetailViewModel
             Role.CHILD -> HabitDetailScreenType.CHILD
         }
 
-        private val initialHabit = savedStateHandle
+        private val navArgs = savedStateHandle
             .toRoute<HabitRoute.HabitDetail>(typeMap = mapOf(typeOf<HabitNavArgs?>() to HabitNavArgsNavType))
-            .habitNavArgs?.toModel()
+
+        private val initialHabit = navArgs.habitNavArgs?.toModel()
+        private val isRetry = navArgs.isRetry
 
         val titleState = TextFieldState(initialText = initialHabit?.title ?: "")
         val rewardState = TextFieldState(initialText = initialHabit?.reward ?: "")
 
         init {
-            val state = when (initialHabit) {
-                null -> HabitDetailScreenState.CREATE
+            val state = when {
+                isRetry -> HabitDetailScreenState.RETRY
+                initialHabit == null -> HabitDetailScreenState.CREATE
                 else -> HabitDetailScreenState.EDIT
             }
 
@@ -77,6 +80,7 @@ class HabitDetailViewModel
                 HabitDetailScreenState.IDLE -> false
                 HabitDetailScreenState.CREATE -> validateAllField()
                 HabitDetailScreenState.EDIT -> isChanged() && validateAllField()
+                HabitDetailScreenState.RETRY -> true
             }
         }.stateIn(
             scope = viewModelScope,
@@ -108,6 +112,7 @@ class HabitDetailViewModel
             return when (screenType) {
                 HabitDetailScreenType.CHILD -> validateTitle() && validateReward() && validateDuration()
                 HabitDetailScreenType.PARENT -> validateTitle() && validateDuration()
+                HabitDetailScreenType.IDLE -> false
             }
         }
 
@@ -117,6 +122,7 @@ class HabitDetailViewModel
             val rewardChanged = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString() != initialHabit?.reward
                 HabitDetailScreenType.PARENT -> false
+                HabitDetailScreenType.IDLE -> false
             }
             return titleChanged || durationChanged || rewardChanged
         }
@@ -128,6 +134,7 @@ class HabitDetailViewModel
                 HabitDetailScreenState.CREATE -> createHabit()
 
                 HabitDetailScreenState.EDIT -> editHabit()
+                HabitDetailScreenState.RETRY -> retryHabit()
             }
         }
 
@@ -140,6 +147,7 @@ class HabitDetailViewModel
             val inputReward = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString()
                 HabitDetailScreenType.PARENT -> null
+                HabitDetailScreenType.IDLE -> null
             }
 
             updateState { copy(loadingState = Async.Loading()) }
@@ -175,6 +183,7 @@ class HabitDetailViewModel
             val inputReward = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString()
                 HabitDetailScreenType.PARENT -> null
+                HabitDetailScreenType.IDLE -> null
             }
             val completed = uiState.value.isCompleted ?: return
 
@@ -203,5 +212,9 @@ class HabitDetailViewModel
                         updateState { copy(loadingState = Async.Init) }
                     }
             }
+        }
+
+        private fun retryHabit() {
+            // TODO: API 연동
         }
     }

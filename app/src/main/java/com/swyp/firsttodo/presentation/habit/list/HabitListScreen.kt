@@ -1,8 +1,13 @@
 package com.swyp.firsttodo.presentation.habit.list
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,12 +29,14 @@ import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.habit.component.HabitList
 import com.swyp.firsttodo.presentation.habit.component.HabitListEmpty
 import com.swyp.firsttodo.presentation.habit.component.HabitMainBanner
+import com.swyp.firsttodo.presentation.habit.component.HabitRetryList
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 
 @Composable
 fun HabitListRoute(
     navigateToHabitDetail: (HabitModel?) -> Unit,
+    navigateToHabitRetry: (HabitModel) -> Unit,
     habitDetailResult: String?,
     onDetailResultConsumed: () -> Unit,
     modifier: Modifier = Modifier,
@@ -46,8 +53,8 @@ fun HabitListRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             is HabitListSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
-
             is HabitListSideEffect.NavigateToHabitDetail -> navigateToHabitDetail(effect.habit)
+            is HabitListSideEffect.NavigateToHabitRetry -> navigateToHabitRetry(effect.habit)
         }
     }
 
@@ -67,6 +74,7 @@ fun HabitListRoute(
         onCheckClick = viewModel::onCheckClick,
         onEditClick = viewModel::onEditClick,
         onDeleteClick = viewModel::onDeleteClick,
+        onRetryClick = viewModel::onRetryClick,
         modifier = modifier,
     )
 }
@@ -78,10 +86,13 @@ fun HabitListScreen(
     onCheckClick: (HabitModel) -> Unit,
     onEditClick: (HabitModel) -> Unit,
     onDeleteClick: (HabitModel) -> Unit,
+    onRetryClick: (HabitModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = modifier,
+        modifier = modifier.verticalScroll(scrollState),
     ) {
         TopBarArea()
 
@@ -109,6 +120,24 @@ fun HabitListScreen(
 
             else -> Unit
         }
+
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
+            thickness = 0.8.dp,
+            color = HaebomTheme.colors.gray50,
+        )
+
+        HabitRetryList(
+            habits = uiState.retryHabits,
+            onRetry = onRetryClick,
+            onDelete = onDeleteClick,
+            scrollState = scrollState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        )
+
+        Spacer(Modifier.height(80.dp))
     }
 }
 
@@ -124,7 +153,7 @@ private class HabitListScreenPreviewProvider : PreviewParameterProvider<HabitLis
     }
 
     override val values = sequenceOf(
-        HabitListUiState(habits = Async.Success(sampleHabits)),
+        HabitListUiState(habits = Async.Success(sampleHabits), retryHabits = Async.Empty),
         HabitListUiState(habits = Async.Success(emptyList())),
     )
 }
@@ -141,6 +170,7 @@ private fun HabitListScreenPreview(
             onCheckClick = {},
             onEditClick = {},
             onDeleteClick = {},
+            onRetryClick = {},
         )
     }
 }

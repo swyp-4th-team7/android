@@ -5,14 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -35,7 +32,7 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
-import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
+import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 
 enum class HabitListType {
     CHILD,
@@ -51,30 +48,28 @@ fun HabitList(
     habits: List<HabitModel>,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
+    Column(
         modifier = modifier
             .background(
                 color = HaebomTheme.colors.gray50,
                 shape = RoundedCornerShape(8.dp),
-            ),
-        contentPadding = PaddingValues(top = 20.dp, bottom = 8.dp, start = 12.dp, end = 12.dp),
-    ) {
-        item {
-            Text(
-                text = "내 습관 모음집",
-                modifier = Modifier.padding(bottom = 12.dp),
-                color = HaebomTheme.colors.black,
-                style = HaebomTheme.typo.section,
             )
-        }
+            .padding(top = 20.dp, bottom = 8.dp, start = 12.dp, end = 12.dp),
+    ) {
+        Text(
+            text = "내 습관 모음집",
+            modifier = Modifier.padding(bottom = 12.dp),
+            color = HaebomTheme.colors.black,
+            style = HaebomTheme.typo.section,
+        )
 
-        items(items = habits, key = { it.habitId }) {
+        habits.forEach { habit ->
             ListItem(
                 habitListType = habitListType,
-                onCheckClick = { onCheckClick(it) },
-                onEditClick = { onEditClick(it) },
-                onDeleteClick = { onDeleteClick(it) },
-                habit = it,
+                onCheckClick = { onCheckClick(habit) },
+                onEditClick = { onEditClick(habit) },
+                onDeleteClick = { onDeleteClick(habit) },
+                habit = habit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 4.dp),
@@ -189,15 +184,9 @@ private fun ListItem(
             }
 
             if (showPopup) {
-                TaskEditPopup(
-                    onEditClick = {
-                        onEditClick()
-                        showPopup = false
-                    },
-                    onDeleteClick = {
-                        onDeleteClick()
-                        showPopup = false
-                    },
+                TaskItemPopup(
+                    onFirstClick = onEditClick,
+                    onDeleteClick = onDeleteClick,
                     onDismiss = { showPopup = false },
                 )
             }

@@ -130,6 +130,7 @@ fun HabitDetailScreen(
             TaskInputSection(
                 title = "습관 작성",
                 modifier = Modifier.padding(bottom = 28.dp),
+                description = uiState.habitDescription,
             ) {
                 HaebomMultiLineTextField(
                     fieldState = titleFieldState,
@@ -161,8 +162,8 @@ fun HabitDetailScreen(
                 )
             }
 
-            when (screenType) {
-                HabitDetailScreenType.CHILD -> TaskInputSection(
+            if (screenType == HabitDetailScreenType.CHILD) {
+                TaskInputSection(
                     title = "보상 정하기",
                     modifier = Modifier.padding(bottom = 28.dp),
                 ) {
@@ -175,25 +176,34 @@ fun HabitDetailScreen(
                         ),
                     )
                 }
-
-                HabitDetailScreenType.PARENT -> Unit
             }
         }
     }
 }
 
-private class HabitDetailScreenPreviewProvider : PreviewParameterProvider<HabitDetailScreenType> {
-    override val values = sequenceOf(*HabitDetailScreenType.entries.toTypedArray())
+private class HabitDetailScreenPreviewProvider :
+    PreviewParameterProvider<Pair<HabitDetailScreenType, HabitDetailScreenState>> {
+    override val values = sequenceOf(
+        Pair(HabitDetailScreenType.IDLE, HabitDetailScreenState.IDLE),
+        Pair(HabitDetailScreenType.CHILD, HabitDetailScreenState.CREATE),
+        Pair(HabitDetailScreenType.PARENT, HabitDetailScreenState.CREATE),
+        Pair(HabitDetailScreenType.CHILD, HabitDetailScreenState.EDIT),
+        Pair(HabitDetailScreenType.PARENT, HabitDetailScreenState.EDIT),
+        Pair(HabitDetailScreenType.CHILD, HabitDetailScreenState.RETRY),
+        Pair(HabitDetailScreenType.PARENT, HabitDetailScreenState.RETRY),
+    )
 }
 
 @Preview
 @Composable
 private fun HabitDetailScreenPreview(
-    @PreviewParameter(HabitDetailScreenPreviewProvider::class) screenType: HabitDetailScreenType,
+    @PreviewParameter(HabitDetailScreenPreviewProvider::class) params:
+        Pair<HabitDetailScreenType, HabitDetailScreenState>,
 ) {
+    val (screenType, screenState) = params
     HaebomTheme {
         HabitDetailScreen(
-            uiState = HabitDetailUiState(),
+            uiState = HabitDetailUiState(screenType = screenType, screenState = screenState),
             screenType = screenType,
             btnEnabled = false,
             titleFieldState = rememberTextFieldState(),
