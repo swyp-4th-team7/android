@@ -37,4 +37,6 @@ sealed interface HabitListSideEffect : UiEffect {
     data class ShowSnackbar(val message: String) : HabitListSideEffect
 
     data class NavigateToHabitDetail(val habit: HabitModel? = null) : HabitListSideEffect
+
+    data class NavigateToHabitRetry(val habit: HabitModel) : HabitListSideEffect
 }

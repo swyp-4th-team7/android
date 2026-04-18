@@ -25,11 +25,15 @@ sealed interface HabitRoute : Route {
     data object Habit : HabitRoute
 
     @Serializable
-    data class HabitDetail(val habitNavArgs: HabitNavArgs? = null) : HabitRoute
+    data class HabitDetail(val habitNavArgs: HabitNavArgs? = null, val isRetry: Boolean = false) : HabitRoute
 }
 
 fun NavController.navigateToHabitDetail(habit: HabitModel?) {
     navigate(HabitRoute.HabitDetail(habit?.toNavArgs()))
+}
+
+fun NavController.navigateToHabitRetry(habit: HabitModel) {
+    navigate(HabitRoute.HabitDetail(habit.toNavArgs(), true))
 }
 
 fun NavGraphBuilder.habitNavGraph(
@@ -48,6 +52,7 @@ fun NavGraphBuilder.habitNavGraph(
 
         HabitListRoute(
             navigateToHabitDetail = navController::navigateToHabitDetail,
+            navigateToHabitRetry = navController::navigateToHabitRetry,
             habitDetailResult = habitDetailResult,
             onDetailResultConsumed = {
                 backStackEntry.savedStateHandle[HABIT_DETAIL_RESULT_KEY] = null

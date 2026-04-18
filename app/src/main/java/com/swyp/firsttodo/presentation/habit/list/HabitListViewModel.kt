@@ -121,6 +121,6 @@ class HabitListViewModel
         }
 
         fun onRetryClick(habit: HabitModel) {
-            // TODO : navigation
+            sendEffect(HabitListSideEffect.NavigateToHabitRetry(habit))
         }
     }

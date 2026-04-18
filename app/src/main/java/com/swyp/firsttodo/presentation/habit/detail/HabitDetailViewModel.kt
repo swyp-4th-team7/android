@@ -45,16 +45,19 @@ class HabitDetailViewModel
             Role.CHILD -> HabitDetailScreenType.CHILD
         }
 
-        private val initialHabit = savedStateHandle
+        private val navArgs = savedStateHandle
             .toRoute<HabitRoute.HabitDetail>(typeMap = mapOf(typeOf<HabitNavArgs?>() to HabitNavArgsNavType))
-            .habitNavArgs?.toModel()
+
+        private val initialHabit = navArgs.habitNavArgs?.toModel()
+        private val isRetry = navArgs.isRetry
 
         val titleState = TextFieldState(initialText = initialHabit?.title ?: "")
         val rewardState = TextFieldState(initialText = initialHabit?.reward ?: "")
 
         init {
-            val state = when (initialHabit) {
-                null -> HabitDetailScreenState.CREATE
+            val state = when {
+                isRetry -> HabitDetailScreenState.RETRY
+                initialHabit == null -> HabitDetailScreenState.CREATE
                 else -> HabitDetailScreenState.EDIT
             }
 

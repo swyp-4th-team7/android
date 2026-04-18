@@ -36,6 +36,7 @@ import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 @Composable
 fun HabitListRoute(
     navigateToHabitDetail: (HabitModel?) -> Unit,
+    navigateToHabitRetry: (HabitModel) -> Unit,
     habitDetailResult: String?,
     onDetailResultConsumed: () -> Unit,
     modifier: Modifier = Modifier,
@@ -52,8 +53,8 @@ fun HabitListRoute(
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
             is HabitListSideEffect.ShowSnackbar -> snackbarHost.showHaebomSnackbar(effect.message)
-
             is HabitListSideEffect.NavigateToHabitDetail -> navigateToHabitDetail(effect.habit)
+            is HabitListSideEffect.NavigateToHabitRetry -> navigateToHabitRetry(effect.habit)
         }
     }
 
