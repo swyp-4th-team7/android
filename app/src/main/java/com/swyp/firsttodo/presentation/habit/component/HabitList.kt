@@ -185,14 +185,8 @@ private fun ListItem(
 
             if (showPopup) {
                 TaskItemPopup(
-                    onFirstClick = {
-                        onEditClick()
-                        showPopup = false
-                    },
-                    onDeleteClick = {
-                        onDeleteClick()
-                        showPopup = false
-                    },
+                    onFirstClick = onEditClick,
+                    onDeleteClick = onDeleteClick,
                     onDismiss = { showPopup = false },
                 )
             }

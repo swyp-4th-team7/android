@@ -86,8 +86,14 @@ fun TaskItemPopup(
     ) {
         PopupContent(
             popupType = popupType,
-            onEditClick = onFirstClick,
-            onDeleteClick = onDeleteClick,
+            onEditClick = {
+                onDismiss()
+                onFirstClick()
+            },
+            onDeleteClick = {
+                onDismiss()
+                onDeleteClick()
+            },
             modifier = modifier,
         )
     }
