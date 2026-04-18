@@ -121,6 +121,6 @@ class HabitListViewModel
         }
 
         fun onRetryClick(habit: HabitModel) {
-            sendEffect(HabitListSideEffect.NavigateToHabitRetry(habit))
+            sendThrottledEffect(HabitListSideEffect.NavigateToHabitRetry(habit))
         }
     }
