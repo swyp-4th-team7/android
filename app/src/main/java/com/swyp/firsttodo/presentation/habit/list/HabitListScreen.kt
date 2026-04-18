@@ -89,8 +89,10 @@ fun HabitListScreen(
     onRetryClick: (HabitModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
+        modifier = modifier.verticalScroll(scrollState),
     ) {
         TopBarArea()
 
@@ -129,6 +131,7 @@ fun HabitListScreen(
             habits = uiState.retryHabits,
             onRetry = onRetryClick,
             onDelete = onDeleteClick,
+            scrollState = scrollState,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),

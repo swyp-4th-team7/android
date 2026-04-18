@@ -1,6 +1,7 @@
 package com.swyp.firsttodo.presentation.habit.component
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
@@ -24,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +41,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,15 +59,25 @@ import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopupType
+import kotlinx.coroutines.launch
+
+private const val HELPER_SCROLL_AMOUNT_DP = 76
 
 @Composable
 fun HabitRetryList(
     habits: Async<List<HabitModel>>,
     onRetry: (HabitModel) -> Unit,
     onDelete: (HabitModel) -> Unit,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
 ) {
     var showHelper by remember { mutableStateOf(false) }
+    var firstItemRect by remember { mutableStateOf(Rect.Zero) }
+    val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    val view = LocalView.current
+    val navBarHeightPx = WindowInsets.navigationBars.getBottom(density).toFloat()
+    val bottomBarHeightPx = with(density) { 64.dp.toPx() } + navBarHeightPx
 
     Column(
         modifier = modifier
@@ -75,12 +89,26 @@ fun HabitRetryList(
             .padding(horizontal = 12.dp)
             .padding(bottom = 12.dp),
     ) {
-        Header(onHelperClick = { showHelper = true })
+        Header(
+            onHelperClick = {
+                coroutineScope.launch {
+                    val visibleBottom = view.height.toFloat() - bottomBarHeightPx
+                    val isFirstItemVisible = firstItemRect != Rect.Zero && firstItemRect.top in 0f..visibleBottom
+                    if (!isFirstItemVisible) {
+                        scrollState.animateScrollTo(
+                            scrollState.value + with(density) { HELPER_SCROLL_AMOUNT_DP.dp.roundToPx() },
+                        )
+                    }
+                    showHelper = true
+                }
+            },
+        )
 
         if (habits == Async.Empty) {
             EmptyItem(
                 showTutorial = showHelper,
                 onTutorialDismiss = { showHelper = false },
+                onRectChanged = { firstItemRect = it },
             )
         } else {
             habits.getDataOrNull()?.let { datas ->
@@ -96,6 +124,7 @@ fun HabitRetryList(
                             onDelete = { onDelete(habit) },
                             showTutorial = index == 0 && showHelper,
                             onTutorialDismiss = { showHelper = false },
+                            onRectChanged = if (index == 0) ({ firstItemRect = it }) else null,
                         )
                     }
                 }
@@ -135,6 +164,7 @@ private fun Header(
 private fun EmptyItem(
     showTutorial: Boolean,
     onTutorialDismiss: () -> Unit,
+    onRectChanged: ((Rect) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     var itemRect by remember { mutableStateOf(Rect.Zero) }
@@ -142,6 +172,7 @@ private fun EmptyItem(
     Box(
         modifier = modifier.onGloballyPositioned { coordinates ->
             itemRect = coordinates.boundsInRoot()
+            onRectChanged?.invoke(itemRect)
         },
     ) {
         Text(
@@ -177,6 +208,7 @@ private fun RetryItem(
     onDelete: () -> Unit,
     showTutorial: Boolean,
     onTutorialDismiss: () -> Unit,
+    onRectChanged: ((Rect) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     var showPopup by remember { mutableStateOf(false) }
@@ -196,6 +228,7 @@ private fun RetryItem(
     Box(
         modifier = modifier.onGloballyPositioned { coordinates ->
             itemRect = coordinates.boundsInRoot()
+            onRectChanged?.invoke(itemRect)
         },
     ) {
         Row(
@@ -385,11 +418,13 @@ private class HabitRetryListPreviewProvider : PreviewParameterProvider<Async<Lis
 private fun HabitRetryListPreview(
     @PreviewParameter(HabitRetryListPreviewProvider::class) habits: Async<List<HabitModel>>,
 ) {
+    val scrollState = androidx.compose.foundation.rememberScrollState()
     HaebomTheme {
         HabitRetryList(
             habits = habits,
             onRetry = {},
             onDelete = {},
+            scrollState = scrollState,
             modifier = Modifier.padding(top = 200.dp),
         )
     }
