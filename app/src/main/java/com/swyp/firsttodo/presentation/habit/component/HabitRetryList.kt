@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -119,16 +120,18 @@ fun HabitRetryList(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     datas.forEachIndexed { index, habit ->
-                        RetryItem(
-                            title = habit.title,
-                            reward = habit.reward,
-                            duration = habit.duration,
-                            onRetry = { onRetry(habit) },
-                            onDelete = { onDelete(habit) },
-                            showTutorial = index == 0 && showHelper,
-                            onTutorialDismiss = { showHelper = false },
-                            onRectChanged = if (index == 0) ({ firstItemRect = it }) else null,
-                        )
+                        key(habit.habitId) {
+                            RetryItem(
+                                title = habit.title,
+                                reward = habit.reward,
+                                duration = habit.duration,
+                                onRetry = { onRetry(habit) },
+                                onDelete = { onDelete(habit) },
+                                showTutorial = index == 0 && showHelper,
+                                onTutorialDismiss = { showHelper = false },
+                                onRectChanged = if (index == 0) ({ firstItemRect = it }) else null,
+                            )
+                        }
                     }
                 }
             }
