@@ -4,6 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class HabitListResponseDto(
+    @SerialName("habits")
+    val habits: List<HabitResponseDto>,
+)
+
+@Serializable
 data class HabitResponseDto(
     @SerialName("habitId")
     val habitId: Long,
@@ -15,10 +21,4 @@ data class HabitResponseDto(
     val reward: String?,
     @SerialName("isCompleted")
     val isCompleted: Boolean,
-)
-
-@Serializable
-data class HabitResponseListDto(
-    @SerialName("habits")
-    val habits: List<HabitResponseDto>,
 )

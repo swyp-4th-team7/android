@@ -3,8 +3,9 @@ package com.swyp.firsttodo.data.remote.service
 import com.swyp.firsttodo.core.network.model.BaseResponse
 import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPatchRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPostRequestDto
+import com.swyp.firsttodo.data.remote.dto.response.habit.FailedHabitListResponseDto
+import com.swyp.firsttodo.data.remote.dto.response.habit.HabitListResponseDto
 import com.swyp.firsttodo.data.remote.dto.response.habit.HabitResponseDto
-import com.swyp.firsttodo.data.remote.dto.response.habit.HabitResponseListDto
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -30,5 +31,8 @@ interface HabitService {
     ): BaseResponse<Unit>
 
     @GET("/api/v1/habits")
-    suspend fun getHabitList(): BaseResponse<HabitResponseListDto>
+    suspend fun getHabitList(): BaseResponse<HabitListResponseDto>
+
+    @GET("/api/v1/habits/failed")
+    suspend fun getFailedHabitList(): BaseResponse<FailedHabitListResponseDto>
 }
