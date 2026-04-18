@@ -1,9 +1,7 @@
 package com.swyp.firsttodo.presentation.habit.component
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,13 +9,11 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -32,14 +28,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathFillType
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
@@ -49,8 +40,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
@@ -58,12 +47,13 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
+import com.swyp.firsttodo.presentation.common.component.TUTORIAL_MIN_SPACE_DP
+import com.swyp.firsttodo.presentation.common.component.TUTORIAL_SCROLL_AMOUNT_DP
+import com.swyp.firsttodo.presentation.common.component.TutorialOverlay
+import com.swyp.firsttodo.presentation.common.component.TutorialType
 import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopupType
 import kotlinx.coroutines.launch
-
-private const val HELPER_SCROLL_AMOUNT_DP = 76
-private const val HELPER_MIN_SPACE_DP = 40
 
 @Composable
 fun HabitRetryList(
@@ -95,12 +85,12 @@ fun HabitRetryList(
             onHelperClick = {
                 coroutineScope.launch {
                     val visibleBottom = view.height.toFloat() - bottomBarHeightPx
-                    val minSpacePx = with(density) { HELPER_MIN_SPACE_DP.dp.toPx() }
+                    val minSpacePx = with(density) { TUTORIAL_MIN_SPACE_DP.dp.toPx() }
                     val isFirstItemComfortablyVisible = firstItemRect != Rect.Zero &&
                         firstItemRect.top in 0f..(visibleBottom - minSpacePx)
                     if (!isFirstItemComfortablyVisible) {
                         scrollState.animateScrollTo(
-                            scrollState.value + with(density) { HELPER_SCROLL_AMOUNT_DP.dp.roundToPx() },
+                            scrollState.value + with(density) { TUTORIAL_SCROLL_AMOUNT_DP.dp.roundToPx() },
                         )
                     }
                     showHelper = true
@@ -197,9 +187,10 @@ private fun EmptyItem(
         )
 
         if (showTutorial) {
-            RetryTutorialOverlay(
+            TutorialOverlay(
                 targetRect = itemRect,
                 onDismiss = onTutorialDismiss,
+                type = TutorialType.RETRY,
             )
         }
     }
@@ -295,78 +286,12 @@ private fun RetryItem(
         }
 
         if (showTutorial) {
-            RetryTutorialOverlay(
+            TutorialOverlay(
                 targetRect = itemRect,
                 onDismiss = onTutorialDismiss,
+                type = TutorialType.RETRY,
             )
         }
-    }
-}
-
-@Composable
-private fun RetryTutorialOverlay(
-    targetRect: Rect,
-    onDismiss: () -> Unit,
-) {
-    val density = LocalDensity.current
-
-    val statusBarHeightPx = WindowInsets.statusBars
-        .getTop(density)
-        .toFloat()
-
-    Popup(
-        onDismissRequest = onDismiss,
-        properties = PopupProperties(focusable = true),
-    ) {
-        val dimColor = HaebomTheme.colors.black.copy(alpha = 0.5f)
-
-        val correctedRect = Rect(
-            left = targetRect.left,
-            top = targetRect.top - statusBarHeightPx,
-            right = targetRect.right,
-            bottom = targetRect.bottom - statusBarHeightPx,
-        )
-
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectTapGestures { onDismiss() }
-                },
-        ) {
-            val cornerRadiusPx = 4.dp.toPx()
-
-            val path = Path().apply {
-                addRect(Rect(0f, 0f, size.width, size.height))
-                addRoundRect(
-                    RoundRect(
-                        rect = correctedRect,
-                        radiusX = cornerRadiusPx,
-                        radiusY = cornerRadiusPx,
-                    ),
-                )
-                fillType = PathFillType.EvenOdd
-            }
-
-            drawPath(path = path, color = dimColor)
-        }
-
-        Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_retry_tooltip),
-            contentDescription = null,
-            tint = Color.Unspecified,
-            modifier = Modifier.layout { measurable, constraints ->
-                val placeable = measurable.measure(constraints)
-
-                val xPosition = constraints.maxWidth - placeable.width - 16.dp.roundToPx()
-
-                val yPosition = correctedRect.top.toInt() - placeable.height - 8.dp.roundToPx()
-
-                layout(placeable.width, placeable.height) {
-                    placeable.placeRelative(xPosition, yPosition)
-                }
-            },
-        )
     }
 }
 
