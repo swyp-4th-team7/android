@@ -62,6 +62,7 @@ import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopupType
 import kotlinx.coroutines.launch
 
 private const val HELPER_SCROLL_AMOUNT_DP = 76
+private const val HELPER_MIN_SPACE_DP = 40
 
 @Composable
 fun HabitRetryList(
@@ -93,8 +94,10 @@ fun HabitRetryList(
             onHelperClick = {
                 coroutineScope.launch {
                     val visibleBottom = view.height.toFloat() - bottomBarHeightPx
-                    val isFirstItemVisible = firstItemRect != Rect.Zero && firstItemRect.top in 0f..visibleBottom
-                    if (!isFirstItemVisible) {
+                    val minSpacePx = with(density) { HELPER_MIN_SPACE_DP.dp.toPx() }
+                    val isFirstItemComfortablyVisible = firstItemRect != Rect.Zero &&
+                        firstItemRect.top in 0f..(visibleBottom - minSpacePx)
+                    if (!isFirstItemComfortablyVisible) {
                         scrollState.animateScrollTo(
                             scrollState.value + with(density) { HELPER_SCROLL_AMOUNT_DP.dp.roundToPx() },
                         )
