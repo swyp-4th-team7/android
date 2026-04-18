@@ -1,5 +1,6 @@
 package com.swyp.firsttodo.presentation.todo.component
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,12 +8,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -21,9 +25,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -33,7 +43,12 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
+import com.swyp.firsttodo.presentation.common.component.TUTORIAL_MIN_SPACE_DP
+import com.swyp.firsttodo.presentation.common.component.TUTORIAL_SCROLL_AMOUNT_DP
+import com.swyp.firsttodo.presentation.common.component.TutorialOverlay
+import com.swyp.firsttodo.presentation.common.component.TutorialType
 import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
+import kotlinx.coroutines.launch
 
 data class ScheduleUiModel(
     val scheduleId: Long,
@@ -51,13 +66,38 @@ fun ScheduleList(
     onPlusClick: () -> Unit,
     onEditClick: (ScheduleUiModel) -> Unit,
     onDeleteClick: (ScheduleUiModel) -> Unit,
+    scrollState: ScrollState,
     modifier: Modifier = Modifier,
 ) {
+    var showHelper by remember { mutableStateOf(false) }
+    var emptyItemRect by remember { mutableStateOf(Rect.Zero) }
+    val coroutineScope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    val view = LocalView.current
+    val navBarHeightPx = WindowInsets.navigationBars.getBottom(density).toFloat()
+    val bottomBarHeightPx = with(density) { 64.dp.toPx() } + navBarHeightPx
+
     TodoCard(
         title = "다가오는 일정",
         onPlusClick = onPlusClick,
-        // TODO: Focus 구현
-        onHelpClick = {},
+        onHelpClick = if (schedules == Async.Empty) {
+            {
+                coroutineScope.launch {
+                    val visibleBottom = view.height.toFloat() - bottomBarHeightPx
+                    val minSpacePx = with(density) { TUTORIAL_MIN_SPACE_DP.dp.toPx() }
+                    val isEmptyItemComfortablyVisible = emptyItemRect != Rect.Zero &&
+                        emptyItemRect.top in 0f..(visibleBottom - minSpacePx)
+                    if (!isEmptyItemComfortablyVisible) {
+                        scrollState.animateScrollTo(
+                            scrollState.value + with(density) { TUTORIAL_SCROLL_AMOUNT_DP.dp.roundToPx() },
+                        )
+                    }
+                    showHelper = true
+                }
+            }
+        } else {
+            null
+        },
         modifier = modifier,
     ) {
         Column(
@@ -75,9 +115,20 @@ fun ScheduleList(
                     }
                 }
 
-                is Async.Empty -> TodoCardEmptyContent(
-                    text = "+를 눌러 다가올 일을 적어 주세요!",
-                )
+                is Async.Empty -> Box(
+                    modifier = Modifier.onGloballyPositioned { emptyItemRect = it.boundsInRoot() },
+                ) {
+                    TodoCardEmptyContent(
+                        text = "+를 눌러 다가올 일을 적어 주세요!",
+                    )
+                    if (showHelper) {
+                        TutorialOverlay(
+                            targetRect = emptyItemRect,
+                            onDismiss = { showHelper = false },
+                            type = TutorialType.SCHEDULE,
+                        )
+                    }
+                }
 
                 else -> Spacer(Modifier.height(56.dp))
             }
@@ -211,12 +262,14 @@ private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<
 private fun ScheduleListPreview(
     @PreviewParameter(ScheduleListPreviewProvider::class) schedules: Async<List<ScheduleUiModel>>,
 ) {
+    val scrollState = rememberScrollState()
     HaebomTheme {
         ScheduleList(
             schedules = schedules,
             onPlusClick = {},
             onEditClick = {},
             onDeleteClick = {},
+            scrollState = scrollState,
         )
     }
 }

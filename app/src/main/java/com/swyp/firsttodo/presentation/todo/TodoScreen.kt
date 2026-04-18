@@ -176,6 +176,7 @@ fun TodoScreen(
                 onPlusClick = onSchedulePlusClick,
                 onEditClick = onScheduleEditClick,
                 onDeleteClick = onScheduleDeleteClick,
+                scrollState = scrollState,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(bottom = 27.dp),
