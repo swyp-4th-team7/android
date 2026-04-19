@@ -74,6 +74,7 @@ fun ScheduleList(
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
     val view = LocalView.current
+
     val navBarHeightPx = WindowInsets.navigationBars.getBottom(density).toFloat()
     val bottomBarHeightPx = with(density) { 64.dp.toPx() } + navBarHeightPx
 
