@@ -70,33 +70,30 @@ fun ScheduleList(
     modifier: Modifier = Modifier,
 ) {
     var showHelper by remember { mutableStateOf(false) }
-    var emptyItemRect by remember { mutableStateOf(Rect.Zero) }
+    var firstItemRect by remember { mutableStateOf(Rect.Zero) }
     val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
     val view = LocalView.current
+
     val navBarHeightPx = WindowInsets.navigationBars.getBottom(density).toFloat()
     val bottomBarHeightPx = with(density) { 64.dp.toPx() } + navBarHeightPx
 
     TodoCard(
         title = "다가오는 일정",
         onPlusClick = onPlusClick,
-        onHelpClick = if (schedules == Async.Empty) {
-            {
-                coroutineScope.launch {
-                    val visibleBottom = view.height.toFloat() - bottomBarHeightPx
-                    val minSpacePx = with(density) { TUTORIAL_MIN_SPACE_DP.dp.toPx() }
-                    val isEmptyItemComfortablyVisible = emptyItemRect != Rect.Zero &&
-                        emptyItemRect.top in 0f..(visibleBottom - minSpacePx)
-                    if (!isEmptyItemComfortablyVisible) {
-                        scrollState.animateScrollTo(
-                            scrollState.value + with(density) { TUTORIAL_SCROLL_AMOUNT_DP.dp.roundToPx() },
-                        )
-                    }
-                    showHelper = true
+        onHelpClick = {
+            coroutineScope.launch {
+                val visibleBottom = view.height.toFloat() - bottomBarHeightPx
+                val minSpacePx = with(density) { TUTORIAL_MIN_SPACE_DP.dp.toPx() }
+                val isFirstItemComfortablyVisible = firstItemRect != Rect.Zero &&
+                    firstItemRect.top in 0f..(visibleBottom - minSpacePx)
+                if (!isFirstItemComfortablyVisible) {
+                    scrollState.animateScrollTo(
+                        scrollState.value + with(density) { TUTORIAL_SCROLL_AMOUNT_DP.dp.roundToPx() },
+                    )
                 }
+                showHelper = true
             }
-        } else {
-            null
         },
         modifier = modifier,
     ) {
@@ -105,25 +102,28 @@ fun ScheduleList(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             when (schedules) {
-                is Async.Success -> schedules.data.forEach { schedule ->
+                is Async.Success -> schedules.data.forEachIndexed { index, schedule ->
                     key(schedule.scheduleId) {
                         ScheduleItem(
                             schedule = schedule,
                             onEditClick = { onEditClick(schedule) },
                             onDeleteClick = { onDeleteClick(schedule) },
+                            showTutorial = index == 0 && showHelper,
+                            onTutorialDismiss = { showHelper = false },
+                            onRectChanged = if (index == 0) ({ firstItemRect = it }) else null,
                         )
                     }
                 }
 
                 is Async.Empty -> Box(
-                    modifier = Modifier.onGloballyPositioned { emptyItemRect = it.boundsInRoot() },
+                    modifier = Modifier.onGloballyPositioned { firstItemRect = it.boundsInRoot() },
                 ) {
                     TodoCardEmptyContent(
                         text = "+를 눌러 다가올 일을 적어 주세요!",
                     )
                     if (showHelper) {
                         TutorialOverlay(
-                            targetRect = emptyItemRect,
+                            targetRect = firstItemRect,
                             onDismiss = { showHelper = false },
                             type = TutorialType.SCHEDULE,
                         )
@@ -141,11 +141,20 @@ private fun ScheduleItem(
     schedule: ScheduleUiModel,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    showTutorial: Boolean,
+    onTutorialDismiss: () -> Unit,
+    onRectChanged: ((Rect) -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     var showPopup by remember { mutableStateOf(false) }
+    var itemRect by remember { mutableStateOf(Rect.Zero) }
 
-    Box {
+    Box(
+        modifier = Modifier.onGloballyPositioned { coordinates ->
+            itemRect = coordinates.boundsInRoot()
+            onRectChanged?.invoke(itemRect)
+        },
+    ) {
         Row(
             modifier = modifier
                 .noRippleClickable({ showPopup = true })
@@ -215,6 +224,14 @@ private fun ScheduleItem(
                 onFirstClick = onEditClick,
                 onDeleteClick = onDeleteClick,
                 onDismiss = { showPopup = false },
+            )
+        }
+
+        if (showTutorial) {
+            TutorialOverlay(
+                targetRect = itemRect,
+                onDismiss = onTutorialDismiss,
+                type = TutorialType.SCHEDULE,
             )
         }
     }
