@@ -218,7 +218,11 @@ class HabitDetailViewModel
             if (uiState.value.loadingState is Async.Loading) return
             val habitId = uiState.value.habitId ?: return
             val inputDuration = uiState.value.duration ?: return
-            val inputReward = rewardState.text.toString()
+            val inputReward = when (screenType) {
+                HabitDetailScreenType.CHILD -> rewardState.text.toString()
+                HabitDetailScreenType.PARENT -> null
+                HabitDetailScreenType.IDLE -> null
+            }
 
             updateState { copy(loadingState = Async.Loading()) }
 
