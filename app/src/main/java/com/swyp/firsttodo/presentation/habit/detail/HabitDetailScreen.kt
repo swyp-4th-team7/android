@@ -129,7 +129,7 @@ fun HabitDetailScreen(
 
             TaskInputSection(
                 title = "습관 작성",
-                modifier = Modifier.padding(bottom = 28.dp),
+                modifier = Modifier.padding(bottom = 3.dp),
                 description = uiState.habitDescription,
             ) {
                 HaebomMultiLineTextField(

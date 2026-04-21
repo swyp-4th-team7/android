@@ -123,7 +123,7 @@ fun ScheduleBottomSheet(
                     onDismiss = onDismiss,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 28.dp),
+                        .padding(bottom = 16.dp),
                 )
 
                 TaskInputSection(
