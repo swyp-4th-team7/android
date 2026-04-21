@@ -112,14 +112,18 @@ class HabitRepositoryImpl
                         reward = reward,
                     ),
                 )
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = when (throwable) {
+            }.map { it }
+                .recoverCatching { throwable ->
+                    throw when (throwable) {
+                        is ApiError.BadRequest -> if (throwable.code == 40022) {
+                            HabitError.RewardEmpty(
+                                throwable.serverMsg,
+                            )
+                        } else {
+                            throwable
+                        }
                         is ApiError.NotFound -> HabitError.HabitNotFound(throwable.serverMsg)
                         else -> throwable
                     }
-                    Result.failure(error)
-                },
-            )
+                }
     }
