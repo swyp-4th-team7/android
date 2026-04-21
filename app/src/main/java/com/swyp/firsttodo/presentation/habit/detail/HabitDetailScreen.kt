@@ -146,6 +146,7 @@ fun HabitDetailScreen(
                     } else {
                         null
                     },
+                    enabled = uiState.titleEnabled,
                 )
             }
 

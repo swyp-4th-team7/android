@@ -58,6 +58,11 @@ data class HabitDetailUiState(
         HabitDetailScreenState.EDIT -> "수정하기"
         HabitDetailScreenState.RETRY -> "재도전하기"
     }
+
+    val titleEnabled = when (screenState) {
+        HabitDetailScreenState.CREATE, HabitDetailScreenState.EDIT -> true
+        else -> false
+    }
 }
 
 sealed interface HabitDetailSideEffect : UiEffect {
