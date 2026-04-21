@@ -49,6 +49,11 @@ sealed class DeleteDialogType(
         description = "입력한 습관이 사라져요!",
     )
 
+    data object FailedHabit : DeleteDialogType(
+        title = "실패한 습관을 삭제할까요?",
+        description = "실패한 습관이 사라져요!",
+    )
+
     class Disconnect(nickname: String) : DeleteDialogType(
         title = "${nickname}님과의 연결을 끊을까요?",
         description = "연동이 끊기면 ${nickname}님의\n활동을 볼 수 없습니다.",
