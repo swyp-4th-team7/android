@@ -99,7 +99,7 @@ fun ShareScreen(
         ) {
             CodeInputSection(
                 fieldState = codeFieldState,
-                modifier = Modifier.padding(bottom = 28.dp),
+                modifier = Modifier.padding(bottom = 3.dp),
                 onDoneAction = onDoneAction,
                 errorText = uiState.codeErrorText,
             )

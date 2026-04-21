@@ -215,6 +215,41 @@ class HabitDetailViewModel
         }
 
         private fun retryHabit() {
-            // TODO: API 연동
+            if (uiState.value.loadingState is Async.Loading) return
+            val habitId = uiState.value.habitId ?: return
+            val inputDuration = uiState.value.duration ?: return
+            val inputReward = when (screenType) {
+                HabitDetailScreenType.CHILD -> rewardState.text.toString()
+                HabitDetailScreenType.PARENT -> null
+                HabitDetailScreenType.IDLE -> null
+            }
+
+            updateState { copy(loadingState = Async.Loading()) }
+
+            viewModelScope.launch {
+                habitRepository.retryFailedHabit(
+                    habitId = habitId,
+                    duration = inputDuration,
+                    reward = inputReward,
+                )
+                    .onSuccess {
+                        sendEffect(HabitDetailSideEffect.PopBackStack("멋져요! 습관 재도전을 시작했습니다."))
+                        updateState { copy(loadingState = Async.Success(Unit)) }
+                    }
+                    .onFailure { throwable ->
+                        when (throwable) {
+                            is HabitError.HabitNotFound -> {
+                                sendEffect(HabitDetailSideEffect.PopBackStack("이미 삭제된 습관입니다."))
+                            }
+
+                            is HabitError.RewardEmpty -> {
+                                sendEffect(HabitDetailSideEffect.ShowSnackbar("보상을 입력해주세요."))
+                            }
+
+                            is ApiError -> sendEffect(HabitDetailSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                        }
+                        updateState { copy(loadingState = Async.Init) }
+                    }
+            }
         }
     }

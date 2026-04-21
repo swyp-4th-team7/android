@@ -60,7 +60,7 @@ fun HabitListRoute(
 
     if (uiState.showDeleteDialog) {
         HaebomDeleteDialog(
-            dialogType = DeleteDialogType.Habit,
+            dialogType = if (uiState.isFailedHabitDelete) DeleteDialogType.FailedHabit else DeleteDialogType.Habit,
             onConfirm = viewModel::onDeleteConfirm,
             onCancel = viewModel::onDeleteCancel,
             onDismiss = viewModel::onDeleteCancel,
@@ -74,6 +74,7 @@ fun HabitListRoute(
         onCheckClick = viewModel::onCheckClick,
         onEditClick = viewModel::onEditClick,
         onDeleteClick = viewModel::onDeleteClick,
+        onFailedHabitDeleteClick = viewModel::onFailedHabitDeleteClick,
         onRetryClick = viewModel::onRetryClick,
         modifier = modifier,
     )
@@ -86,6 +87,7 @@ fun HabitListScreen(
     onCheckClick: (HabitModel) -> Unit,
     onEditClick: (HabitModel) -> Unit,
     onDeleteClick: (HabitModel) -> Unit,
+    onFailedHabitDeleteClick: (HabitModel) -> Unit,
     onRetryClick: (HabitModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -128,9 +130,9 @@ fun HabitListScreen(
         )
 
         HabitRetryList(
-            habits = uiState.retryHabits,
+            habits = uiState.failedHabits,
             onRetry = onRetryClick,
-            onDelete = onDeleteClick,
+            onDelete = onFailedHabitDeleteClick,
             scrollState = scrollState,
             modifier = Modifier
                 .fillMaxWidth()
@@ -153,7 +155,7 @@ private class HabitListScreenPreviewProvider : PreviewParameterProvider<HabitLis
     }
 
     override val values = sequenceOf(
-        HabitListUiState(habits = Async.Success(sampleHabits), retryHabits = Async.Empty),
+        HabitListUiState(habits = Async.Success(sampleHabits), failedHabits = Async.Empty),
         HabitListUiState(habits = Async.Success(emptyList())),
     )
 }
@@ -170,6 +172,7 @@ private fun HabitListScreenPreview(
             onCheckClick = {},
             onEditClick = {},
             onDeleteClick = {},
+            onFailedHabitDeleteClick = {},
             onRetryClick = {},
         )
     }
