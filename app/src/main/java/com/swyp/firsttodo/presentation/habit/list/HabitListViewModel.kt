@@ -69,6 +69,7 @@ class HabitListViewModel
             message ?: return
             sendEffect(HabitListSideEffect.ShowSnackbar(message))
             getHabits()
+            getFailedHabits()
         }
 
         fun onCreateClick() {

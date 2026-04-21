@@ -215,9 +215,12 @@ class HabitDetailViewModel
         }
 
         private fun retryHabit() {
+            if (uiState.value.loadingState is Async.Loading) return
             val habitId = uiState.value.habitId ?: return
             val inputDuration = uiState.value.duration ?: return
             val inputReward = rewardState.text.toString()
+
+            updateState { copy(loadingState = Async.Loading()) }
 
             viewModelScope.launch {
                 habitRepository.retryFailedHabit(
