@@ -23,4 +23,10 @@ interface HabitRepository {
     suspend fun getHabits(): Result<List<HabitModel>>
 
     suspend fun getFailedHabits(): Result<List<HabitModel>>
+
+    suspend fun retryFailedHabit(
+        habitId: Long,
+        duration: HabitDuration,
+        reward: String?,
+    ): Result<Unit>
 }

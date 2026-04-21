@@ -2,6 +2,7 @@ package com.swyp.firsttodo.data.remote.datasourceimpl
 
 import com.swyp.firsttodo.core.network.model.BaseResponse
 import com.swyp.firsttodo.data.remote.datasource.HabitDataSource
+import com.swyp.firsttodo.data.remote.dto.request.habit.FailedHabitRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPatchRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPostRequestDto
 import com.swyp.firsttodo.data.remote.dto.response.habit.FailedHabitListResponseDto
@@ -33,4 +34,9 @@ class HabitDataSourceImpl
 
         override suspend fun getFailedHabitList(): BaseResponse<FailedHabitListResponseDto> =
             habitService.getFailedHabitList()
+
+        override suspend fun patchFailedHabit(
+            habitId: Long,
+            request: FailedHabitRequestDto,
+        ): BaseResponse<Unit> = habitService.patchFailedHabit(habitId, request)
     }
