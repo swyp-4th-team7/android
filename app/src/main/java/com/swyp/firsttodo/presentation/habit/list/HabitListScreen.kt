@@ -74,6 +74,7 @@ fun HabitListRoute(
         onCheckClick = viewModel::onCheckClick,
         onEditClick = viewModel::onEditClick,
         onDeleteClick = viewModel::onDeleteClick,
+        onFailedHabitDeleteClick = viewModel::onFailedHabitDeleteClick,
         onRetryClick = viewModel::onRetryClick,
         modifier = modifier,
     )
@@ -86,6 +87,7 @@ fun HabitListScreen(
     onCheckClick: (HabitModel) -> Unit,
     onEditClick: (HabitModel) -> Unit,
     onDeleteClick: (HabitModel) -> Unit,
+    onFailedHabitDeleteClick: (HabitModel) -> Unit,
     onRetryClick: (HabitModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -130,7 +132,7 @@ fun HabitListScreen(
         HabitRetryList(
             habits = uiState.failedHabits,
             onRetry = onRetryClick,
-            onDelete = onDeleteClick,
+            onDelete = onFailedHabitDeleteClick,
             scrollState = scrollState,
             modifier = Modifier
                 .fillMaxWidth()
@@ -170,6 +172,7 @@ private fun HabitListScreenPreview(
             onCheckClick = {},
             onEditClick = {},
             onDeleteClick = {},
+            onFailedHabitDeleteClick = {},
             onRetryClick = {},
         )
     }

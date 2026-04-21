@@ -102,7 +102,11 @@ class HabitListViewModel
         }
 
         fun onDeleteClick(habit: HabitModel) {
-            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init) }
+            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init, isFailedHabitDelete = false) }
+        }
+
+        fun onFailedHabitDeleteClick(habit: HabitModel) {
+            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init, isFailedHabitDelete = true) }
         }
 
         fun onDeleteConfirm() {
@@ -113,9 +117,17 @@ class HabitListViewModel
             viewModelScope.launch {
                 habitRepository.deleteHabit(habitId)
                     .onSuccess {
-                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
-                        sendEffect(HabitListSideEffect.ShowSnackbar("습관이 삭제되었습니다."))
+                        val message = if (uiState.value.isFailedHabitDelete) "실패한 습관이 삭제되었습니다." else "습관이 삭제되었습니다."
+                        updateState {
+                            copy(
+                                delRequestedId = null,
+                                deleteState = Async.Success(Unit),
+                                isFailedHabitDelete = false,
+                            )
+                        }
+                        sendEffect(HabitListSideEffect.ShowSnackbar(message))
                         getHabits()
+                        getFailedHabits()
                     }.onFailure { throwable ->
                         when (throwable) {
                             is HabitError.HabitNotFound -> {
