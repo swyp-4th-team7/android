@@ -32,13 +32,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.component.HaebomLabel
+import com.swyp.firsttodo.core.common.component.TaskItemPopup
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
-import com.swyp.firsttodo.presentation.common.component.HaebomLabel
-import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 
 data class TodayTodoUiModel(
     val todoId: Long,

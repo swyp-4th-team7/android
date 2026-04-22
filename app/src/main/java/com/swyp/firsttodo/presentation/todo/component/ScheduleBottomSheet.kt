@@ -38,16 +38,16 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.component.BottomSheetHeader
+import com.swyp.firsttodo.core.common.component.HaebomLargeButton
+import com.swyp.firsttodo.core.common.component.HaebomMultiLineTextField
+import com.swyp.firsttodo.core.common.component.HaebomTag
+import com.swyp.firsttodo.core.common.component.TaskInputSection
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicBottomSheet
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
-import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
-import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
-import com.swyp.firsttodo.presentation.common.component.HaebomTag
-import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
-import com.swyp.firsttodo.presentation.common.component.task.TaskSheetHeader
 import com.swyp.firsttodo.presentation.main.snackbar.HaebomSnackbarHost
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 
@@ -117,7 +117,7 @@ fun ScheduleBottomSheet(
                     .padding(horizontal = 16.dp)
                     .verticalScroll(scrollState),
             ) {
-                TaskSheetHeader(
+                BottomSheetHeader(
                     title = sheetType.title,
                     description = sheetType.description,
                     onDismiss = onDismiss,

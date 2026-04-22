@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component.task
+package com.swyp.firsttodo.core.common.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.RegularStyle
 
 @Composable
-fun TaskSheetHeader(
+fun BottomSheetHeader(
     title: String,
     description: String,
     onDismiss: () -> Unit,
@@ -40,7 +40,7 @@ fun TaskSheetHeader(
         ) {
             Text(
                 text = title,
-                color = colors.black,
+                color = HaebomTheme.colors.black,
                 style = BoldStyle.copy(fontSize = 20.sp),
             )
 

@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.swyp.firsttodo.presentation.common.component.HaebomTopBar
+import com.swyp.firsttodo.core.common.component.HaebomTopBar
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable

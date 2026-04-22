@@ -19,10 +19,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
+import com.swyp.firsttodo.core.common.component.MAIN_TOP_BAR_HEIGHT
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-
-const val MAIN_TOP_BAR_HEIGHT = 56
 
 @Composable
 fun MainTopBar(

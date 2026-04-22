@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.component.HaebomDeleteDialog
+import com.swyp.firsttodo.core.common.component.TopBarArea
+import com.swyp.firsttodo.core.common.type.DeleteDialogType
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
-import com.swyp.firsttodo.presentation.common.component.DeleteDialogType
-import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
-import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.habit.component.HabitList
 import com.swyp.firsttodo.presentation.habit.component.HabitListEmpty
 import com.swyp.firsttodo.presentation.habit.component.HabitMainBanner
