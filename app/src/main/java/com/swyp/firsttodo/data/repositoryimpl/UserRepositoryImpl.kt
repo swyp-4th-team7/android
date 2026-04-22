@@ -69,7 +69,7 @@ class UserRepositoryImpl
                         40006 -> ProfileError.NicknameLength(e.serverMsg)
                         40007 -> ProfileError.NicknameSymbols(e.serverMsg)
                         40008 -> ProfileError.RoleEmpty(e.serverMsg)
-                        else -> ProfileError.Undefined(e.serverMsg)
+                        else -> e
                     }
 
                     else -> e

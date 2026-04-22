@@ -10,6 +10,4 @@ sealed class ProfileError(
     class NicknameSymbols(message: String) : ProfileError(message)
 
     class RoleEmpty(message: String) : ProfileError(message)
-
-    class Undefined(message: String) : ProfileError(message)
 }
