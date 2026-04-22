@@ -13,10 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
-interface UiState
-
-interface UiEffect
-
 abstract class BaseViewModel<S : UiState, E : UiEffect>(
     initialState: S,
 ) : ViewModel() {
