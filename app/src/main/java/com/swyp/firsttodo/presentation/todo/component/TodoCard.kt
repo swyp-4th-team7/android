@@ -1,10 +1,10 @@
 package com.swyp.firsttodo.presentation.todo.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -29,6 +29,7 @@ fun TodoCard(
     title: String,
     onPlusClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onHelpClick: (() -> Unit)? = null,
     content: @Composable (() -> Unit),
 ) {
     Column(
@@ -45,7 +46,6 @@ fun TodoCard(
                 .fillMaxWidth()
                 .heightIn(48.dp)
                 .padding(start = 12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -53,6 +53,20 @@ fun TodoCard(
                 color = HaebomTheme.colors.black,
                 style = HaebomTheme.typo.section,
             )
+
+            onHelpClick?.let {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_help_24),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .noRippleClickable(it)
+                        .padding(vertical = 12.dp)
+                        .padding(start = 4.dp, end = 20.dp),
+                    tint = Color.Unspecified,
+                )
+            }
+
+            Spacer(Modifier.weight(1f))
 
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_plus),
@@ -75,6 +89,7 @@ private fun TodoCardPreview() {
         TodoCard(
             title = "오늘의 할 일",
             onPlusClick = {},
+            onHelpClick = {},
         ) {
             Box(modifier = Modifier.size((100.dp)))
         }

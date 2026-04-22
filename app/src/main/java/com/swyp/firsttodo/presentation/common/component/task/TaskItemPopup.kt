@@ -2,10 +2,13 @@ package com.swyp.firsttodo.presentation.common.component.task
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,21 +31,25 @@ import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.core.designsystem.theme.MediumStyle
+
+enum class TaskItemPopupType(val text: String) {
+    EDIT(text = "수정하기"),
+    RETRY(text = "재도전하기"),
+}
 
 @Composable
-fun TaskEditPopup(
-    onEditClick: () -> Unit,
+fun TaskItemPopup(
+    onFirstClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    popupType: TaskItemPopupType = TaskItemPopupType.EDIT,
     offset: DpOffset = DpOffset(8.dp, 8.dp),
 ) {
     val density = LocalDensity.current
@@ -78,8 +85,15 @@ fun TaskEditPopup(
         onDismissRequest = onDismiss,
     ) {
         PopupContent(
-            onEditClick = onEditClick,
-            onDeleteClick = onDeleteClick,
+            popupType = popupType,
+            onEditClick = {
+                onDismiss()
+                onFirstClick()
+            },
+            onDeleteClick = {
+                onDismiss()
+                onDeleteClick()
+            },
             modifier = modifier,
         )
     }
@@ -87,6 +101,7 @@ fun TaskEditPopup(
 
 @Composable
 private fun PopupContent(
+    popupType: TaskItemPopupType,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -95,6 +110,7 @@ private fun PopupContent(
 
     Column(
         modifier = modifier
+            .width(IntrinsicSize.Max)
             .dropShadow(
                 shape = RoundedCornerShape(8.dp),
                 shadow = Shadow(
@@ -110,8 +126,9 @@ private fun PopupContent(
             ),
     ) {
         val dividerColor = colors.black.copy(alpha = 0.09f)
+
         ButtonItem(
-            text = "수정하기",
+            text = popupType.text,
             color = colors.gray600,
             iconRes = R.drawable.ic_edit_24,
             onClick = onEditClick,
@@ -146,16 +163,19 @@ private fun ButtonItem(
 ) {
     Row(
         modifier = modifier
+            .fillMaxWidth()
             .noRippleClickable(onClick)
-            .padding(all = 13.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+            .padding(horizontal = 12.dp, vertical = 13.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = text,
+            modifier = Modifier.weight(1f),
             color = color,
-            style = MediumStyle.copy(fontSize = 12.sp),
+            style = HaebomTheme.typo.helperText,
         )
+
+        Spacer(modifier = Modifier.width(15.dp))
 
         Icon(
             imageVector = ImageVector.vectorResource(iconRes),
@@ -172,6 +192,7 @@ private fun PopupContentPreview() {
         PopupContent(
             onEditClick = {},
             onDeleteClick = {},
+            popupType = TaskItemPopupType.RETRY,
             modifier = Modifier.padding(all = 20.dp),
         )
     }

@@ -138,7 +138,11 @@ fun TodoBottomSheet(
                     verticalAlignment = Alignment.Bottom,
                 ) {
                     if (isLoading) {
-                        Spacer(Modifier.size(161.dp, 29.dp).skeleton())
+                        Spacer(
+                            Modifier
+                                .size(161.dp, 29.dp)
+                                .skeleton(),
+                        )
                     } else {
                         Text(
                             text = sheetType.title,
@@ -159,7 +163,11 @@ fun TodoBottomSheet(
 
                 if (isLoading) {
                     Spacer(Modifier.height(2.dp))
-                    Spacer(Modifier.size(241.dp, 20.dp).skeleton())
+                    Spacer(
+                        Modifier
+                            .size(241.dp, 20.dp)
+                            .skeleton(),
+                    )
                 } else {
                     Text(
                         text = sheetType.description,
@@ -171,7 +179,11 @@ fun TodoBottomSheet(
                 Spacer(Modifier.height(28.dp))
 
                 if (isLoading) {
-                    Spacer(Modifier.size(56.dp, 26.dp).skeleton())
+                    Spacer(
+                        Modifier
+                            .size(56.dp, 26.dp)
+                            .skeleton(),
+                    )
                 } else {
                     Text(
                         text = "할 일",
@@ -183,21 +195,28 @@ fun TodoBottomSheet(
                 Spacer(Modifier.height(8.dp))
 
                 if (isLoading) {
-                    Spacer(Modifier.fillMaxWidth().height(48.dp).skeleton())
-                    Spacer(Modifier.height(20.dp))
+                    Spacer(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .skeleton(),
+                    )
                 } else {
                     HaebomMultiLineTextField(
                         fieldState = titleFieldState,
                         placeholder = "할 일을 입력해 주세요.",
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 20.dp),
+                            .fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     )
                 }
 
                 if (isLoading) {
-                    Spacer(Modifier.size(70.dp, 28.dp).skeleton())
+                    Spacer(
+                        Modifier
+                            .size(70.dp, 28.dp)
+                            .skeleton(),
+                    )
                 } else {
                     Text(
                         text = "카테고리",
@@ -215,14 +234,18 @@ fun TodoBottomSheet(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         categories.forEach { _ ->
-                            Spacer(Modifier.size(64.dp, 32.dp).skeleton())
+                            Spacer(
+                                Modifier
+                                    .size(64.dp, 32.dp)
+                                    .skeleton(),
+                            )
                         }
                     }
 
-                    Spacer(Modifier.height(40.dp))
+                    Spacer(Modifier.height(20.dp))
                 } else {
                     Column(
-                        modifier = Modifier.padding(bottom = 40.dp),
+                        modifier = Modifier.padding(bottom = 20.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
                         TaskCategoryList(
@@ -235,7 +258,11 @@ fun TodoBottomSheet(
                 }
 
                 if (isLoading) {
-                    Spacer(Modifier.size(70.dp, 26.dp).skeleton())
+                    Spacer(
+                        Modifier
+                            .size(70.dp, 26.dp)
+                            .skeleton(),
+                    )
                 } else {
                     Text(
                         text = "색상 선택",
@@ -272,7 +299,12 @@ fun TodoBottomSheet(
                 }
 
                 if (isLoading) {
-                    Spacer(Modifier.fillMaxWidth().height(52.dp).skeleton())
+                    Spacer(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(52.dp)
+                            .skeleton(),
+                    )
                 } else {
                     HaebomLargeButton(
                         text = sheetType.btnText,

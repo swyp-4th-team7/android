@@ -2,7 +2,6 @@ package com.swyp.firsttodo.data.di
 
 import com.swyp.firsttodo.data.repositoryimpl.AuthRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.FamilyRepositoryImpl
-import com.swyp.firsttodo.data.repositoryimpl.GrowthRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.HabitRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.NotificationRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.RewardRepositoryImpl
@@ -12,7 +11,6 @@ import com.swyp.firsttodo.data.repositoryimpl.TodoRepositoryImpl
 import com.swyp.firsttodo.data.repositoryimpl.UserRepositoryImpl
 import com.swyp.firsttodo.domain.repository.AuthRepository
 import com.swyp.firsttodo.domain.repository.FamilyRepository
-import com.swyp.firsttodo.domain.repository.GrowthRepository
 import com.swyp.firsttodo.domain.repository.HabitRepository
 import com.swyp.firsttodo.domain.repository.NotificationRepository
 import com.swyp.firsttodo.domain.repository.RewardRepository
@@ -66,8 +64,4 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsRewardRepository(rewardRepositoryImpl: RewardRepositoryImpl): RewardRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindsGrowthRepository(growthRepositoryImpl: GrowthRepositoryImpl): GrowthRepository
 }

@@ -45,16 +45,19 @@ class HabitDetailViewModel
             Role.CHILD -> HabitDetailScreenType.CHILD
         }
 
-        private val initialHabit = savedStateHandle
+        private val navArgs = savedStateHandle
             .toRoute<HabitRoute.HabitDetail>(typeMap = mapOf(typeOf<HabitNavArgs?>() to HabitNavArgsNavType))
-            .habitNavArgs?.toModel()
+
+        private val initialHabit = navArgs.habitNavArgs?.toModel()
+        private val isRetry = navArgs.isRetry
 
         val titleState = TextFieldState(initialText = initialHabit?.title ?: "")
         val rewardState = TextFieldState(initialText = initialHabit?.reward ?: "")
 
         init {
-            val state = when (initialHabit) {
-                null -> HabitDetailScreenState.CREATE
+            val state = when {
+                isRetry -> HabitDetailScreenState.RETRY
+                initialHabit == null -> HabitDetailScreenState.CREATE
                 else -> HabitDetailScreenState.EDIT
             }
 
@@ -77,6 +80,7 @@ class HabitDetailViewModel
                 HabitDetailScreenState.IDLE -> false
                 HabitDetailScreenState.CREATE -> validateAllField()
                 HabitDetailScreenState.EDIT -> isChanged() && validateAllField()
+                HabitDetailScreenState.RETRY -> true
             }
         }.stateIn(
             scope = viewModelScope,
@@ -108,6 +112,7 @@ class HabitDetailViewModel
             return when (screenType) {
                 HabitDetailScreenType.CHILD -> validateTitle() && validateReward() && validateDuration()
                 HabitDetailScreenType.PARENT -> validateTitle() && validateDuration()
+                HabitDetailScreenType.IDLE -> false
             }
         }
 
@@ -117,6 +122,7 @@ class HabitDetailViewModel
             val rewardChanged = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString() != initialHabit?.reward
                 HabitDetailScreenType.PARENT -> false
+                HabitDetailScreenType.IDLE -> false
             }
             return titleChanged || durationChanged || rewardChanged
         }
@@ -128,6 +134,7 @@ class HabitDetailViewModel
                 HabitDetailScreenState.CREATE -> createHabit()
 
                 HabitDetailScreenState.EDIT -> editHabit()
+                HabitDetailScreenState.RETRY -> retryHabit()
             }
         }
 
@@ -140,6 +147,7 @@ class HabitDetailViewModel
             val inputReward = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString()
                 HabitDetailScreenType.PARENT -> null
+                HabitDetailScreenType.IDLE -> null
             }
 
             updateState { copy(loadingState = Async.Loading()) }
@@ -175,6 +183,7 @@ class HabitDetailViewModel
             val inputReward = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString()
                 HabitDetailScreenType.PARENT -> null
+                HabitDetailScreenType.IDLE -> null
             }
             val completed = uiState.value.isCompleted ?: return
 
@@ -196,6 +205,45 @@ class HabitDetailViewModel
                         when (throwable) {
                             is HabitError.HabitNotFound -> {
                                 sendEffect(HabitDetailSideEffect.PopBackStack("이미 삭제된 습관입니다."))
+                            }
+
+                            is ApiError -> sendEffect(HabitDetailSideEffect.ShowSnackbar(throwable.snackbarMsg()))
+                        }
+                        updateState { copy(loadingState = Async.Init) }
+                    }
+            }
+        }
+
+        private fun retryHabit() {
+            if (uiState.value.loadingState is Async.Loading) return
+            val habitId = uiState.value.habitId ?: return
+            val inputDuration = uiState.value.duration ?: return
+            val inputReward = when (screenType) {
+                HabitDetailScreenType.CHILD -> rewardState.text.toString()
+                HabitDetailScreenType.PARENT -> null
+                HabitDetailScreenType.IDLE -> null
+            }
+
+            updateState { copy(loadingState = Async.Loading()) }
+
+            viewModelScope.launch {
+                habitRepository.retryFailedHabit(
+                    habitId = habitId,
+                    duration = inputDuration,
+                    reward = inputReward,
+                )
+                    .onSuccess {
+                        sendEffect(HabitDetailSideEffect.PopBackStack("멋져요! 습관 재도전을 시작했습니다."))
+                        updateState { copy(loadingState = Async.Success(Unit)) }
+                    }
+                    .onFailure { throwable ->
+                        when (throwable) {
+                            is HabitError.HabitNotFound -> {
+                                sendEffect(HabitDetailSideEffect.PopBackStack("이미 삭제된 습관입니다."))
+                            }
+
+                            is HabitError.RewardEmpty -> {
+                                sendEffect(HabitDetailSideEffect.ShowSnackbar("보상을 입력해주세요."))
                             }
 
                             is ApiError -> sendEffect(HabitDetailSideEffect.ShowSnackbar(throwable.snackbarMsg()))

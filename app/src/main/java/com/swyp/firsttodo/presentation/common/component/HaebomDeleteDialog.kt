@@ -39,9 +39,19 @@ sealed class DeleteDialogType(
         description = "입력한 할 일이 사라져요!",
     )
 
+    data object Schedule : DeleteDialogType(
+        title = "선택한 일정을 삭제할까요?",
+        description = "입력한 일정이 사라져요!",
+    )
+
     data object Habit : DeleteDialogType(
         title = "선택한 습관을 삭제할까요?",
         description = "입력한 습관이 사라져요!",
+    )
+
+    data object FailedHabit : DeleteDialogType(
+        title = "실패한 습관을 삭제할까요?",
+        description = "실패한 습관이 사라져요!",
     )
 
     class Disconnect(nickname: String) : DeleteDialogType(

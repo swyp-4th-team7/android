@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,12 +34,11 @@ import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
-import com.swyp.firsttodo.core.common.extension.noRippleLongClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.common.component.HaebomLabel
-import com.swyp.firsttodo.presentation.common.component.task.TaskEditPopup
+import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
 
 data class TodayTodoUiModel(
     val todoId: Long,
@@ -75,12 +75,14 @@ fun TodoList(
                     null -> Spacer(Modifier.height(56.dp))
 
                     else -> data.forEach { todo ->
-                        TodoItem(
-                            todo = todo,
-                            onCheckClick = { onCheckClick(todo) },
-                            onEditClick = { onEditClick(todo) },
-                            onDeleteClick = { onDeleteClick(todo) },
-                        )
+                        key(todo.todoId) {
+                            TodoItem(
+                                todo = todo,
+                                onCheckClick = { onCheckClick(todo) },
+                                onEditClick = { onEditClick(todo) },
+                                onDeleteClick = { onDeleteClick(todo) },
+                            )
+                        }
                     }
                 }
             }
@@ -131,7 +133,7 @@ private fun TodoItem(
         Box {
             Row(
                 modifier = Modifier
-                    .noRippleLongClickable({ showPopup = true })
+                    .noRippleClickable({ showPopup = true })
                     .background(
                         color = HaebomTheme.colors.white,
                         shape = RoundedCornerShape(4.dp),
@@ -157,15 +159,9 @@ private fun TodoItem(
             }
 
             if (showPopup) {
-                TaskEditPopup(
-                    onEditClick = {
-                        onEditClick()
-                        showPopup = false
-                    },
-                    onDeleteClick = {
-                        onDeleteClick()
-                        showPopup = false
-                    },
+                TaskItemPopup(
+                    onFirstClick = onEditClick,
+                    onDeleteClick = onDeleteClick,
                     onDismiss = { showPopup = false },
                 )
             }

@@ -31,6 +31,7 @@ class HabitListViewModel
             updateState { copy(role = role) }
 
             getHabits()
+            getFailedHabits()
         }
 
         fun getHabits() {
@@ -52,10 +53,23 @@ class HabitListViewModel
             }
         }
 
+        fun getFailedHabits() {
+            viewModelScope.launch {
+                habitRepository.getFailedHabits()
+                    .onSuccess {
+                        updateState { copy(failedHabits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                    }
+                    .onFailure {
+                        if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
+                    }
+            }
+        }
+
         fun onDetailResult(message: String?) {
             message ?: return
             sendEffect(HabitListSideEffect.ShowSnackbar(message))
             getHabits()
+            getFailedHabits()
         }
 
         fun onCreateClick() {
@@ -88,7 +102,11 @@ class HabitListViewModel
         }
 
         fun onDeleteClick(habit: HabitModel) {
-            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init) }
+            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init, isFailedHabitDelete = false) }
+        }
+
+        fun onFailedHabitDeleteClick(habit: HabitModel) {
+            updateState { copy(delRequestedId = habit.habitId, deleteState = Async.Init, isFailedHabitDelete = true) }
         }
 
         fun onDeleteConfirm() {
@@ -99,9 +117,17 @@ class HabitListViewModel
             viewModelScope.launch {
                 habitRepository.deleteHabit(habitId)
                     .onSuccess {
-                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
-                        sendEffect(HabitListSideEffect.ShowSnackbar("습관이 삭제되었습니다."))
+                        val message = if (uiState.value.isFailedHabitDelete) "실패한 습관이 삭제되었습니다." else "습관이 삭제되었습니다."
+                        updateState {
+                            copy(
+                                delRequestedId = null,
+                                deleteState = Async.Success(Unit),
+                                isFailedHabitDelete = false,
+                            )
+                        }
+                        sendEffect(HabitListSideEffect.ShowSnackbar(message))
                         getHabits()
+                        getFailedHabits()
                     }.onFailure { throwable ->
                         when (throwable) {
                             is HabitError.HabitNotFound -> {
@@ -118,5 +144,9 @@ class HabitListViewModel
 
         fun onDeleteCancel() {
             updateState { copy(delRequestedId = null) }
+        }
+
+        fun onRetryClick(habit: HabitModel) {
+            sendThrottledEffect(HabitListSideEffect.NavigateToHabitRetry(habit))
         }
     }

@@ -2,7 +2,9 @@ package com.swyp.firsttodo.presentation.common.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.KeyboardActionHandler
@@ -63,13 +65,13 @@ fun HaebomMultiLineTextField(
                 style = HaebomTheme.typo.helperText,
             )
 
-            sampleText != null -> Text(
+            sampleText != null && fieldState.text.isEmpty() -> Text(
                 text = sampleText,
                 color = HaebomTheme.colors.gray300,
                 style = HaebomTheme.typo.helperText,
             )
 
-            else -> Unit
+            else -> Spacer(Modifier.height(17.dp))
         }
     }
 }
