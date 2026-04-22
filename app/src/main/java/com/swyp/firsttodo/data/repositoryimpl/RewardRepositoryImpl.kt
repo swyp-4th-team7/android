@@ -22,33 +22,33 @@ class RewardRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 rewardDataSource.patchInProgressHabit(habitId, RewardRequestBody(reward))
-            }.recoverCatching {
-                throw if (it is ApiError) {
-                    when (it.code) {
-                        40022 -> RewardError.RewardValueEmpty(it.serverMsg)
-                        40300 -> RewardError.AccessDenied(it.serverMsg)
-                        40401, 40405 -> RewardError.RewardNotFound(it.serverMsg)
-                        40026 -> RewardError.InvalidStatus(it.serverMsg)
-                        else -> it
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError -> when (e.code) {
+                        40022 -> RewardError.RewardValueEmpty(e.serverMsg)
+                        40300 -> RewardError.AccessDenied(e.serverMsg)
+                        40401, 40405 -> RewardError.RewardNotFound(e.serverMsg)
+                        40026 -> RewardError.InvalidStatus(e.serverMsg)
+                        else -> e
                     }
-                } else {
-                    it
+
+                    else -> e
                 }
             }
 
         override suspend fun completeReward(habitId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 rewardDataSource.patchCompleteHabit(habitId)
-            }.recoverCatching {
-                throw if (it is ApiError) {
-                    when (it.code) {
-                        40300 -> RewardError.AccessDenied(it.serverMsg)
-                        40401, 40405 -> RewardError.RewardNotFound(it.serverMsg)
-                        40026 -> RewardError.InvalidStatus(it.serverMsg)
-                        else -> it
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError -> when (e.code) {
+                        40300 -> RewardError.AccessDenied(e.serverMsg)
+                        40401, 40405 -> RewardError.RewardNotFound(e.serverMsg)
+                        40026 -> RewardError.InvalidStatus(e.serverMsg)
+                        else -> e
                     }
-                } else {
-                    it
+
+                    else -> e
                 }
             }
 

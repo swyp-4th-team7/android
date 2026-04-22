@@ -20,17 +20,17 @@ class FamilyRepositoryImpl
         override suspend fun connectFamily(inviteCode: String): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 familyDataSource.postFamilyConnect(FamilyConnectRequestBody(inviteCode))
-            }.recoverCatching { throwable ->
-                throw when (throwable) {
-                    is ApiError.BadRequest -> when (throwable.code) {
-                        40015 -> FamilyError.InviteCodeEmpty(throwable.serverMsg)
-                        40019 -> FamilyError.InviteCodeMySelf(throwable.serverMsg)
-                        else -> throwable
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError -> when (e.code) {
+                        40015 -> FamilyError.InviteCodeEmpty(e.serverMsg)
+                        40019 -> FamilyError.InviteCodeMySelf(e.serverMsg)
+                        40404 -> FamilyError.InviteCodeInvalid(e.serverMsg)
+                        40903 -> FamilyError.InviteAlreadyDone(e.serverMsg)
+                        else -> e
                     }
 
-                    is ApiError.NotFound -> FamilyError.InviteCodeInvalid(throwable.serverMsg)
-                    is ApiError.Conflict -> FamilyError.InviteAlreadyDone(throwable.serverMsg)
-                    else -> throwable
+                    else -> e
                 }
             }
 
@@ -42,14 +42,10 @@ class FamilyRepositoryImpl
         override suspend fun disconnectFamily(targetUserId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 familyDataSource.deleteFamilyConnect(targetUserId)
-            }.recoverCatching { throwable ->
-                throw if (throwable is ApiError.BadRequest) {
-                    when (throwable.code) {
-                        40405 -> FamilyError.ConnectInvalid(throwable.serverMsg)
-                        else -> throwable
-                    }
-                } else {
-                    throwable
+            }.recoverCatching { e ->
+                throw when {
+                    e is ApiError.NotFound -> FamilyError.ConnectInvalid(e.serverMsg)
+                    else -> e
                 }
             }
 
@@ -62,11 +58,10 @@ class FamilyRepositoryImpl
             apiResponseHandler.safeApiCall {
                 familyDataSource.getMyInviteCode()
             }.map { it.inviteCode }
-                .recoverCatching {
-                    throw if (it is ApiError && it.code == 40026) {
-                        FamilyError.OnboardingUncompleted(it.serverMsg)
-                    } else {
-                        it
+                .recoverCatching { e ->
+                    throw when {
+                        e is ApiError && e.code == 40026 -> FamilyError.OnboardingUncompleted(e.serverMsg)
+                        else -> e
                     }
                 }
     }

@@ -62,17 +62,17 @@ class UserRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 userDataSource.patchProfile(ProfileRequestDto(nickname, userType))
-            }.recoverCatching { throwable ->
-                throw if (throwable is ApiError.BadRequest) {
-                    when (throwable.code) {
-                        40005 -> ProfileError.NicknameEmpty(throwable.serverMsg)
-                        40006 -> ProfileError.NicknameLength(throwable.serverMsg)
-                        40007 -> ProfileError.NicknameSymbols(throwable.serverMsg)
-                        40008 -> ProfileError.RoleEmpty(throwable.serverMsg)
-                        else -> ProfileError.Undefined(throwable.serverMsg)
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError -> when (e.code) {
+                        40005 -> ProfileError.NicknameEmpty(e.serverMsg)
+                        40006 -> ProfileError.NicknameLength(e.serverMsg)
+                        40007 -> ProfileError.NicknameSymbols(e.serverMsg)
+                        40008 -> ProfileError.RoleEmpty(e.serverMsg)
+                        else -> ProfileError.Undefined(e.serverMsg)
                     }
-                } else {
-                    throwable
+
+                    else -> e
                 }
             }
 

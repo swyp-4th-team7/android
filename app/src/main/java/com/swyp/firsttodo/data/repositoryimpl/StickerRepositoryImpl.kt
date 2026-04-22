@@ -21,11 +21,10 @@ class StickerRepositoryImpl
             apiResponseHandler.safeApiCall {
                 stickerDataSource.getWeeklyStickers(weekOffset)
             }.map { it.toModel() }
-                .recoverCatching { throwable ->
-                    throw if (throwable is ApiError.BadRequest && throwable.code == 40024) {
-                        StickerError.WeekOffsetInvalid(throwable.serverMsg)
-                    } else {
-                        throwable
+                .recoverCatching { e ->
+                    throw when {
+                        e is ApiError && e.code == 40024 -> StickerError.WeekOffsetInvalid(e.serverMsg)
+                        else -> e
                     }
                 }
 

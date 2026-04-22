@@ -24,16 +24,16 @@ class ScheduleRepositoryImpl
             apiResponseHandler.safeApiCall {
                 scheduleDataSource.createSchedule(ScheduleRequestDto(title, category, scheduleDate))
             }.map { }
-                .recoverCatching { throwable ->
-                    throw if (throwable is ApiError.BadRequest) {
-                        when (throwable.code) {
-                            40014 -> ScheduleError.TitleEmpty(throwable.serverMsg)
-                            40016 -> ScheduleError.CategoryEmpty(throwable.serverMsg)
-                            40017 -> ScheduleError.DateEmpty(throwable.serverMsg)
-                            else -> throwable
+                .recoverCatching { e ->
+                    throw when (e) {
+                        is ApiError -> when (e.code) {
+                            40014 -> ScheduleError.TitleEmpty(e.serverMsg)
+                            40016 -> ScheduleError.CategoryEmpty(e.serverMsg)
+                            40017 -> ScheduleError.DateEmpty(e.serverMsg)
+                            else -> e
                         }
-                    } else {
-                        throwable
+
+                        else -> e
                     }
                 }
 
@@ -50,22 +50,20 @@ class ScheduleRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 scheduleDataSource.patchSchedule(scheduleId, ScheduleRequestDto(title, category, scheduleDate))
-            }.recoverCatching { throwable ->
-                throw if (throwable is ApiError.NotFound) {
-                    ScheduleError.ScheduleNotFound(throwable.serverMsg)
-                } else {
-                    throwable
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError.NotFound -> ScheduleError.ScheduleNotFound(e.serverMsg)
+                    else -> e
                 }
             }
 
         override suspend fun deleteSchedule(scheduleId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 scheduleDataSource.deleteSchedule(scheduleId)
-            }.recoverCatching { throwable ->
-                throw if (throwable is ApiError.NotFound) {
-                    ScheduleError.ScheduleNotFound(throwable.serverMsg)
-                } else {
-                    throwable
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError.NotFound -> ScheduleError.ScheduleNotFound(e.serverMsg)
+                    else -> e
                 }
             }
     }
