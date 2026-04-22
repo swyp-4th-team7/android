@@ -22,6 +22,9 @@ abstract class BaseViewModel<S : UiState, E : UiEffect>(
     private val _sideEffect = Channel<E>(Channel.BUFFERED)
     val sideEffect: Flow<E> = _sideEffect.receiveAsFlow()
 
+    val currentState: S
+        get() = _uiState.value
+
     private val lastEffectTime = ConcurrentHashMap<String, Long>()
 
     protected fun updateState(reducer: S.() -> S) {
