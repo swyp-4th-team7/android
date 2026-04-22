@@ -21,7 +21,7 @@ class MainDrawerViewModel
         private val userRepository: UserRepository,
     ) : BaseViewModel<MainDrawerUiState, MainDrawerSideEffect>(MainDrawerUiState()) {
         fun getMyInfo() {
-            if (uiState.value.nickname is Async.Success) return
+            if (currentState.nickname is Async.Success) return
 
             viewModelScope.launch {
                 userRepository.getMyInfo()
@@ -50,7 +50,7 @@ class MainDrawerViewModel
         }
 
         fun onDialogConfirmBtnClick() {
-            when (uiState.value.dialogType) {
+            when (currentState.dialogType) {
                 DrawerDialogType.LOGOUT -> onLogoutConfirm()
                 DrawerDialogType.WITHDRAWAL -> onWithdrawalConfirm()
             }
@@ -67,7 +67,7 @@ class MainDrawerViewModel
         }
 
         private fun onLogoutConfirm() {
-            if (uiState.value.dialogLoadingState is Async.Loading) return
+            if (currentState.dialogLoadingState is Async.Loading) return
 
             updateState { copy(dialogLoadingState = Async.Loading()) }
 
@@ -96,7 +96,7 @@ class MainDrawerViewModel
         }
 
         private fun onWithdrawalConfirm() {
-            if (uiState.value.dialogLoadingState is Async.Loading) return
+            if (currentState.dialogLoadingState is Async.Loading) return
 
             updateState { copy(dialogLoadingState = Async.Loading()) }
 

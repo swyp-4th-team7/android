@@ -52,9 +52,9 @@ class RewardDetailViewModel
         }
 
         fun onBtnClick() {
-            if (uiState.value.btnState is Async.Loading) return
+            if (currentState.btnState is Async.Loading) return
 
-            when (uiState.value.screenType) {
+            when (currentState.screenType) {
                 RewardDetailScreenType.ACCEPT -> acceptReward()
                 RewardDetailScreenType.DELIVER -> deliverReward()
                 null -> Unit
@@ -62,8 +62,8 @@ class RewardDetailViewModel
         }
 
         private fun acceptReward() {
-            val habitId = uiState.value.habitId ?: return
-            val inputReward = uiState.value.rewardText
+            val habitId = currentState.habitId ?: return
+            val inputReward = currentState.rewardText
 
             updateState { copy(btnState = Async.Loading()) }
 
@@ -95,7 +95,7 @@ class RewardDetailViewModel
         }
 
         private fun deliverReward() {
-            val habitId = uiState.value.habitId ?: return
+            val habitId = currentState.habitId ?: return
 
             updateState { copy(btnState = Async.Loading()) }
 

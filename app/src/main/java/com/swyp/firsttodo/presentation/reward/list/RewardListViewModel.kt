@@ -38,7 +38,7 @@ class RewardListViewModel
         }
 
         private fun initStickerTab() {
-            when (uiState.value.role) {
+            when (currentState.role) {
                 Role.PARENT -> initParentStickerTab()
                 Role.CHILD -> initChildStickerTab()
                 null -> Unit
@@ -46,9 +46,9 @@ class RewardListViewModel
         }
 
         private fun initRewardTab() {
-            when (uiState.value.role) {
-                Role.PARENT -> loadParentRewardTab(uiState.value.selectedFilter)
-                Role.CHILD -> loadChildRewardTab(uiState.value.selectedFilter)
+            when (currentState.role) {
+                Role.PARENT -> loadParentRewardTab(currentState.selectedFilter)
+                Role.CHILD -> loadChildRewardTab(currentState.selectedFilter)
                 null -> Unit
             }
         }
@@ -60,7 +60,7 @@ class RewardListViewModel
                     .onSuccess {
                         updateState { copy(parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
                     }.onFailure { throwable ->
-                        uiState.value.parentStickers.getDataOrNull()?.let { prevData ->
+                        currentState.parentStickers.getDataOrNull()?.let { prevData ->
                             updateState { copy(parentStickers = Async.Success(prevData)) }
                         } ?: updateState { copy(parentStickers = Async.Init) }
 
@@ -91,7 +91,7 @@ class RewardListViewModel
                         }
                     }
                     .onFailure {
-                        uiState.value.childCompletedSticker.getDataOrNull()?.let { prevData ->
+                        currentState.childCompletedSticker.getDataOrNull()?.let { prevData ->
                             updateState { copy(childCompletedSticker = Async.Success(prevData)) }
                         } ?: updateState { copy(childCompletedSticker = Async.Init) }
 
@@ -157,7 +157,7 @@ class RewardListViewModel
         }
 
         fun onTabClick(tab: RewardHeaderTabType) {
-            val currentTab = uiState.value.currentTab
+            val currentTab = currentState.currentTab
             updateState { copy(currentTab = tab) }
 
             if (currentTab != tab) {
@@ -169,7 +169,7 @@ class RewardListViewModel
         }
 
         fun onFilterTypeClick(filterType: RewardFilterType) {
-            when (uiState.value.role) {
+            when (currentState.role) {
                 Role.PARENT -> if (filterType is ParentRewardFilterType) {
                     updateState { copy(parentSelectedFilterType = filterType) }
                     loadParentRewardTab(filterType)
@@ -201,7 +201,7 @@ class RewardListViewModel
         }
 
         fun refresh() {
-            when (uiState.value.currentTab) {
+            when (currentState.currentTab) {
                 RewardHeaderTabType.STICKER -> initStickerTab()
                 RewardHeaderTabType.REWARD -> initRewardTab()
             }

@@ -63,7 +63,7 @@ class ShareViewModel
         }
 
         fun disconnectFamily() {
-            val targetUserId = uiState.value.disconnectRequestMember?.userId ?: return
+            val targetUserId = currentState.disconnectRequestMember?.userId ?: return
 
             viewModelScope.launch {
                 updateState { copy(disconnectState = Async.Loading()) }

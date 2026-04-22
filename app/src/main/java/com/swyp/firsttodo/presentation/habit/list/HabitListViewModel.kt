@@ -43,7 +43,7 @@ class HabitListViewModel
                         updateState { copy(habits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
                     }
                     .onFailure {
-                        val prevData = uiState.value.habits.getDataOrNull()
+                        val prevData = currentState.habits.getDataOrNull()
                         if (prevData != null) {
                             updateState { copy(habits = Async.Success(prevData)) }
                         }
@@ -110,14 +110,14 @@ class HabitListViewModel
         }
 
         fun onDeleteConfirm() {
-            val habitId = uiState.value.delRequestedId ?: return
+            val habitId = currentState.delRequestedId ?: return
 
             updateState { copy(deleteState = Async.Loading()) }
 
             viewModelScope.launch {
                 habitRepository.deleteHabit(habitId)
                     .onSuccess {
-                        val message = if (uiState.value.isFailedHabitDelete) "실패한 습관이 삭제되었습니다." else "습관이 삭제되었습니다."
+                        val message = if (currentState.isFailedHabitDelete) "실패한 습관이 삭제되었습니다." else "습관이 삭제되었습니다."
                         updateState {
                             copy(
                                 delRequestedId = null,

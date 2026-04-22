@@ -58,14 +58,14 @@ class OnboardingViewModel
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
         fun onBack() {
-            when (uiState.value.currentStep) {
+            when (currentState.currentStep) {
                 OnboardingStep.ROLE_SELECT -> handleDoubleBackPressToExit()
                 OnboardingStep.PROFILE -> updateState { copy(currentStep = OnboardingStep.ROLE_SELECT) }
             }
         }
 
         fun onBottomBtnClick() {
-            when (uiState.value.currentStep) {
+            when (currentState.currentStep) {
                 OnboardingStep.ROLE_SELECT -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
                 OnboardingStep.PROFILE -> saveProfile()
             }
@@ -76,7 +76,7 @@ class OnboardingViewModel
         }
 
         private fun saveProfile() {
-            val role = uiState.value.selectedRole ?: return
+            val role = currentState.selectedRole ?: return
             val nickname = nickNameFieldState.text.toString()
             if (!isValidNickname(nickname)) return
 

@@ -57,8 +57,8 @@ class LoginViewModel
         }
 
         fun onGoogleLoginClick() {
-            if (uiState.value.loginState is Async.Loading) return
-            if (uiState.value.token is Async.Loading) return
+            if (currentState.loginState is Async.Loading) return
+            if (currentState.token is Async.Loading) return
 
             updateState { copy(token = Async.Loading()) }
             sendEffect(LoginSideEffect.LaunchGoogleLogin)
@@ -90,7 +90,7 @@ class LoginViewModel
         }
 
         private fun socialLogin(type: SocialType) {
-            val token = (uiState.value.token as? Async.Success)?.data ?: return
+            val token = (currentState.token as? Async.Success)?.data ?: return
 
             updateState { copy(loginState = Async.Loading()) }
 
