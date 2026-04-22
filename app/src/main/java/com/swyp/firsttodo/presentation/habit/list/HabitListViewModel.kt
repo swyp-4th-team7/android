@@ -6,10 +6,10 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.HabitError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.domain.repository.HabitRepository
-import com.swyp.firsttodo.domain.throwable.HabitError
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

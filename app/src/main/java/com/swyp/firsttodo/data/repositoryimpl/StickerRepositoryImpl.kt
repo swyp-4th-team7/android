@@ -4,11 +4,11 @@ import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.StickerDataSource
+import com.swyp.firsttodo.domain.error.StickerError
 import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
 import com.swyp.firsttodo.domain.model.sticker.StickerBoardModel
 import com.swyp.firsttodo.domain.model.sticker.WeeklyStickersModel
 import com.swyp.firsttodo.domain.repository.StickerRepository
-import com.swyp.firsttodo.domain.throwable.StickerError
 import javax.inject.Inject
 
 class StickerRepositoryImpl

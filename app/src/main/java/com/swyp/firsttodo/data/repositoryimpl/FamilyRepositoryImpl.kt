@@ -5,10 +5,10 @@ import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.FamilyDataSource
 import com.swyp.firsttodo.data.remote.dto.request.family.FamilyConnectRequestBody
+import com.swyp.firsttodo.domain.error.FamilyError
 import com.swyp.firsttodo.domain.model.family.ConnectedFamilyModel
 import com.swyp.firsttodo.domain.model.family.FamilyInfo
 import com.swyp.firsttodo.domain.repository.FamilyRepository
-import com.swyp.firsttodo.domain.throwable.FamilyError
 import javax.inject.Inject
 
 class FamilyRepositoryImpl

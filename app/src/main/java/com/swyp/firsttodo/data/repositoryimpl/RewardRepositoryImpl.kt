@@ -5,9 +5,9 @@ import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.RewardDataSource
 import com.swyp.firsttodo.data.remote.dto.request.reward.RewardRequestBody
+import com.swyp.firsttodo.domain.error.RewardError
 import com.swyp.firsttodo.domain.model.reward.RewardModel
 import com.swyp.firsttodo.domain.repository.RewardRepository
-import com.swyp.firsttodo.domain.throwable.RewardError
 import javax.inject.Inject
 
 class RewardRepositoryImpl

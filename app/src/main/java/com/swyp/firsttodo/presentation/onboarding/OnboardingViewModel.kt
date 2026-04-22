@@ -5,8 +5,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.ProfileError
 import com.swyp.firsttodo.domain.model.Role
-import com.swyp.firsttodo.domain.throwable.ProfileError
 import com.swyp.firsttodo.domain.usecase.user.SaveOnboardingProfile
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel

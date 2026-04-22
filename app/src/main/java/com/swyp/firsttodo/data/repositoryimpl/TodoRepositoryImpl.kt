@@ -6,11 +6,11 @@ import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.TodoDataSource
 import com.swyp.firsttodo.data.remote.dto.request.todo.TodoCreateRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.todo.TodoEditRequestDto
+import com.swyp.firsttodo.domain.error.TodoError
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.domain.model.todo.TodoColor
 import com.swyp.firsttodo.domain.model.todo.TodoListModel
 import com.swyp.firsttodo.domain.repository.TodoRepository
-import com.swyp.firsttodo.domain.throwable.TodoError
 import javax.inject.Inject
 
 class TodoRepositoryImpl

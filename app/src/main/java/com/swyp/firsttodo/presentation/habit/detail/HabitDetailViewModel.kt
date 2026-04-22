@@ -9,10 +9,10 @@ import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.HabitError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.repository.HabitRepository
-import com.swyp.firsttodo.domain.throwable.HabitError
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgs
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgsNavType

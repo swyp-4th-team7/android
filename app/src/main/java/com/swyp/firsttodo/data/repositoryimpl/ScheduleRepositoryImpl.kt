@@ -5,9 +5,9 @@ import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.ScheduleDataSource
 import com.swyp.firsttodo.data.remote.dto.request.schedule.ScheduleRequestDto
+import com.swyp.firsttodo.domain.error.ScheduleError
 import com.swyp.firsttodo.domain.model.ScheduleModel
 import com.swyp.firsttodo.domain.repository.ScheduleRepository
-import com.swyp.firsttodo.domain.throwable.ScheduleError
 import javax.inject.Inject
 
 class ScheduleRepositoryImpl

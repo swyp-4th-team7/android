@@ -7,10 +7,10 @@ import com.swyp.firsttodo.data.remote.datasource.HabitDataSource
 import com.swyp.firsttodo.data.remote.dto.request.habit.FailedHabitRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPatchRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.habit.HabitPostRequestDto
+import com.swyp.firsttodo.domain.error.HabitError
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.domain.repository.HabitRepository
-import com.swyp.firsttodo.domain.throwable.HabitError
 import javax.inject.Inject
 
 class HabitRepositoryImpl

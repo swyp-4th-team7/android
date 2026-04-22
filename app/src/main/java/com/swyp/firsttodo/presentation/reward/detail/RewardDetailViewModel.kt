@@ -8,9 +8,9 @@ import androidx.navigation.toRoute
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.RewardError
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.repository.RewardRepository
-import com.swyp.firsttodo.domain.throwable.RewardError
 import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.reward.navigation.RewardRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
