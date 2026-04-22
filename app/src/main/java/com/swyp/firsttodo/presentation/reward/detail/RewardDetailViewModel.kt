@@ -14,8 +14,10 @@ import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.repository.RewardRepository
 import com.swyp.firsttodo.presentation.reward.navigation.RewardRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +30,17 @@ class RewardDetailViewModel
     ) : BaseViewModel<RewardDetailUiState, RewardDetailSideEffect>(RewardDetailUiState()) {
         val rewardFieldState = TextFieldState()
 
+        val isBtnEnabled: StateFlow<Boolean> = combine(
+            snapshotFlow { rewardFieldState.text.toString() },
+            uiState,
+        ) { text, state ->
+            when (state.screenType) {
+                RewardDetailScreenType.ACCEPT -> text.isNotBlank()
+                RewardDetailScreenType.DELIVER -> true
+                null -> false
+            } && state.btnState !is Async.Loading
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
         init {
             val route = savedStateHandle.toRoute<RewardRoute.RewardDetail>()
             rewardFieldState.edit { append(route.reward) }
@@ -38,13 +51,8 @@ class RewardDetailViewModel
                     habit = route.habit,
                     duration = runCatching { HabitDuration.valueOf(route.duration) }.getOrNull(),
                     initialReward = route.reward,
-                    rewardText = route.reward,
                 )
             }
-
-            snapshotFlow { rewardFieldState.text.toString() }
-                .onEach { updateState { copy(rewardText = it) } }
-                .launchIn(viewModelScope)
         }
 
         fun onPopBackStack() {
@@ -63,7 +71,7 @@ class RewardDetailViewModel
 
         private fun acceptReward() {
             val habitId = currentState.habitId ?: return
-            val inputReward = currentState.rewardText
+            val inputReward = rewardFieldState.text.toString()
 
             updateState { copy(btnState = Async.Loading()) }
 

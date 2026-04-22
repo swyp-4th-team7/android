@@ -20,7 +20,6 @@ data class RewardDetailUiState(
     val habit: String = "",
     val duration: HabitDuration? = null,
     val initialReward: String = "",
-    val rewardText: String = "",
     val btnState: Async<Unit> = Async.Init,
 ) : UiState {
     val title = when (screenType) {
@@ -46,12 +45,6 @@ data class RewardDetailUiState(
         RewardDetailScreenType.DELIVER -> "전달 완료"
         null -> ""
     }
-
-    val isBtnEnabled = when (screenType) {
-        RewardDetailScreenType.ACCEPT -> rewardText.isNotBlank()
-        RewardDetailScreenType.DELIVER -> true
-        null -> false
-    } && btnState !is Async.Loading
 }
 
 sealed interface RewardDetailSideEffect : UiEffect {

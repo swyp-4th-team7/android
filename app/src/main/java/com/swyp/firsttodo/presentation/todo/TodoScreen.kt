@@ -46,6 +46,8 @@ fun TodoRoute(
     viewModel: TodoViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isTodoEnabled by viewModel.isTodoEnabled.collectAsStateWithLifecycle()
+    val isScheduleEnabled by viewModel.isScheduleEnabled.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
     val activity = LocalContext.current as? Activity
 
@@ -73,7 +75,7 @@ fun TodoRoute(
     if (uiState.showTodoBottomSheet) {
         TodoBottomSheet(
             sheetType = uiState.todoBottomSheetType,
-            btnEnabled = uiState.editingTodo.isBtnEnabled,
+            btnEnabled = isTodoEnabled,
             loadingStatus = uiState.todoBottomSheetState,
             categories = uiState.todoCategories,
             selectedCategory = uiState.editingTodo.category,
@@ -89,12 +91,12 @@ fun TodoRoute(
     if (uiState.showScheduleBottomSheet) {
         ScheduleBottomSheet(
             sheetType = uiState.scheduleBottomSheetType,
-            btnEnabled = uiState.editingSchedule.isBtnEnabled,
+            btnEnabled = isScheduleEnabled,
             loadingStatus = uiState.scheduleBottomSheetState,
             selectedCategory = uiState.editingSchedule.category,
             titleFieldState = viewModel.scheduleTitleFieldState,
             dateFieldState = viewModel.scheduleDateFieldState,
-            dateErrorText = uiState.editingSchedule.dateErrorText,
+            dateErrorText = viewModel.dateErrorText.value,
             onBtnClick = viewModel::onScheduleBottomBtnClick,
             onCategoryClick = viewModel::onScheduleCategoryClick,
             onDismiss = viewModel::closeScheduleBottomSheet,

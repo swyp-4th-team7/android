@@ -15,45 +15,23 @@ import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheetType
 import com.swyp.firsttodo.presentation.todo.component.ScheduleUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodayTodoUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodoBottomSheetType
-import com.swyp.firsttodo.presentation.todo.util.isTodayOrAfter
-import com.swyp.firsttodo.presentation.todo.util.toDateOrNull
 
 data class EditingTodo(
     val todoId: Long? = null,
-    val title: String = "",
     val category: TodoCategoryModel? = null,
     val labelColor: LabelColor? = null,
     val originalTitle: String? = null,
     val originalCategory: TodoCategoryModel? = null,
     val originalLabelColor: LabelColor? = null,
-) {
-    private val isEditMode = todoId != null
-    private val hasChanges = title != originalTitle || category != originalCategory || labelColor != originalLabelColor
-    val isBtnEnabled: Boolean = title.isNotBlank() && category != null && labelColor != null &&
-        (!isEditMode || hasChanges)
-}
+)
 
 data class EditingSchedule(
     val scheduleId: Long? = null,
-    val title: String = "",
-    val date: String = "",
     val category: ScheduleCategory? = null,
     val originalTitle: String? = null,
     val originalDate: String? = null,
     val originalCategory: ScheduleCategory? = null,
-) {
-    val dateErrorText: String? = run {
-        if (date.isEmpty()) return@run null
-        val parsed = date.toDateOrNull() ?: return@run "올바르지 않은 날짜예요. 다시 확인해 주세요."
-        if (!parsed.isTodayOrAfter()) return@run "과거의 날짜예요. 다시 확인해 주세요."
-        null
-    }
-
-    private val isEditMode = scheduleId != null
-    private val hasChanges = title != originalTitle || date != originalDate || category != originalCategory
-    val isBtnEnabled: Boolean = title.isNotBlank() && date.isNotEmpty() && dateErrorText == null && category != null &&
-        (!isEditMode || hasChanges)
-}
+)
 
 @Immutable
 data class TodoUiState(

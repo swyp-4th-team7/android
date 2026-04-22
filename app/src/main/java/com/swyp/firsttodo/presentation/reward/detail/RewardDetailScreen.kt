@@ -41,6 +41,7 @@ fun RewardDetailRoute(
     viewModel: RewardDetailViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isBtnEnabled by viewModel.isBtnEnabled.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
@@ -53,6 +54,7 @@ fun RewardDetailRoute(
     RewardDetailScreen(
         uiState = uiState,
         rewardFieldState = viewModel.rewardFieldState,
+        isBtnEnabled = isBtnEnabled,
         onPopBackStack = viewModel::onPopBackStack,
         onBtnClick = viewModel::onBtnClick,
         modifier = modifier,
@@ -63,6 +65,7 @@ fun RewardDetailRoute(
 fun RewardDetailScreen(
     uiState: RewardDetailUiState,
     rewardFieldState: TextFieldState,
+    isBtnEnabled: Boolean,
     onPopBackStack: () -> Unit,
     onBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -80,7 +83,7 @@ fun RewardDetailScreen(
             HaebomLargeButton(
                 text = uiState.btnText,
                 onClick = onBtnClick,
-                enabled = uiState.isBtnEnabled,
+                enabled = isBtnEnabled,
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
@@ -167,9 +170,10 @@ private fun RewardDetailScreenPreview(
     HaebomTheme {
         RewardDetailScreen(
             uiState = uiState,
+            rewardFieldState = rememberTextFieldState(),
+            isBtnEnabled = true,
             onPopBackStack = {},
             onBtnClick = {},
-            rewardFieldState = rememberTextFieldState(),
         )
     }
 }
