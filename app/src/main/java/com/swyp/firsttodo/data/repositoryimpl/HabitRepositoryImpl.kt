@@ -26,10 +26,9 @@ class HabitRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 habitDataSource.postHabit(HabitPostRequestDto(title, duration.name, reward))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.BadRequest) {
+            }.map { }
+                .recoverCatching { throwable ->
+                    throw if (throwable is ApiError.BadRequest) {
                         when (throwable.code) {
                             40020 -> HabitError.TitleEmpty(throwable.serverMsg)
                             40021 -> HabitError.DurationEmpty(throwable.serverMsg)
@@ -38,9 +37,7 @@ class HabitRepositoryImpl
                     } else {
                         throwable
                     }
-                    Result.failure(error)
-                },
-            )
+                }
 
         override suspend fun editHabit(
             habitId: Long,
@@ -54,40 +51,29 @@ class HabitRepositoryImpl
                     habitId = habitId,
                     request = HabitPatchRequestDto(title, duration.name, reward, isCompleted),
                 )
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = when (throwable) {
-                        is ApiError.BadRequest -> {
-                            when (throwable.code) {
-                                40020 -> HabitError.TitleEmpty(throwable.serverMsg)
-                                40021 -> HabitError.DurationEmpty(throwable.serverMsg)
-                                40023 -> HabitError.CompletedEmpty(throwable.serverMsg)
-                                else -> throwable
-                            }
-                        }
-
-                        is ApiError.NotFound -> HabitError.HabitNotFound(throwable.serverMsg)
-
+            }.recoverCatching { throwable ->
+                throw when (throwable) {
+                    is ApiError.BadRequest -> when (throwable.code) {
+                        40020 -> HabitError.TitleEmpty(throwable.serverMsg)
+                        40021 -> HabitError.DurationEmpty(throwable.serverMsg)
+                        40023 -> HabitError.CompletedEmpty(throwable.serverMsg)
                         else -> throwable
                     }
-                    Result.failure(error)
-                },
-            )
+
+                    is ApiError.NotFound -> HabitError.HabitNotFound(throwable.serverMsg)
+                    else -> throwable
+                }
+            }
 
         override suspend fun deleteHabit(habitId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 habitDataSource.deleteHabit(habitId)
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = when (throwable) {
-                        is ApiError.NotFound -> HabitError.HabitNotFound(throwable.serverMsg)
-                        else -> throwable
-                    }
-                    Result.failure(error)
-                },
-            )
+            }.recoverCatching { throwable ->
+                throw when (throwable) {
+                    is ApiError.NotFound -> HabitError.HabitNotFound(throwable.serverMsg)
+                    else -> throwable
+                }
+            }
 
         override suspend fun getHabits(): Result<List<HabitModel>> =
             apiResponseHandler.safeApiCall {
@@ -112,18 +98,16 @@ class HabitRepositoryImpl
                         reward = reward,
                     ),
                 )
-            }.map { it }
-                .recoverCatching { throwable ->
-                    throw when (throwable) {
-                        is ApiError.BadRequest -> if (throwable.code == 40022) {
-                            HabitError.RewardEmpty(
-                                throwable.serverMsg,
-                            )
-                        } else {
-                            throwable
-                        }
-                        is ApiError.NotFound -> HabitError.HabitNotFound(throwable.serverMsg)
-                        else -> throwable
+            }.recoverCatching { throwable ->
+                throw when (throwable) {
+                    is ApiError.BadRequest -> if (throwable.code == 40022) {
+                        HabitError.RewardEmpty(throwable.serverMsg)
+                    } else {
+                        throwable
                     }
+
+                    is ApiError.NotFound -> HabitError.HabitNotFound(throwable.serverMsg)
+                    else -> throwable
                 }
+            }
     }

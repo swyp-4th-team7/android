@@ -33,7 +33,8 @@ class UserRepositoryImpl
                 Result.success(Unit)
             } else {
                 Result.failure(
-                    remoteResult.exceptionOrNull() ?: localResult.exceptionOrNull() ?: Exception("Both fail"),
+                    remoteResult.exceptionOrNull() ?: localResult.exceptionOrNull()
+                        ?: Exception("Both fail"),
                 )
             }
         }
@@ -49,7 +50,8 @@ class UserRepositoryImpl
                 Result.success(Unit)
             } else {
                 Result.failure(
-                    remoteResult.exceptionOrNull() ?: localResult.exceptionOrNull() ?: Exception("Both fail"),
+                    remoteResult.exceptionOrNull() ?: localResult.exceptionOrNull()
+                        ?: Exception("Both fail"),
                 )
             }
         }
@@ -60,23 +62,19 @@ class UserRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 userDataSource.patchProfile(ProfileRequestDto(nickname, userType))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val mapped = if (throwable is ApiError.BadRequest) {
-                        when (throwable.code) {
-                            40005 -> ProfileError.NicknameEmpty(throwable.serverMsg)
-                            40006 -> ProfileError.NicknameLength(throwable.serverMsg)
-                            40007 -> ProfileError.NicknameSymbols(throwable.serverMsg)
-                            40008 -> ProfileError.RoleEmpty(throwable.serverMsg)
-                            else -> ProfileError.Undefined(throwable.serverMsg)
-                        }
-                    } else {
-                        throwable
+            }.recoverCatching { throwable ->
+                throw if (throwable is ApiError.BadRequest) {
+                    when (throwable.code) {
+                        40005 -> ProfileError.NicknameEmpty(throwable.serverMsg)
+                        40006 -> ProfileError.NicknameLength(throwable.serverMsg)
+                        40007 -> ProfileError.NicknameSymbols(throwable.serverMsg)
+                        40008 -> ProfileError.RoleEmpty(throwable.serverMsg)
+                        else -> ProfileError.Undefined(throwable.serverMsg)
                     }
-                    Result.failure(mapped)
-                },
-            )
+                } else {
+                    throwable
+                }
+            }
 
         override suspend fun updateTerms(): Result<Unit> =
             apiResponseHandler.safeApiCall { userDataSource.patchTerms() }

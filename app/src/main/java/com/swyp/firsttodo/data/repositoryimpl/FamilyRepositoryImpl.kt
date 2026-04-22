@@ -20,26 +20,19 @@ class FamilyRepositoryImpl
         override suspend fun connectFamily(inviteCode: String): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 familyDataSource.postFamilyConnect(FamilyConnectRequestBody(inviteCode))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = when (throwable) {
-                        is ApiError.BadRequest -> when (throwable.code) {
-                            40015 -> FamilyError.InviteCodeEmpty(throwable.serverMsg)
-                            40019 -> FamilyError.InviteCodeMySelf(throwable.serverMsg)
-                            else -> throwable
-                        }
-
-                        is ApiError.NotFound -> FamilyError.InviteCodeInvalid(throwable.serverMsg)
-
-                        is ApiError.Conflict -> FamilyError.InviteAlreadyDone(throwable.serverMsg)
-
+            }.recoverCatching { throwable ->
+                throw when (throwable) {
+                    is ApiError.BadRequest -> when (throwable.code) {
+                        40015 -> FamilyError.InviteCodeEmpty(throwable.serverMsg)
+                        40019 -> FamilyError.InviteCodeMySelf(throwable.serverMsg)
                         else -> throwable
                     }
 
-                    Result.failure(error)
-                },
-            )
+                    is ApiError.NotFound -> FamilyError.InviteCodeInvalid(throwable.serverMsg)
+                    is ApiError.Conflict -> FamilyError.InviteAlreadyDone(throwable.serverMsg)
+                    else -> throwable
+                }
+            }
 
         override suspend fun getConnectedFamily(): Result<List<ConnectedFamilyModel>> =
             apiResponseHandler.safeApiCall {
@@ -49,20 +42,16 @@ class FamilyRepositoryImpl
         override suspend fun disconnectFamily(targetUserId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 familyDataSource.deleteFamilyConnect(targetUserId)
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.BadRequest) {
-                        when (throwable.code) {
-                            40405 -> FamilyError.ConnectInvalid(throwable.serverMsg)
-                            else -> throwable
-                        }
-                    } else {
-                        throwable
+            }.recoverCatching { throwable ->
+                throw if (throwable is ApiError.BadRequest) {
+                    when (throwable.code) {
+                        40405 -> FamilyError.ConnectInvalid(throwable.serverMsg)
+                        else -> throwable
                     }
-                    Result.failure(error)
-                },
-            )
+                } else {
+                    throwable
+                }
+            }
 
         override suspend fun getFamilyDashboard(): Result<List<FamilyInfo>> =
             apiResponseHandler.safeApiCall {
