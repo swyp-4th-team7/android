@@ -3,11 +3,11 @@ package com.swyp.firsttodo.presentation.main.drawer
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.repository.UserRepository
 import com.swyp.firsttodo.domain.usecase.user.DeleteAccountUseCase
 import com.swyp.firsttodo.domain.usecase.user.LogoutUseCase
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

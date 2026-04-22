@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.extension
+package com.swyp.firsttodo.core.common.extension
 
 import com.swyp.firsttodo.core.network.model.ApiError
 

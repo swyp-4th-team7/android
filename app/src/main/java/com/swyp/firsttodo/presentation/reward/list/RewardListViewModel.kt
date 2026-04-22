@@ -5,12 +5,12 @@ import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.reward.RewardStatus
 import com.swyp.firsttodo.domain.repository.RewardRepository
 import com.swyp.firsttodo.domain.repository.StickerRepository
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType

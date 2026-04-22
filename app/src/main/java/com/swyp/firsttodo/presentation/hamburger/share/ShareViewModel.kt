@@ -5,11 +5,11 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.error.FamilyError
 import com.swyp.firsttodo.domain.model.family.ConnectedFamilyModel
 import com.swyp.firsttodo.domain.repository.FamilyRepository
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
