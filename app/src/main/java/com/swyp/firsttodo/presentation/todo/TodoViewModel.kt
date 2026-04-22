@@ -399,7 +399,7 @@ class TodoViewModel
             viewModelScope.launch {
                 todoRepository.deleteTodo(todoId)
                     .onSuccess {
-                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
+                        updateState { copy(delRequestedId = null, deleteState = Async.Init) }
                         sendEffect(TodoSideEffect.ShowSnackbar("할 일이 삭제되었습니다."))
                         getTodos()
                     }
@@ -410,7 +410,7 @@ class TodoViewModel
                                 updateState {
                                     copy(
                                         delRequestedId = null,
-                                        deleteState = Async.Success(Unit),
+                                        deleteState = Async.Init,
                                     )
                                 }
                                 "이미 삭제된 할 일 입니다."
@@ -440,7 +440,7 @@ class TodoViewModel
             viewModelScope.launch {
                 scheduleRepository.deleteSchedule(scheduleId)
                     .onSuccess {
-                        updateState { copy(delRequestedId = null, deleteState = Async.Success(Unit)) }
+                        updateState { copy(delRequestedId = null, deleteState = Async.Init) }
                         sendEffect(TodoSideEffect.ShowSnackbar("다가오는 일정이 삭제되었습니다."))
                         getSchedules()
                     }
@@ -450,7 +450,7 @@ class TodoViewModel
                                 updateState {
                                     copy(
                                         delRequestedId = null,
-                                        deleteState = Async.Success(Unit),
+                                        deleteState = Async.Init,
                                     )
                                 }
                                 getSchedules()

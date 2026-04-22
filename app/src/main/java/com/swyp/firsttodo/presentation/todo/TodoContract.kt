@@ -80,6 +80,7 @@ data class TodoUiState(
     val todoCategories: List<TodoCategoryModel> = categories
 
     val showDeleteDialog = delRequestedId != null
+    val isDialogLoading = deleteState is Async.Loading
 
     val characterImageRes = if (todos is Async.Empty) {
         R.drawable.img_todo_empty_176

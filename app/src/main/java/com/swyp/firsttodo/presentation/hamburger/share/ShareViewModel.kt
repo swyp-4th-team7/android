@@ -70,7 +70,6 @@ class ShareViewModel
 
                 familyRepository.disconnectFamily(targetUserId)
                     .onSuccess {
-                        updateState { copy(disconnectState = Async.Success(Unit)) }
                         closeDialog()
                         getFamiles()
                         sendEffect(ShareSideEffect.ShowSnackbar("가족 연결이 끊겼습니다."))

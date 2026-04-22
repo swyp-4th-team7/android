@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.extension.skeleton
 import com.swyp.firsttodo.core.common.type.DeleteDialogType
@@ -37,21 +35,15 @@ fun HaebomDeleteDialog(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     onDismiss: () -> Unit,
-    loadingState: Async<Unit>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     confirmBtnLabel: String = "네, 삭제할래요",
     cancelBtnLabel: String = "아니요",
 ) {
-    LaunchedEffect(loadingState) {
-        if (loadingState is Async.Success) onDismiss()
-    }
-
     HaebomBasicDialog(
         onDismiss = onDismiss,
         modifier = modifier.padding(horizontal = 20.dp),
     ) {
-        val isLoading = loadingState is Async.Loading
-
         DialogContent(
             dialogType = dialogType,
             onConfirm = onConfirm,
@@ -73,8 +65,7 @@ fun DialogContent(
     cancelBtnLabel: String,
 ) {
     Column(
-        modifier = Modifier
-            .padding(all = 24.dp),
+        modifier = Modifier.padding(all = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (isLoading) {

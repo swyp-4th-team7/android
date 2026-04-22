@@ -20,6 +20,8 @@ data class HabitListUiState(
 ) : UiState {
     val showDeleteDialog = delRequestedId != null
 
+    val isDialogLoading = deleteState is Async.Loading
+
     val habitsData = habits.getDataOrNull()
 
     val listType = when (role) {

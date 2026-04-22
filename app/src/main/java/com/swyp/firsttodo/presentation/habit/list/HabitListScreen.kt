@@ -64,7 +64,7 @@ fun HabitListRoute(
             onConfirm = viewModel::onDeleteConfirm,
             onCancel = viewModel::onDeleteCancel,
             onDismiss = viewModel::onDeleteCancel,
-            loadingState = uiState.deleteState,
+            isLoading = uiState.isDialogLoading,
         )
     }
 

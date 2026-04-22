@@ -121,7 +121,7 @@ class HabitListViewModel
                         updateState {
                             copy(
                                 delRequestedId = null,
-                                deleteState = Async.Success(Unit),
+                                deleteState = Async.Init,
                                 isFailedHabitDelete = false,
                             )
                         }
