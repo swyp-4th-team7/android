@@ -6,10 +6,12 @@ import androidx.navigation.toRoute
 import com.swyp.firsttodo.BuildConfig
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.SocialType
 import com.swyp.firsttodo.domain.usecase.auth.SocialLoginUseCase
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLoginResult
 import com.swyp.firsttodo.presentation.auth.navigation.AuthRoute
+import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -107,7 +109,7 @@ class LoginViewModel
                     }
                 }.onFailure {
                     updateState { copy(loginState = Async.Init) }
-                    sendEffect(LoginSideEffect.ShowSnackbar("로그인에 실패했어요. 다시 시도해주세요."))
+                    if (it is ApiError) sendEffect(LoginSideEffect.ShowSnackbar(it.snackbarMsg()))
                     Timber.e(it)
                 }
             }

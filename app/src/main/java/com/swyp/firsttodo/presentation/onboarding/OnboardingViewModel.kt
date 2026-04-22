@@ -8,7 +8,7 @@ import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.throwable.ProfileError
 import com.swyp.firsttodo.domain.usecase.user.SaveOnboardingProfile
-import com.swyp.firsttodo.presentation.common.message.ErrorMessage
+import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -91,8 +91,7 @@ class OnboardingViewModel
                             is ProfileError.NicknameLength -> "닉네임은 1자 이상 12자 이하로 입력해주세요."
                             is ProfileError.NicknameSymbols -> "닉네임은 한글로만 입력해주세요."
                             is ProfileError.RoleEmpty -> "역할은 필수로 선택해주세요."
-                            is ApiError.NetworkConnection -> ErrorMessage.NETWORK_ERROR
-                            is ApiError.ServerError -> ErrorMessage.SERVER_ERROR
+                            is ApiError -> throwable.snackbarMsg()
                             else -> "프로필 저장에 실패했어요."
                         }
                         sendEffect(OnboardingSideEffect.ShowSnackbar(message))
