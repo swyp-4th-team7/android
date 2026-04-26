@@ -46,6 +46,7 @@ import com.swyp.firsttodo.presentation.reward.component.RewardHeader
 import com.swyp.firsttodo.presentation.reward.component.StickerBoard
 import com.swyp.firsttodo.presentation.reward.component.StickerBoardCompleteDialog
 import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RewardListRoute(
@@ -202,7 +203,7 @@ fun RewardListScreen(
 
 // region Preview
 
-private val sampleParentStickers = listOf(
+private val sampleParentStickers = persistentListOf(
     ChildStickerModel(
         childId = 1L,
         nickname = "해봄이",
@@ -221,7 +222,7 @@ private val sampleParentStickers = listOf(
     ),
 )
 
-private val sampleParentRewards = listOf(
+private val sampleParentRewards = persistentListOf(
     ParentRewardUiModel(
         id = 1L,
         title = "수학 공부하기",
@@ -260,7 +261,7 @@ private val sampleParentRewards = listOf(
     ),
 )
 
-private val sampleChildRewards = listOf(
+private val sampleChildRewards = persistentListOf(
     ChildRewardUiModel(
         rewardId = 1L,
         title = "하루 10분 명상하기",

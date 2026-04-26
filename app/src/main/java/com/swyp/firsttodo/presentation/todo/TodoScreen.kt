@@ -39,6 +39,7 @@ import com.swyp.firsttodo.presentation.todo.component.TodoBanner
 import com.swyp.firsttodo.presentation.todo.component.TodoBottomSheet
 import com.swyp.firsttodo.presentation.todo.component.TodoList
 import com.swyp.firsttodo.presentation.todo.component.WeeklyCalendar
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun TodoRoute(
@@ -203,7 +204,7 @@ private val previewWeeklyStickers = WeeklyStickersModel(
     ),
 )
 
-private val previewTodos = listOf(
+private val previewTodos = persistentListOf(
     TodayTodoUiModel(
         todoId = 1L,
         title = "수학 숙제 완료하기",
@@ -248,7 +249,7 @@ private val previewTodos = listOf(
     ),
 )
 
-private val previewSchedules = listOf(
+private val previewSchedules = persistentListOf(
     ScheduleUiModel(
         scheduleId = 1L,
         dDay = 3,

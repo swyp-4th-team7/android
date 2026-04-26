@@ -32,6 +32,8 @@ import com.swyp.firsttodo.presentation.habit.component.HabitMainBanner
 import com.swyp.firsttodo.presentation.habit.component.HabitRetryList
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun HabitListRoute(
@@ -155,8 +157,8 @@ private class HabitListScreenPreviewProvider : PreviewParameterProvider<HabitLis
     }
 
     override val values = sequenceOf(
-        HabitListUiState(habits = Async.Success(sampleHabits), failedHabits = Async.Empty),
-        HabitListUiState(habits = Async.Success(emptyList())),
+        HabitListUiState(habits = Async.Success(sampleHabits.toImmutableList()), failedHabits = Async.Empty),
+        HabitListUiState(habits = Async.Success(persistentListOf())),
     )
 }
 
