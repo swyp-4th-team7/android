@@ -15,6 +15,8 @@ import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheetType
 import com.swyp.firsttodo.presentation.todo.component.ScheduleUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodayTodoUiModel
 import com.swyp.firsttodo.presentation.todo.component.TodoBottomSheetType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class EditingTodo(
     val todoId: Long? = null,
@@ -36,13 +38,13 @@ data class EditingSchedule(
 @Immutable
 data class TodoUiState(
     val role: Role? = null,
-    val categories: List<TodoCategoryModel> = emptyList(),
+    val categories: ImmutableList<TodoCategoryModel> = persistentListOf(),
     val progressPercent: Async<Int> = Async.Init,
     val remainTodoCount: Async<Int> = Async.Init,
     val weeklyStickers: Async<WeeklyStickersModel> = Async.Init,
     val weekOffset: Int = 0,
-    val todos: Async<List<TodayTodoUiModel>> = Async.Init,
-    val schedules: Async<List<ScheduleUiModel>> = Async.Init,
+    val todos: Async<ImmutableList<TodayTodoUiModel>> = Async.Init,
+    val schedules: Async<ImmutableList<ScheduleUiModel>> = Async.Init,
     val editingTodo: EditingTodo = EditingTodo(),
     val editingSchedule: EditingSchedule = EditingSchedule(),
     val showTodoBottomSheet: Boolean = false,
@@ -55,7 +57,7 @@ data class TodoUiState(
     val delRequestedType: DeleteDialogType = DeleteDialogType.Todo,
     val deleteState: Async<Unit> = Async.Init,
 ) : UiState {
-    val todoCategories: List<TodoCategoryModel> = categories
+    val todoCategories: ImmutableList<TodoCategoryModel> = categories
 
     val showDeleteDialog = delRequestedId != null
     val isDialogLoading = deleteState is Async.Loading

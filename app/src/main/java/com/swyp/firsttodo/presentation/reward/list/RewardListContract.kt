@@ -11,6 +11,8 @@ import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 enum class RewardHeaderTabType(
     override val index: Int,
@@ -75,13 +77,13 @@ data class RewardListUiState(
     val currentTab: RewardHeaderTabType = RewardHeaderTabType.STICKER,
     // parent
     val parentSelectedFilterType: ParentRewardFilterType = ParentRewardFilterType.ALL,
-    val parentStickers: Async<List<ChildStickerModel>> = Async.Init,
-    val parentRewards: Async<List<ParentRewardUiModel>> = Async.Init,
+    val parentStickers: Async<ImmutableList<ChildStickerModel>> = Async.Init,
+    val parentRewards: Async<ImmutableList<ParentRewardUiModel>> = Async.Init,
     // child
     val childCompletedSticker: Async<Int> = Async.Init,
     val showStickerCompleteDialog: Boolean = false,
     val childSelectedFilterType: ChildRewardFilterType = ChildRewardFilterType.ALL,
-    val childRewards: Async<List<ChildRewardUiModel>> = Async.Init,
+    val childRewards: Async<ImmutableList<ChildRewardUiModel>> = Async.Init,
 ) : UiState {
     val tabs = RewardHeaderTabType.entries
 
@@ -105,9 +107,9 @@ data class RewardListUiState(
         RewardHeaderTabType.REWARD -> "가족과 함께 정한 보상들을 확인해 보세요."
     }
 
-    val filters: List<RewardFilterType> = when (role) {
-        Role.PARENT -> ParentRewardFilterType.entries
-        else -> ChildRewardFilterType.entries
+    val filters: ImmutableList<RewardFilterType> = when (role) {
+        Role.PARENT -> ParentRewardFilterType.entries.toImmutableList()
+        else -> ChildRewardFilterType.entries.toImmutableList()
     }
 
     val selectedFilter: RewardFilterType = when (role) {

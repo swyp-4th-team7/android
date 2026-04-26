@@ -33,6 +33,8 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 enum class HabitListType {
     CHILD,
@@ -45,7 +47,7 @@ fun HabitList(
     onCheckClick: (HabitModel) -> Unit,
     onEditClick: (HabitModel) -> Unit,
     onDeleteClick: (HabitModel) -> Unit,
-    habits: List<HabitModel>,
+    habits: ImmutableList<HabitModel>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -202,7 +204,7 @@ private val previewHabits = HabitDuration.entries.mapIndexed { index, duration -
         title = if (index % 2 == 0) "하루에 책 10장 읽기" else "하루에 책 10장 읽기 하루에 책 10장 읽기 하루에 책 10장 읽기",
         reward = if (index % 2 == 0) "가족이랑 놀이공원 가기" else "가족이랑 놀이공원 가기 가족이랑 놀이공원 가기 가족이랑 놀이공원 가기",
     )
-}
+}.toImmutableList()
 
 private class HabitListPreviewProvider : PreviewParameterProvider<HabitListType> {
     override val values = sequenceOf(*HabitListType.entries.toTypedArray())

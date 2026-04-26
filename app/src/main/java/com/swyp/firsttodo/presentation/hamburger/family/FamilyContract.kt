@@ -6,10 +6,11 @@ import com.swyp.firsttodo.core.base.UiEffect
 import com.swyp.firsttodo.core.base.UiState
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.domain.model.family.FamilyInfo
+import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 data class FamilyUiState(
-    val familyInfos: Async<List<FamilyInfo>> = Async.Init,
+    val familyInfos: Async<ImmutableList<FamilyInfo>> = Async.Init,
 ) : UiState {
     val familyData = familyInfos.getDataOrNull()
 }

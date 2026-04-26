@@ -33,6 +33,9 @@ import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 import com.swyp.firsttodo.presentation.reward.component.RewardDetailTextBox
 import com.swyp.firsttodo.presentation.reward.component.RewardHeader
+import kotlinx.collections.immutable.toImmutableList
+
+private val habitDurations = HabitDuration.entries.toImmutableList()
 
 @Composable
 fun RewardDetailRoute(
@@ -120,7 +123,7 @@ fun RewardDetailScreen(
                 description = "자녀의 습관 기간을 확인하세요.",
             ) {
                 TaskCategoryList(
-                    categories = HabitDuration.entries,
+                    categories = habitDurations,
                     selectedCategory = uiState.duration,
                     onCategoryClick = {},
                     getDisplayName = { it.displayName },

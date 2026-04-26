@@ -48,6 +48,8 @@ import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.type.TutorialType
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.ScheduleCategory
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 data class ScheduleUiModel(
@@ -62,7 +64,7 @@ data class ScheduleUiModel(
 
 @Composable
 fun ScheduleList(
-    schedules: Async<List<ScheduleUiModel>>,
+    schedules: Async<ImmutableList<ScheduleUiModel>>,
     onPlusClick: () -> Unit,
     onEditClick: (ScheduleUiModel) -> Unit,
     onDeleteClick: (ScheduleUiModel) -> Unit,
@@ -237,10 +239,10 @@ private fun ScheduleItem(
     }
 }
 
-private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<ScheduleUiModel>>> {
+private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<ImmutableList<ScheduleUiModel>>> {
     override val values = sequenceOf(
         Async.Success(
-            listOf(
+            persistentListOf(
                 ScheduleUiModel(
                     scheduleId = 1L,
                     dDay = 5,
@@ -277,7 +279,7 @@ private class ScheduleListPreviewProvider : PreviewParameterProvider<Async<List<
 @Preview(showBackground = true)
 @Composable
 private fun ScheduleListPreview(
-    @PreviewParameter(ScheduleListPreviewProvider::class) schedules: Async<List<ScheduleUiModel>>,
+    @PreviewParameter(ScheduleListPreviewProvider::class) schedules: Async<ImmutableList<ScheduleUiModel>>,
 ) {
     val scrollState = rememberScrollState()
     HaebomTheme {

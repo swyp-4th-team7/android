@@ -25,6 +25,7 @@ import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyDashBoar
 import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyHeader
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun FamilyRoute(
@@ -100,7 +101,7 @@ private fun FamilyScreenPreview() {
         FamilyScreen(
             uiState = FamilyUiState(
                 familyInfos = Async.Success(
-                    listOf(
+                    persistentListOf(
                         FamilyInfo(1L, "엄마는외계인", FamilyTodo(10, 3), FamilyHabit(completed = true)),
                         FamilyInfo(2L, "박영희영희영희영희영희", FamilyTodo(10, 10), FamilyHabit(completed = false)),
                         FamilyInfo(3L, "이민준", FamilyTodo(5, 0), FamilyHabit(completed = true)),

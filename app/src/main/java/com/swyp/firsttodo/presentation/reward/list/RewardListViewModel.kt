@@ -16,6 +16,7 @@ import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 import com.swyp.firsttodo.presentation.reward.extension.durationIconRes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -56,7 +57,11 @@ class RewardListViewModel
             viewModelScope.launch {
                 stickerRepository.getChildrenStickerList()
                     .onSuccess {
-                        updateState { copy(parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                        updateState {
+                            copy(
+                                parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it.toImmutableList()),
+                            )
+                        }
                     }.onFailure { throwable ->
                         if (throwable is ApiError) {
                             sendEffect(RewardListSideEffect.ShowSnackbar(throwable.snackbarMsg()))
@@ -106,7 +111,13 @@ class RewardListViewModel
                         }
                         updateState {
                             copy(
-                                parentRewards = if (newData.isEmpty()) Async.Empty else Async.Success(newData),
+                                parentRewards = if (newData.isEmpty()) {
+                                    Async.Empty
+                                } else {
+                                    Async.Success(
+                                        newData.toImmutableList(),
+                                    )
+                                },
                             )
                         }
                     }
@@ -133,7 +144,13 @@ class RewardListViewModel
                         }
                         updateState {
                             copy(
-                                childRewards = if (newData.isEmpty()) Async.Empty else Async.Success(newData),
+                                childRewards = if (newData.isEmpty()) {
+                                    Async.Empty
+                                } else {
+                                    Async.Success(
+                                        newData.toImmutableList(),
+                                    )
+                                },
                             )
                         }
                     }

@@ -61,6 +61,8 @@ import com.swyp.firsttodo.core.designsystem.theme.SemiBoldStyle
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.presentation.main.snackbar.HaebomSnackbarHost
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 enum class TodoBottomSheetType(
     val title: String,
@@ -95,7 +97,7 @@ fun TodoBottomSheet(
     sheetType: TodoBottomSheetType,
     btnEnabled: Boolean,
     loadingStatus: Async<Unit>,
-    categories: List<TodoCategoryModel>,
+    categories: ImmutableList<TodoCategoryModel>,
     selectedCategory: TodoCategoryModel?,
     selectedLabelColor: LabelColor?,
     titleFieldState: TextFieldState,
@@ -386,7 +388,7 @@ private fun TodoBottomSheetPreview(
     var selectedCategory by remember { mutableStateOf<TodoCategoryModel?>(null) }
     var selectedLabelColor by remember { mutableStateOf<LabelColor?>(null) }
     val titleFieldState = rememberTextFieldState()
-    val categories = listOf(
+    val categories = persistentListOf(
         TodoCategoryModel("공부", "공부"),
         TodoCategoryModel("숙제", "숙제"),
         TodoCategoryModel("운동", "운동"),

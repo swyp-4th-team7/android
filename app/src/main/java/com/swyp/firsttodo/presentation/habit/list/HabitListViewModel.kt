@@ -11,6 +11,7 @@ import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.domain.repository.HabitRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +38,11 @@ class HabitListViewModel
             viewModelScope.launch {
                 habitRepository.getHabits()
                     .onSuccess {
-                        updateState { copy(habits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                        updateState {
+                            copy(
+                                habits = if (it.isEmpty()) Async.Empty else Async.Success(it.toImmutableList()),
+                            )
+                        }
                     }
                     .onFailure {
                         if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
@@ -49,7 +54,11 @@ class HabitListViewModel
             viewModelScope.launch {
                 habitRepository.getFailedHabits()
                     .onSuccess {
-                        updateState { copy(failedHabits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                        updateState {
+                            copy(
+                                failedHabits = if (it.isEmpty()) Async.Empty else Async.Success(it.toImmutableList()),
+                            )
+                        }
                     }
                     .onFailure {
                         if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))

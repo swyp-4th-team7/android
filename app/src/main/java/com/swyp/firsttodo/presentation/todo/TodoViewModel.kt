@@ -34,6 +34,7 @@ import com.swyp.firsttodo.presentation.todo.util.toDashedDate
 import com.swyp.firsttodo.presentation.todo.util.toDateOrNull
 import com.swyp.firsttodo.presentation.todo.util.toDisplayDate
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -177,7 +178,7 @@ class TodoViewModel
         suspend fun getTodoCategories() =
             todoRepository.getTodoCategories()
                 .onSuccess { categories ->
-                    updateState { copy(categories = categories) }
+                    updateState { copy(categories = categories.toImmutableList()) }
                 }
                 .onFailure {
                     if (it is ApiError) sendEffect(TodoSideEffect.ShowSnackbar(it.snackbarMsg()))
@@ -202,7 +203,7 @@ class TodoViewModel
                     updateState {
                         copy(
                             remainTodoCount = Async.Success(data.remainingCount),
-                            todos = if (newTodos.isEmpty()) Async.Empty else Async.Success(newTodos),
+                            todos = if (newTodos.isEmpty()) Async.Empty else Async.Success(newTodos.toImmutableList()),
                             progressPercent = Async.Success(data.progressPercent),
                         )
                     }
@@ -232,7 +233,13 @@ class TodoViewModel
 
                         updateState {
                             copy(
-                                schedules = if (list.isEmpty()) Async.Empty else Async.Success(newSchedules),
+                                schedules = if (list.isEmpty()) {
+                                    Async.Empty
+                                } else {
+                                    Async.Success(
+                                        newSchedules.toImmutableList(),
+                                    )
+                                },
                             )
                         }
                     }

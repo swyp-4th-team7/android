@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> TaskCategoryList(
-    categories: List<T>,
+    categories: ImmutableList<T>,
     selectedCategory: T?,
     onCategoryClick: (T) -> Unit,
     getDisplayName: (T) -> String,
