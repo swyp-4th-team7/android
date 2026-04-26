@@ -32,6 +32,8 @@ import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.family.FamilyHabit
 import com.swyp.firsttodo.domain.model.family.FamilyInfo
 import com.swyp.firsttodo.domain.model.family.FamilyTodo
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 private const val FIRST_COL_WEIGHT = 100f
 private const val SECOND_COL_WEIGHT = 104f
@@ -39,7 +41,7 @@ private const val THIRD_COL_WEIGHT = 88f
 
 @Composable
 fun FamilyDashBoard(
-    familyInfos: List<FamilyInfo>,
+    familyInfos: ImmutableList<FamilyInfo>,
     modifier: Modifier = Modifier,
 ) {
     val colors = HaebomTheme.colors
@@ -146,7 +148,7 @@ fun FamilyDashBoard(
 private fun FamilyDashBoardPreview() {
     HaebomTheme {
         FamilyDashBoard(
-            familyInfos = listOf(
+            familyInfos = persistentListOf(
                 FamilyInfo(1L, "엄마는외계인", FamilyTodo(10, 3), FamilyHabit(completed = true)),
                 FamilyInfo(2L, "박영희영희영희영희영희", FamilyTodo(10, 10), FamilyHabit(completed = false)),
                 FamilyInfo(3L, "이민준", FamilyTodo(5, 0), FamilyHabit(completed = true)),

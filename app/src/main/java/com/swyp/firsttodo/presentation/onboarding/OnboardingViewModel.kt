@@ -4,11 +4,11 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.ProfileError
 import com.swyp.firsttodo.domain.model.Role
-import com.swyp.firsttodo.domain.throwable.ProfileError
 import com.swyp.firsttodo.domain.usecase.user.SaveOnboardingProfile
-import com.swyp.firsttodo.presentation.common.message.ErrorMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -58,14 +58,14 @@ class OnboardingViewModel
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
         fun onBack() {
-            when (uiState.value.currentStep) {
+            when (currentState.currentStep) {
                 OnboardingStep.ROLE_SELECT -> handleDoubleBackPressToExit()
                 OnboardingStep.PROFILE -> updateState { copy(currentStep = OnboardingStep.ROLE_SELECT) }
             }
         }
 
         fun onBottomBtnClick() {
-            when (uiState.value.currentStep) {
+            when (currentState.currentStep) {
                 OnboardingStep.ROLE_SELECT -> updateState { copy(currentStep = OnboardingStep.PROFILE) }
                 OnboardingStep.PROFILE -> saveProfile()
             }
@@ -76,7 +76,7 @@ class OnboardingViewModel
         }
 
         private fun saveProfile() {
-            val role = uiState.value.selectedRole ?: return
+            val role = currentState.selectedRole ?: return
             val nickname = nickNameFieldState.text.toString()
             if (!isValidNickname(nickname)) return
 
@@ -87,27 +87,12 @@ class OnboardingViewModel
                         Timber.e(throwable, "save onboarding profile error")
 
                         val message = when (throwable) {
-                            is ProfileError -> {
-                                when (throwable) {
-                                    is ProfileError.NicknameEmpty -> "닉네임은 필수로 입력해주세요."
-                                    is ProfileError.NicknameLength -> "닉네임은 1자 이상 12자 이하로 입력해주세요."
-                                    is ProfileError.NicknameSymbols -> "닉네임은 한글로만 입력해주세요."
-                                    is ProfileError.RoleEmpty -> "역할은 필수로 선택해주세요."
-                                    is ProfileError.Undefined -> throwable.message ?: "프로필 저장에 실패했어요."
-                                }
-                            }
-
-                            is ApiError.NetworkConnection -> {
-                                ErrorMessage.NETWORK_ERROR
-                            }
-
-                            is ApiError.ServerError -> {
-                                ErrorMessage.SERVER_ERROR
-                            }
-
-                            else -> {
-                                "프로필 저장에 실패했어요."
-                            }
+                            is ProfileError.NicknameEmpty -> "닉네임은 필수로 입력해주세요."
+                            is ProfileError.NicknameLength -> "닉네임은 1자 이상 12자 이하로 입력해주세요."
+                            is ProfileError.NicknameSymbols -> "닉네임은 한글로만 입력해주세요."
+                            is ProfileError.RoleEmpty -> "역할은 필수로 선택해주세요."
+                            is ApiError -> throwable.snackbarMsg()
+                            else -> "프로필 저장에 실패했어요."
                         }
                         sendEffect(OnboardingSideEffect.ShowSnackbar(message))
                     }

@@ -26,18 +26,21 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.swyp.firsttodo.core.common.component.HaebomLargeButton
+import com.swyp.firsttodo.core.common.component.HaebomMultiLineTextField
+import com.swyp.firsttodo.core.common.component.TaskCategoryList
+import com.swyp.firsttodo.core.common.component.TaskInputSection
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
-import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
-import com.swyp.firsttodo.presentation.common.component.HaebomMultiLineTextField
-import com.swyp.firsttodo.presentation.common.component.task.TaskCategoryList
-import com.swyp.firsttodo.presentation.common.component.task.TaskInputSection
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailHeader
 import com.swyp.firsttodo.presentation.habit.component.HabitDetailTopBar
 import com.swyp.firsttodo.presentation.habit.extension.displayName
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
+import kotlinx.collections.immutable.toImmutableList
+
+private val habitDurations = HabitDuration.entries.toImmutableList()
 
 @Composable
 fun HabitDetailRoute(
@@ -156,7 +159,7 @@ fun HabitDetailScreen(
                 description = "10일에 1번 실패시 경고 알림을 보냅니다.",
             ) {
                 TaskCategoryList(
-                    categories = HabitDuration.entries,
+                    categories = habitDurations,
                     selectedCategory = uiState.duration,
                     onCategoryClick = onDurationClick,
                     getDisplayName = { it.displayName },

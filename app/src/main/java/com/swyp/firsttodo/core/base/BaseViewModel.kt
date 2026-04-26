@@ -13,10 +13,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
-interface UiState
-
-interface UiEffect
-
 abstract class BaseViewModel<S : UiState, E : UiEffect>(
     initialState: S,
 ) : ViewModel() {
@@ -25,6 +21,9 @@ abstract class BaseViewModel<S : UiState, E : UiEffect>(
 
     private val _sideEffect = Channel<E>(Channel.BUFFERED)
     val sideEffect: Flow<E> = _sideEffect.receiveAsFlow()
+
+    val currentState: S
+        get() = _uiState.value
 
     private val lastEffectTime = ConcurrentHashMap<String, Long>()
 

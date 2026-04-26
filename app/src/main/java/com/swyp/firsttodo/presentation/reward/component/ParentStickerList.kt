@@ -23,10 +23,12 @@ import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.sticker.ChildStickerModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ParentStickerList(
-    stickers: Async<List<ChildStickerModel>>,
+    stickers: Async<ImmutableList<ChildStickerModel>>,
     modifier: Modifier = Modifier,
 ) {
     when (stickers) {
@@ -137,7 +139,7 @@ fun ParentStickerList(
     }
 }
 
-private val sampleStickers = listOf(
+private val sampleStickers = persistentListOf(
     ChildStickerModel(
         childId = 1L,
         nickname = "해봄이",
@@ -164,8 +166,8 @@ private val sampleStickers = listOf(
     ),
 )
 
-private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<List<ChildStickerModel>>> {
-    override val values: Sequence<Async<List<ChildStickerModel>>> = sequenceOf(
+private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<ImmutableList<ChildStickerModel>>> {
+    override val values: Sequence<Async<ImmutableList<ChildStickerModel>>> = sequenceOf(
         Async.Success(sampleStickers),
         Async.Empty,
         Async.Loading(),
@@ -175,7 +177,7 @@ private class ParentStickerListPreviewProvider : PreviewParameterProvider<Async<
 @Preview(showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 private fun ParentStickerListPreview(
-    @PreviewParameter(ParentStickerListPreviewProvider::class) stickers: Async<List<ChildStickerModel>>,
+    @PreviewParameter(ParentStickerListPreviewProvider::class) stickers: Async<ImmutableList<ChildStickerModel>>,
 ) {
     HaebomTheme {
         ParentStickerList(

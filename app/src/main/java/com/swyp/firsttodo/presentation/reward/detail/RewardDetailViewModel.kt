@@ -7,15 +7,17 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.RewardError
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.repository.RewardRepository
-import com.swyp.firsttodo.domain.throwable.RewardError
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.reward.navigation.RewardRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,6 +30,17 @@ class RewardDetailViewModel
     ) : BaseViewModel<RewardDetailUiState, RewardDetailSideEffect>(RewardDetailUiState()) {
         val rewardFieldState = TextFieldState()
 
+        val isBtnEnabled: StateFlow<Boolean> = combine(
+            snapshotFlow { rewardFieldState.text.toString() },
+            uiState,
+        ) { text, state ->
+            when (state.screenType) {
+                RewardDetailScreenType.ACCEPT -> text.isNotBlank()
+                RewardDetailScreenType.DELIVER -> true
+                null -> false
+            } && state.loadingState !is Async.Loading
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+
         init {
             val route = savedStateHandle.toRoute<RewardRoute.RewardDetail>()
             rewardFieldState.edit { append(route.reward) }
@@ -38,13 +51,8 @@ class RewardDetailViewModel
                     habit = route.habit,
                     duration = runCatching { HabitDuration.valueOf(route.duration) }.getOrNull(),
                     initialReward = route.reward,
-                    rewardText = route.reward,
                 )
             }
-
-            snapshotFlow { rewardFieldState.text.toString() }
-                .onEach { updateState { copy(rewardText = it) } }
-                .launchIn(viewModelScope)
         }
 
         fun onPopBackStack() {
@@ -52,9 +60,9 @@ class RewardDetailViewModel
         }
 
         fun onBtnClick() {
-            if (uiState.value.btnState is Async.Loading) return
+            if (currentState.loadingState is Async.Loading) return
 
-            when (uiState.value.screenType) {
+            when (currentState.screenType) {
                 RewardDetailScreenType.ACCEPT -> acceptReward()
                 RewardDetailScreenType.DELIVER -> deliverReward()
                 null -> Unit
@@ -62,17 +70,17 @@ class RewardDetailViewModel
         }
 
         private fun acceptReward() {
-            val habitId = uiState.value.habitId ?: return
-            val inputReward = uiState.value.rewardText
+            val habitId = currentState.habitId ?: return
+            val inputReward = rewardFieldState.text.toString()
 
-            updateState { copy(btnState = Async.Loading()) }
+            updateState { copy(loadingState = Async.Loading()) }
 
             viewModelScope.launch {
                 rewardRepository.startReward(habitId, inputReward)
                     .onSuccess {
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 수락이 완료되었습니다."))
                     }.onFailure {
-                        updateState { copy(btnState = Async.Init) }
+                        updateState { copy(loadingState = Async.Init) }
                         if (it is RewardError.RewardValueEmpty) {
                             sendEffect(RewardDetailSideEffect.ShowSnackbar("보상을 필수로 입력해주세요."))
                             return@launch
@@ -95,9 +103,9 @@ class RewardDetailViewModel
         }
 
         private fun deliverReward() {
-            val habitId = uiState.value.habitId ?: return
+            val habitId = currentState.habitId ?: return
 
-            updateState { copy(btnState = Async.Loading()) }
+            updateState { copy(loadingState = Async.Loading()) }
 
             viewModelScope.launch {
                 rewardRepository.completeReward(habitId)
@@ -105,7 +113,7 @@ class RewardDetailViewModel
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 전달이 완료되었습니다."))
                     }
                     .onFailure {
-                        updateState { copy(btnState = Async.Init) }
+                        updateState { copy(loadingState = Async.Init) }
                         if (it is ApiError) {
                             sendEffect(RewardDetailSideEffect.ShowSnackbar(it.snackbarMsg()))
                             return@launch

@@ -9,6 +9,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import com.swyp.firsttodo.presentation.auth.navigation.navigateToLogin
 import com.swyp.firsttodo.presentation.hamburger.navigation.navigateToFamily
 import com.swyp.firsttodo.presentation.hamburger.navigation.navigateToShare
 import com.swyp.firsttodo.presentation.main.bottombar.MainBottomBar
+import com.swyp.firsttodo.presentation.main.bottombar.MainTab
 import com.swyp.firsttodo.presentation.main.drawer.MainDrawer
 import com.swyp.firsttodo.presentation.main.navigation.MainNavHost
 import com.swyp.firsttodo.presentation.main.navigation.MainNavigator
@@ -39,6 +41,7 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
 ) {
     val showDrawer by viewModel.showDrawer.collectAsStateWithLifecycle()
+    val onTabClick: (MainTab) -> Unit = remember(navigator) { { navigator.navigate(it) } }
 
     HandleSideEffects(viewModel.sideEffect) { effect ->
         when (effect) {
@@ -58,7 +61,7 @@ fun MainScreen(
                     MainBottomBar(
                         visible = navigator.shouldShowBottomBar(),
                         currentTab = navigator.currentTab,
-                        onTabClick = { navigator.navigate(it) },
+                        onTabClick = onTabClick,
                     )
                 },
             ) { innerPadding ->

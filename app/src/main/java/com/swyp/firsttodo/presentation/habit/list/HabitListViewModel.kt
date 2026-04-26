@@ -4,14 +4,14 @@ import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
-import com.swyp.firsttodo.core.common.extension.getDataOrNull
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.HabitError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.domain.repository.HabitRepository
-import com.swyp.firsttodo.domain.throwable.HabitError
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,19 +35,16 @@ class HabitListViewModel
         }
 
         fun getHabits() {
-            updateState { copy(habits = Async.Loading((this.habits as? Async.Success)?.data)) }
-
             viewModelScope.launch {
                 habitRepository.getHabits()
                     .onSuccess {
-                        updateState { copy(habits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                        updateState {
+                            copy(
+                                habits = if (it.isEmpty()) Async.Empty else Async.Success(it.toImmutableList()),
+                            )
+                        }
                     }
                     .onFailure {
-                        val prevData = uiState.value.habits.getDataOrNull()
-                        if (prevData != null) {
-                            updateState { copy(habits = Async.Success(prevData)) }
-                        }
-
                         if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }
@@ -57,7 +54,11 @@ class HabitListViewModel
             viewModelScope.launch {
                 habitRepository.getFailedHabits()
                     .onSuccess {
-                        updateState { copy(failedHabits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                        updateState {
+                            copy(
+                                failedHabits = if (it.isEmpty()) Async.Empty else Async.Success(it.toImmutableList()),
+                            )
+                        }
                     }
                     .onFailure {
                         if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
@@ -110,18 +111,18 @@ class HabitListViewModel
         }
 
         fun onDeleteConfirm() {
-            val habitId = uiState.value.delRequestedId ?: return
+            val habitId = currentState.delRequestedId ?: return
 
             updateState { copy(deleteState = Async.Loading()) }
 
             viewModelScope.launch {
                 habitRepository.deleteHabit(habitId)
                     .onSuccess {
-                        val message = if (uiState.value.isFailedHabitDelete) "실패한 습관이 삭제되었습니다." else "습관이 삭제되었습니다."
+                        val message = if (currentState.isFailedHabitDelete) "실패한 습관이 삭제되었습니다." else "습관이 삭제되었습니다."
                         updateState {
                             copy(
                                 delRequestedId = null,
-                                deleteState = Async.Success(Unit),
+                                deleteState = Async.Init,
                                 isFailedHabitDelete = false,
                             )
                         }

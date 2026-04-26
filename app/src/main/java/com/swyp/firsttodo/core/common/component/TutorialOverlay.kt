@@ -1,6 +1,5 @@
-package com.swyp.firsttodo.presentation.common.component
+package com.swyp.firsttodo.core.common.component
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.WindowInsets
@@ -22,25 +21,11 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import com.swyp.firsttodo.R
+import com.swyp.firsttodo.core.common.type.TutorialType
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 
 internal const val TUTORIAL_SCROLL_AMOUNT_DP = 76
 internal const val TUTORIAL_MIN_SPACE_DP = 40
-
-enum class TutorialType(
-    @param:DrawableRes val tooltipIconRes: Int,
-    val tooltipEndMarginDp: Int,
-) {
-    RETRY(
-        tooltipIconRes = R.drawable.ic_retry_tooltip,
-        tooltipEndMarginDp = 16,
-    ),
-    SCHEDULE(
-        tooltipIconRes = R.drawable.ic_schedule_tooltip,
-        tooltipEndMarginDp = 28,
-    ),
-}
 
 @Composable
 fun TutorialOverlay(

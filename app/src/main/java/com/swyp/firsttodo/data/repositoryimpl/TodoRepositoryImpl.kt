@@ -6,11 +6,11 @@ import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.TodoDataSource
 import com.swyp.firsttodo.data.remote.dto.request.todo.TodoCreateRequestDto
 import com.swyp.firsttodo.data.remote.dto.request.todo.TodoEditRequestDto
+import com.swyp.firsttodo.domain.error.TodoError
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
 import com.swyp.firsttodo.domain.model.todo.TodoColor
 import com.swyp.firsttodo.domain.model.todo.TodoListModel
 import com.swyp.firsttodo.domain.repository.TodoRepository
-import com.swyp.firsttodo.domain.throwable.TodoError
 import javax.inject.Inject
 
 class TodoRepositoryImpl
@@ -26,23 +26,20 @@ class TodoRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 todoDataSource.postTodo(TodoCreateRequestDto(title, category, color.name))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.BadRequest) {
-                        when (throwable.code) {
-                            40009 -> TodoError.TitleEmpty(throwable.serverMsg)
-                            40011 -> TodoError.CategoryEmpty(throwable.serverMsg)
-                            40013 -> TodoError.ColorEmpty(throwable.serverMsg)
-                            40018 -> TodoError.CategoryInvalid(throwable.serverMsg)
-                            else -> throwable
+            }.map { }
+                .recoverCatching { e ->
+                    throw if (e is ApiError.BadRequest) {
+                        when (e.code) {
+                            40009 -> TodoError.TitleEmpty(e.serverMsg)
+                            40011 -> TodoError.CategoryEmpty(e.serverMsg)
+                            40013 -> TodoError.ColorEmpty(e.serverMsg)
+                            40018 -> TodoError.CategoryInvalid(e.serverMsg)
+                            else -> e
                         }
                     } else {
-                        throwable
+                        e
                     }
-                    Result.failure(error)
-                },
-            )
+                }
 
         override suspend fun editTodo(
             todoId: Long,
@@ -53,36 +50,22 @@ class TodoRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 todoDataSource.patchTodo(todoId, TodoEditRequestDto(title, category, color?.name, completed))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.NotFound) {
-                        TodoError.IdNotFound(
-                            throwable.serverMsg,
-                        )
-                    } else {
-                        throwable
-                    }
-                    Result.failure(error)
-                },
-            )
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError.NotFound -> TodoError.IdNotFound(e.serverMsg)
+                    else -> e
+                }
+            }
 
         override suspend fun deleteTodo(todoId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 todoDataSource.deleteTodo(todoId)
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.NotFound) {
-                        TodoError.IdNotFound(
-                            throwable.serverMsg,
-                        )
-                    } else {
-                        throwable
-                    }
-                    Result.failure(error)
-                },
-            )
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError.NotFound -> TodoError.IdNotFound(e.serverMsg)
+                    else -> e
+                }
+            }
 
         override suspend fun getTodos(): Result<TodoListModel> =
             apiResponseHandler.safeApiCall {

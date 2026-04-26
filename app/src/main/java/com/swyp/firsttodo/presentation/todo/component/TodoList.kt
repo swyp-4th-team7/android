@@ -32,13 +32,15 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.component.HaebomLabel
+import com.swyp.firsttodo.core.common.component.TaskItemPopup
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
-import com.swyp.firsttodo.presentation.common.component.HaebomLabel
-import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class TodayTodoUiModel(
     val todoId: Long,
@@ -50,7 +52,7 @@ data class TodayTodoUiModel(
 
 @Composable
 fun TodoList(
-    todos: Async<List<TodayTodoUiModel>>,
+    todos: Async<ImmutableList<TodayTodoUiModel>>,
     onPlusClick: () -> Unit,
     onCheckClick: (TodayTodoUiModel) -> Unit,
     onEditClick: (TodayTodoUiModel) -> Unit,
@@ -171,10 +173,10 @@ private fun TodoItem(
 
 private val previewCategory = TodoCategoryModel(name = "STUDY", label = "공부")
 
-private class TodoListPreviewProvider : PreviewParameterProvider<Async<List<TodayTodoUiModel>>> {
+private class TodoListPreviewProvider : PreviewParameterProvider<Async<ImmutableList<TodayTodoUiModel>>> {
     override val values = sequenceOf(
         Async.Success(
-            listOf(
+            persistentListOf(
                 TodayTodoUiModel(1L, "수학 숙제 풀기", completed = false, previewCategory, LabelColor.BLUE),
                 TodayTodoUiModel(
                     2L,
@@ -200,7 +202,7 @@ private class TodoListPreviewProvider : PreviewParameterProvider<Async<List<Toda
 @Preview(showBackground = true)
 @Composable
 private fun TodoListPreview(
-    @PreviewParameter(TodoListPreviewProvider::class) todos: Async<List<TodayTodoUiModel>>,
+    @PreviewParameter(TodoListPreviewProvider::class) todos: Async<ImmutableList<TodayTodoUiModel>>,
 ) {
     HaebomTheme {
         TodoList(

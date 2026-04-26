@@ -4,19 +4,19 @@ import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
-import com.swyp.firsttodo.core.common.extension.getDataOrNull
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.reward.RewardStatus
 import com.swyp.firsttodo.domain.repository.RewardRepository
 import com.swyp.firsttodo.domain.repository.StickerRepository
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.reward.component.ChildRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.ParentRewardUiModel
 import com.swyp.firsttodo.presentation.reward.component.RewardFilterType
 import com.swyp.firsttodo.presentation.reward.detail.RewardDetailScreenType
 import com.swyp.firsttodo.presentation.reward.extension.durationIconRes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +38,7 @@ class RewardListViewModel
         }
 
         private fun initStickerTab() {
-            when (uiState.value.role) {
+            when (currentState.role) {
                 Role.PARENT -> initParentStickerTab()
                 Role.CHILD -> initChildStickerTab()
                 null -> Unit
@@ -46,24 +46,23 @@ class RewardListViewModel
         }
 
         private fun initRewardTab() {
-            when (uiState.value.role) {
-                Role.PARENT -> loadParentRewardTab(uiState.value.selectedFilter)
-                Role.CHILD -> loadChildRewardTab(uiState.value.selectedFilter)
+            when (currentState.role) {
+                Role.PARENT -> loadParentRewardTab(currentState.selectedFilter)
+                Role.CHILD -> loadChildRewardTab(currentState.selectedFilter)
                 null -> Unit
             }
         }
 
         private fun initParentStickerTab() {
-            updateState { copy(parentStickers = Async.Loading(this.parentStickers.getDataOrNull())) }
             viewModelScope.launch {
                 stickerRepository.getChildrenStickerList()
                     .onSuccess {
-                        updateState { copy(parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                        updateState {
+                            copy(
+                                parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it.toImmutableList()),
+                            )
+                        }
                     }.onFailure { throwable ->
-                        uiState.value.parentStickers.getDataOrNull()?.let { prevData ->
-                            updateState { copy(parentStickers = Async.Success(prevData)) }
-                        } ?: updateState { copy(parentStickers = Async.Init) }
-
                         if (throwable is ApiError) {
                             sendEffect(RewardListSideEffect.ShowSnackbar(throwable.snackbarMsg()))
                         }
@@ -72,7 +71,6 @@ class RewardListViewModel
         }
 
         private fun initChildStickerTab() {
-            updateState { copy(childCompletedSticker = Async.Loading(this.childCompletedSticker.getDataOrNull())) }
             viewModelScope.launch {
                 stickerRepository.getStickerBoard()
                     .onSuccess {
@@ -91,10 +89,6 @@ class RewardListViewModel
                         }
                     }
                     .onFailure {
-                        uiState.value.childCompletedSticker.getDataOrNull()?.let { prevData ->
-                            updateState { copy(childCompletedSticker = Async.Success(prevData)) }
-                        } ?: updateState { copy(childCompletedSticker = Async.Init) }
-
                         if (it is ApiError) sendEffect(RewardListSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }
@@ -117,7 +111,13 @@ class RewardListViewModel
                         }
                         updateState {
                             copy(
-                                parentRewards = if (newData.isEmpty()) Async.Empty else Async.Success(newData),
+                                parentRewards = if (newData.isEmpty()) {
+                                    Async.Empty
+                                } else {
+                                    Async.Success(
+                                        newData.toImmutableList(),
+                                    )
+                                },
                             )
                         }
                     }
@@ -144,7 +144,13 @@ class RewardListViewModel
                         }
                         updateState {
                             copy(
-                                childRewards = if (newData.isEmpty()) Async.Empty else Async.Success(newData),
+                                childRewards = if (newData.isEmpty()) {
+                                    Async.Empty
+                                } else {
+                                    Async.Success(
+                                        newData.toImmutableList(),
+                                    )
+                                },
                             )
                         }
                     }
@@ -157,7 +163,7 @@ class RewardListViewModel
         }
 
         fun onTabClick(tab: RewardHeaderTabType) {
-            val currentTab = uiState.value.currentTab
+            val currentTab = currentState.currentTab
             updateState { copy(currentTab = tab) }
 
             if (currentTab != tab) {
@@ -169,7 +175,7 @@ class RewardListViewModel
         }
 
         fun onFilterTypeClick(filterType: RewardFilterType) {
-            when (uiState.value.role) {
+            when (currentState.role) {
                 Role.PARENT -> if (filterType is ParentRewardFilterType) {
                     updateState { copy(parentSelectedFilterType = filterType) }
                     loadParentRewardTab(filterType)
@@ -201,7 +207,7 @@ class RewardListViewModel
         }
 
         fun refresh() {
-            when (uiState.value.currentTab) {
+            when (currentState.currentTab) {
                 RewardHeaderTabType.STICKER -> initStickerTab()
                 RewardHeaderTabType.REWARD -> initRewardTab()
             }

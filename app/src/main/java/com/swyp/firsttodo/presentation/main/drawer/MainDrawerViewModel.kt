@@ -3,11 +3,11 @@ package com.swyp.firsttodo.presentation.main.drawer
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.repository.UserRepository
 import com.swyp.firsttodo.domain.usecase.user.DeleteAccountUseCase
 import com.swyp.firsttodo.domain.usecase.user.LogoutUseCase
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,7 +21,7 @@ class MainDrawerViewModel
         private val userRepository: UserRepository,
     ) : BaseViewModel<MainDrawerUiState, MainDrawerSideEffect>(MainDrawerUiState()) {
         fun getMyInfo() {
-            if (uiState.value.nickname is Async.Success) return
+            if (currentState.nickname is Async.Success) return
 
             viewModelScope.launch {
                 userRepository.getMyInfo()
@@ -50,7 +50,7 @@ class MainDrawerViewModel
         }
 
         fun onDialogConfirmBtnClick() {
-            when (uiState.value.dialogType) {
+            when (currentState.dialogType) {
                 DrawerDialogType.LOGOUT -> onLogoutConfirm()
                 DrawerDialogType.WITHDRAWAL -> onWithdrawalConfirm()
             }
@@ -67,7 +67,7 @@ class MainDrawerViewModel
         }
 
         private fun onLogoutConfirm() {
-            if (uiState.value.dialogLoadingState is Async.Loading) return
+            if (currentState.dialogLoadingState is Async.Loading) return
 
             updateState { copy(dialogLoadingState = Async.Loading()) }
 
@@ -96,7 +96,7 @@ class MainDrawerViewModel
         }
 
         private fun onWithdrawalConfirm() {
-            if (uiState.value.dialogLoadingState is Async.Loading) return
+            if (currentState.dialogLoadingState is Async.Loading) return
 
             updateState { copy(dialogLoadingState = Async.Loading()) }
 

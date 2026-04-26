@@ -3,10 +3,11 @@ package com.swyp.firsttodo.presentation.hamburger.family
 import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.repository.FamilyRepository
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,10 +25,13 @@ class FamilyViewModel
             viewModelScope.launch {
                 familyRepository.getFamilyDashboard()
                     .onSuccess {
-                        updateState { copy(familyInfos = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
+                        updateState {
+                            copy(
+                                familyInfos = if (it.isEmpty()) Async.Empty else Async.Success(it.toImmutableList()),
+                            )
+                        }
                     }
                     .onFailure {
-                        updateState { copy(familyInfos = Async.Init) }
                         if (it is ApiError) sendEffect(FamilySideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }

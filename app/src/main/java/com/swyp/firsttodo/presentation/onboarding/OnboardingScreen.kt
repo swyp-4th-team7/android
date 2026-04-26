@@ -19,13 +19,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.swyp.firsttodo.core.common.component.HaebomLargeButton
+import com.swyp.firsttodo.core.common.component.HaebomTopBar
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.common.util.screenHeightDp
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.Role
-import com.swyp.firsttodo.presentation.common.component.HaebomLargeButton
-import com.swyp.firsttodo.presentation.common.component.HaebomTopBar
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 import com.swyp.firsttodo.presentation.onboarding.component.ProfileView

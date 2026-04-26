@@ -38,6 +38,8 @@ import com.swyp.firsttodo.domain.model.reward.RewardStatus
 import com.swyp.firsttodo.presentation.reward.extension.backgroundColor
 import com.swyp.firsttodo.presentation.reward.extension.displayName
 import com.swyp.firsttodo.presentation.reward.extension.textColor
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 data class ChildRewardUiModel(
     val rewardId: Long,
@@ -49,7 +51,7 @@ data class ChildRewardUiModel(
 
 @Composable
 fun ChildRewardList(
-    rewards: Async<List<ChildRewardUiModel>>,
+    rewards: Async<ImmutableList<ChildRewardUiModel>>,
     onCreateHabitBtnClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -158,7 +160,7 @@ fun ChildRewardList(
     }
 }
 
-private val previewRewards = listOf(
+private val previewRewards = persistentListOf(
     ChildRewardUiModel(
         rewardId = 1L,
         title = "하루 10분 명상하기",
@@ -203,8 +205,8 @@ private val previewRewards = listOf(
     ),
 )
 
-private class ChildRewardListPreviewProvider : PreviewParameterProvider<Async<List<ChildRewardUiModel>>> {
-    override val values: Sequence<Async<List<ChildRewardUiModel>>> = sequenceOf(
+private class ChildRewardListPreviewProvider : PreviewParameterProvider<Async<ImmutableList<ChildRewardUiModel>>> {
+    override val values: Sequence<Async<ImmutableList<ChildRewardUiModel>>> = sequenceOf(
         Async.Success(previewRewards),
         Async.Empty,
         Async.Loading(),
@@ -214,7 +216,7 @@ private class ChildRewardListPreviewProvider : PreviewParameterProvider<Async<Li
 @Preview(showBackground = true, widthDp = 360)
 @Composable
 private fun ChildRewardListPreview(
-    @PreviewParameter(ChildRewardListPreviewProvider::class) rewards: Async<List<ChildRewardUiModel>>,
+    @PreviewParameter(ChildRewardListPreviewProvider::class) rewards: Async<ImmutableList<ChildRewardUiModel>>,
 ) {
     HaebomTheme {
         ChildRewardList(
