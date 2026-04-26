@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.swyp.firsttodo.BuildConfig
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.snackbarMsg
@@ -23,6 +25,7 @@ class LoginViewModel
     constructor(
         savedStateHandle: SavedStateHandle,
         private val socialLoginUseCase: SocialLoginUseCase,
+        private val analyticsManager: AnalyticsManager,
     ) :
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
         private val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
@@ -101,6 +104,13 @@ class LoginViewModel
                     socialType = type,
                     token = token,
                 ).onSuccess { isProfileComplete ->
+                    analyticsManager.track(
+                        AnalyticsEvent.Login(
+                            method = type.name,
+                            isProfileCompleted = isProfileComplete,
+                        ),
+                    )
+
                     updateState { copy(loginState = Async.Success(Unit)) }
 
                     when {
