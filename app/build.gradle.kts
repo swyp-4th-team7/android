@@ -128,6 +128,10 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
 
+    // --- Amplitude ---
+    implementation(libs.analytics)
+    implementation(libs.session.replay)
+
     // --- Testing ---
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
