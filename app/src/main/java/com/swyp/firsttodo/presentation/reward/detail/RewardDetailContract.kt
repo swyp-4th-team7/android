@@ -20,7 +20,7 @@ data class RewardDetailUiState(
     val habit: String = "",
     val duration: HabitDuration? = null,
     val initialReward: String = "",
-    val btnState: Async<Unit> = Async.Init,
+    val loadingState: Async<Unit> = Async.Init,
 ) : UiState {
     val title = when (screenType) {
         RewardDetailScreenType.ACCEPT -> "보상 확인하기"

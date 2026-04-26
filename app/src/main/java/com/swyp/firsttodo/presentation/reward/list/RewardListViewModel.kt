@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
-import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.Role
@@ -54,16 +53,11 @@ class RewardListViewModel
         }
 
         private fun initParentStickerTab() {
-            updateState { copy(parentStickers = Async.Loading(this.parentStickers.getDataOrNull())) }
             viewModelScope.launch {
                 stickerRepository.getChildrenStickerList()
                     .onSuccess {
                         updateState { copy(parentStickers = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
                     }.onFailure { throwable ->
-                        currentState.parentStickers.getDataOrNull()?.let { prevData ->
-                            updateState { copy(parentStickers = Async.Success(prevData)) }
-                        } ?: updateState { copy(parentStickers = Async.Init) }
-
                         if (throwable is ApiError) {
                             sendEffect(RewardListSideEffect.ShowSnackbar(throwable.snackbarMsg()))
                         }
@@ -72,7 +66,6 @@ class RewardListViewModel
         }
 
         private fun initChildStickerTab() {
-            updateState { copy(childCompletedSticker = Async.Loading(this.childCompletedSticker.getDataOrNull())) }
             viewModelScope.launch {
                 stickerRepository.getStickerBoard()
                     .onSuccess {
@@ -91,10 +84,6 @@ class RewardListViewModel
                         }
                     }
                     .onFailure {
-                        currentState.childCompletedSticker.getDataOrNull()?.let { prevData ->
-                            updateState { copy(childCompletedSticker = Async.Success(prevData)) }
-                        } ?: updateState { copy(childCompletedSticker = Async.Init) }
-
                         if (it is ApiError) sendEffect(RewardListSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }

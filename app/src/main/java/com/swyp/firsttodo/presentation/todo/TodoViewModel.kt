@@ -208,13 +208,6 @@ class TodoViewModel
                     }
                 }
                 .onFailure { throwable ->
-                    val prevData = currentState.todos.getDataOrNull()
-                    updateState {
-                        copy(
-                            todos = if (prevData == null) Async.Init else Async.Success(prevData),
-                        )
-                    }
-
                     if (throwable is ApiError) {
                         sendEffect(TodoSideEffect.ShowSnackbar(throwable.snackbarMsg()))
                     }
@@ -244,11 +237,6 @@ class TodoViewModel
                         }
                     }
                     .onFailure {
-                        val prevData = currentState.schedules.getDataOrNull()
-                        updateState {
-                            copy(schedules = if (prevData == null) Async.Init else Async.Success(prevData))
-                        }
-
                         if (it is ApiError) sendEffect(TodoSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }

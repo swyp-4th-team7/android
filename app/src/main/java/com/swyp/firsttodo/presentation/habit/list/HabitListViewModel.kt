@@ -4,7 +4,6 @@ import androidx.lifecycle.viewModelScope
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
-import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.error.HabitError
@@ -35,19 +34,12 @@ class HabitListViewModel
         }
 
         fun getHabits() {
-            updateState { copy(habits = Async.Loading((this.habits as? Async.Success)?.data)) }
-
             viewModelScope.launch {
                 habitRepository.getHabits()
                     .onSuccess {
                         updateState { copy(habits = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
                     }
                     .onFailure {
-                        val prevData = currentState.habits.getDataOrNull()
-                        if (prevData != null) {
-                            updateState { copy(habits = Async.Success(prevData)) }
-                        }
-
                         if (it is ApiError) sendEffect(HabitListSideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }

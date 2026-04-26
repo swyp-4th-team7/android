@@ -73,16 +73,18 @@ fun FamilyScreen(
         ) {
             FamilyHeader()
 
-            if (uiState.familyInfos is Async.Empty) {
-                FamilyDashBoardEmpty(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                )
-            } else {
-                uiState.familyData?.let { data ->
+            when {
+                uiState.familyInfos is Async.Empty -> {
+                    FamilyDashBoardEmpty(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    )
+                }
+
+                uiState.familyData != null -> {
                     FamilyDashBoard(
-                        familyInfos = data,
+                        familyInfos = uiState.familyData,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }

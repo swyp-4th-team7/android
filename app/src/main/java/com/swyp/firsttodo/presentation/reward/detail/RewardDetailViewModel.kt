@@ -38,7 +38,7 @@ class RewardDetailViewModel
                 RewardDetailScreenType.ACCEPT -> text.isNotBlank()
                 RewardDetailScreenType.DELIVER -> true
                 null -> false
-            } && state.btnState !is Async.Loading
+            } && state.loadingState !is Async.Loading
         }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
         init {
@@ -60,7 +60,7 @@ class RewardDetailViewModel
         }
 
         fun onBtnClick() {
-            if (currentState.btnState is Async.Loading) return
+            if (currentState.loadingState is Async.Loading) return
 
             when (currentState.screenType) {
                 RewardDetailScreenType.ACCEPT -> acceptReward()
@@ -73,14 +73,14 @@ class RewardDetailViewModel
             val habitId = currentState.habitId ?: return
             val inputReward = rewardFieldState.text.toString()
 
-            updateState { copy(btnState = Async.Loading()) }
+            updateState { copy(loadingState = Async.Loading()) }
 
             viewModelScope.launch {
                 rewardRepository.startReward(habitId, inputReward)
                     .onSuccess {
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 수락이 완료되었습니다."))
                     }.onFailure {
-                        updateState { copy(btnState = Async.Init) }
+                        updateState { copy(loadingState = Async.Init) }
                         if (it is RewardError.RewardValueEmpty) {
                             sendEffect(RewardDetailSideEffect.ShowSnackbar("보상을 필수로 입력해주세요."))
                             return@launch
@@ -105,7 +105,7 @@ class RewardDetailViewModel
         private fun deliverReward() {
             val habitId = currentState.habitId ?: return
 
-            updateState { copy(btnState = Async.Loading()) }
+            updateState { copy(loadingState = Async.Loading()) }
 
             viewModelScope.launch {
                 rewardRepository.completeReward(habitId)
@@ -113,7 +113,7 @@ class RewardDetailViewModel
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 전달이 완료되었습니다."))
                     }
                     .onFailure {
-                        updateState { copy(btnState = Async.Init) }
+                        updateState { copy(loadingState = Async.Init) }
                         if (it is ApiError) {
                             sendEffect(RewardDetailSideEffect.ShowSnackbar(it.snackbarMsg()))
                             return@launch

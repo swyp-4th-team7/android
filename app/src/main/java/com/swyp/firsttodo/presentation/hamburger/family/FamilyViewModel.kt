@@ -27,7 +27,6 @@ class FamilyViewModel
                         updateState { copy(familyInfos = if (it.isEmpty()) Async.Empty else Async.Success(it)) }
                     }
                     .onFailure {
-                        updateState { copy(familyInfos = Async.Init) }
                         if (it is ApiError) sendEffect(FamilySideEffect.ShowSnackbar(it.snackbarMsg()))
                     }
             }
