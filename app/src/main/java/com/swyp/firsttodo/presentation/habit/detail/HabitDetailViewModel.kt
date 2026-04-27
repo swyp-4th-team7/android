@@ -5,6 +5,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
@@ -34,6 +36,7 @@ class HabitDetailViewModel
         savedStateHandle: SavedStateHandle,
         sessionManager: SessionManager,
         private val habitRepository: HabitRepository,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<HabitDetailUiState, HabitDetailSideEffect>(HabitDetailUiState()) {
         private val role: Role = when (sessionManager.sessionState.value.userType) {
             Role.PARENT.request -> Role.PARENT
@@ -158,6 +161,11 @@ class HabitDetailViewModel
                     duration = inputDuration,
                     reward = inputReward,
                 ).onSuccess {
+                    analyticsManager.track(
+                        AnalyticsEvent.CreateHabit(
+                            duration = inputDuration.name,
+                        ),
+                    )
                     sendEffect(HabitDetailSideEffect.PopBackStack("습관이 추가되었습니다."))
                     updateState { copy(loadingState = Async.Success(Unit)) }
                 }.onFailure { throwable ->
@@ -198,6 +206,12 @@ class HabitDetailViewModel
                     isCompleted = completed,
                 )
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.EditHabit(
+                                habitId = habitId,
+                                duration = inputDuration.name,
+                            ),
+                        )
                         sendEffect(HabitDetailSideEffect.PopBackStack("습관이 수정되었습니다."))
                         updateState { copy(loadingState = Async.Success(Unit)) }
                     }
@@ -233,6 +247,12 @@ class HabitDetailViewModel
                     reward = inputReward,
                 )
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.RetryHabit(
+                                habitId = habitId,
+                                duration = inputDuration.name,
+                            ),
+                        )
                         sendEffect(HabitDetailSideEffect.PopBackStack("멋져요! 습관 재도전을 시작했습니다."))
                         updateState { copy(loadingState = Async.Success(Unit)) }
                     }

@@ -3,6 +3,8 @@ package com.swyp.firsttodo.presentation.onboarding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
@@ -25,6 +27,7 @@ class OnboardingViewModel
     @Inject
     constructor(
         private val saveOnboardingProfile: SaveOnboardingProfile,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<OnboardingUiState, OnboardingSideEffect>(OnboardingUiState()) {
         val nickNameFieldState = TextFieldState()
 
@@ -82,7 +85,14 @@ class OnboardingViewModel
 
             viewModelScope.launch {
                 saveOnboardingProfile(nickname, role)
-                    .onSuccess { sendThrottledEffect(OnboardingSideEffect.NavigateToTodo) }
+                    .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.CompleteProfile(
+                                role = role.name,
+                            ),
+                        )
+                        sendThrottledEffect(OnboardingSideEffect.NavigateToTodo)
+                    }
                     .onFailure { throwable ->
                         Timber.e(throwable, "save onboarding profile error")
 

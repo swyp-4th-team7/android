@@ -1,6 +1,8 @@
 package com.swyp.firsttodo.presentation.main.drawer
 
 import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.snackbarMsg
@@ -19,6 +21,7 @@ class MainDrawerViewModel
         private val logoutUseCase: LogoutUseCase,
         private val deleteAccountUseCase: DeleteAccountUseCase,
         private val userRepository: UserRepository,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<MainDrawerUiState, MainDrawerSideEffect>(MainDrawerUiState()) {
         fun getMyInfo() {
             if (currentState.nickname is Async.Success) return
@@ -74,6 +77,7 @@ class MainDrawerViewModel
             viewModelScope.launch {
                 logoutUseCase()
                     .onSuccess {
+                        analyticsManager.track(AnalyticsEvent.Logout)
                         updateState { copy(dialogLoadingState = Async.Success(Unit), nickname = Async.Init) }
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("로그아웃 되었습니다."))
@@ -103,6 +107,7 @@ class MainDrawerViewModel
             viewModelScope.launch {
                 deleteAccountUseCase()
                     .onSuccess {
+                        analyticsManager.track(AnalyticsEvent.Withdraw)
                         updateState { copy(dialogLoadingState = Async.Success(Unit), nickname = Async.Init) }
                         closeDialog()
                         sendEffect(MainDrawerSideEffect.ShowSnackbar("계정이 탈퇴되었습니다."))
