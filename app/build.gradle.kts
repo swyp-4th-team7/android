@@ -45,12 +45,15 @@ android {
         debug {
             buildConfigField("String", "BASE_URL", properties["base.url"].toString())
             buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties["google.web.client.id"]}\"")
+            buildConfigField("String", "AMPLITUDE_KEY", properties["amplitude.dev.key"].toString())
         }
 
         release {
             signingConfig = signingConfigs.getByName("release")
             buildConfigField("String", "BASE_URL", properties["base.url"].toString())
             buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties["google.web.client.id"]}\"")
+            buildConfigField("String", "AMPLITUDE_KEY", properties["amplitude.prod.key"].toString())
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -127,6 +130,10 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
+
+    // --- Amplitude ---
+    implementation(libs.analytics)
+    implementation(libs.session.replay)
 
     // --- Testing ---
     testImplementation(libs.junit)
