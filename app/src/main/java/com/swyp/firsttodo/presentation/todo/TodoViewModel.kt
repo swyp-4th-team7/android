@@ -262,7 +262,6 @@ class TodoViewModel
                     analyticsManager.track(
                         AnalyticsEvent.ToggleTodo(
                             todoId = todoUiModel.todoId,
-                            title = todoUiModel.title,
                             isChecked = targetState,
                         ),
                     )
@@ -535,7 +534,6 @@ class TodoViewModel
                 ).onSuccess {
                     analyticsManager.track(
                         AnalyticsEvent.CreateTodo(
-                            title = title,
                             category = category,
                         ),
                     )
@@ -586,7 +584,6 @@ class TodoViewModel
                     analyticsManager.track(
                         AnalyticsEvent.EditTodo(
                             todoId = todoId,
-                            title = title,
                             category = category,
                         ),
                     )
@@ -655,7 +652,6 @@ class TodoViewModel
                     .onSuccess {
                         analyticsManager.track(
                             AnalyticsEvent.CreateSchedule(
-                                title = title,
                                 date = date,
                                 category = category,
                             ),
@@ -708,7 +704,6 @@ class TodoViewModel
                         analyticsManager.track(
                             AnalyticsEvent.EditSchedule(
                                 scheduleId = scheduleId,
-                                title = title,
                                 date = date,
                                 category = category,
                             ),

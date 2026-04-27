@@ -89,7 +89,6 @@ class OnboardingViewModel
                         analyticsManager.track(
                             AnalyticsEvent.CompleteProfile(
                                 role = role.name,
-                                nickname = nickname,
                             ),
                         )
                         sendThrottledEffect(OnboardingSideEffect.NavigateToTodo)

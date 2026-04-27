@@ -84,9 +84,7 @@ class RewardDetailViewModel
                         analyticsManager.track(
                             AnalyticsEvent.AcceptReward(
                                 habitId = habitId,
-                                title = currentState.habit,
                                 duration = currentState.duration?.name ?: HabitDuration.SEVEN_DAYS.name,
-                                reward = inputReward,
                             ),
                         )
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 수락이 완료되었습니다."))
@@ -124,9 +122,7 @@ class RewardDetailViewModel
                         analyticsManager.track(
                             AnalyticsEvent.GiveReward(
                                 habitId = habitId,
-                                title = currentState.habit,
                                 duration = currentState.duration?.name ?: HabitDuration.SEVEN_DAYS.name,
-                                reward = rewardFieldState.text.toString(),
                             ),
                         )
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 전달이 완료되었습니다."))

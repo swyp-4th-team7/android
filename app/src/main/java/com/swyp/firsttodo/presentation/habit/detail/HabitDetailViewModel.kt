@@ -163,9 +163,7 @@ class HabitDetailViewModel
                 ).onSuccess {
                     analyticsManager.track(
                         AnalyticsEvent.CreateHabit(
-                            title = inputTitle,
                             duration = inputDuration.name,
-                            reward = inputReward,
                         ),
                     )
                     sendEffect(HabitDetailSideEffect.PopBackStack("습관이 추가되었습니다."))
@@ -211,9 +209,7 @@ class HabitDetailViewModel
                         analyticsManager.track(
                             AnalyticsEvent.EditHabit(
                                 habitId = habitId,
-                                title = inputTitle,
                                 duration = inputDuration.name,
-                                reward = inputReward,
                             ),
                         )
                         sendEffect(HabitDetailSideEffect.PopBackStack("습관이 수정되었습니다."))
@@ -254,9 +250,7 @@ class HabitDetailViewModel
                         analyticsManager.track(
                             AnalyticsEvent.RetryHabit(
                                 habitId = habitId,
-                                title = titleState.text.toString(),
                                 duration = inputDuration.name,
-                                reward = inputReward,
                             ),
                         )
                         sendEffect(HabitDetailSideEffect.PopBackStack("멋져요! 습관 재도전을 시작했습니다."))

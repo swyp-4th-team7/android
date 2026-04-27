@@ -19,13 +19,11 @@ sealed class AnalyticsEvent(
 
     data class CompleteProfile(
         val role: String,
-        val nickname: String,
     ) : AnalyticsEvent(
             name = "complete_profile",
             screenName = Screen.ONBOARDING,
             properties = mapOf(
                 "role" to role.lowercase(),
-                "nickname" to nickname,
             ),
         )
 
@@ -39,48 +37,34 @@ sealed class AnalyticsEvent(
         screenName = Screen.SIDE_MENU,
     )
 
-    data class ConnectFamily(
-        val code: String,
-    ) : AnalyticsEvent(
-            name = "connect_family",
-            screenName = Screen.SHARE,
-            properties = mapOf(
-                "code" to code,
-            ),
-        )
+    data object ConnectFamily : AnalyticsEvent(
+        name = "connect_family",
+        screenName = Screen.SHARE,
+    )
 
-    data class DisconnectFamily(
-        val nickname: String,
-    ) : AnalyticsEvent(
-            name = "disconnect_family",
-            screenName = Screen.SHARE,
-            properties = mapOf(
-                "nickname" to nickname,
-            ),
-        )
+    data object DisconnectFamily : AnalyticsEvent(
+        name = "disconnect_family",
+        screenName = Screen.SHARE,
+    )
 
     data class CreateTodo(
-        val title: String,
         val category: String,
     ) : AnalyticsEvent(
             name = "create_todo",
             screenName = Screen.TODO,
             properties = mapOf(
-                "title" to title,
                 "category" to category,
             ),
         )
 
     data class EditTodo(
         val todoId: Long,
-        val title: String,
         val category: String,
     ) : AnalyticsEvent(
             name = "edit_todo",
             screenName = Screen.TODO,
             properties = mapOf(
                 "todo_id" to todoId.toString(),
-                "title" to title,
                 "category" to category,
             ),
         )
@@ -97,27 +81,23 @@ sealed class AnalyticsEvent(
 
     data class ToggleTodo(
         val todoId: Long,
-        val title: String,
         val isChecked: Boolean,
     ) : AnalyticsEvent(
             name = "toggle_todo",
             screenName = Screen.TODO,
             properties = mapOf(
                 "todo_id" to todoId.toString(),
-                "title" to title,
                 "is_checked" to isChecked,
             ),
         )
 
     data class CreateSchedule(
-        val title: String,
         val date: String,
         val category: String,
     ) : AnalyticsEvent(
             name = "create_schedule",
             screenName = Screen.TODO,
             properties = mapOf(
-                "title" to title,
                 "date" to date,
                 "category" to category,
             ),
@@ -125,7 +105,6 @@ sealed class AnalyticsEvent(
 
     data class EditSchedule(
         val scheduleId: Long,
-        val title: String,
         val date: String,
         val category: String,
     ) : AnalyticsEvent(
@@ -133,7 +112,6 @@ sealed class AnalyticsEvent(
             screenName = Screen.TODO,
             properties = mapOf(
                 "schedule_id" to scheduleId.toString(),
-                "title" to title,
                 "date" to date,
                 "category" to category,
             ),
@@ -150,32 +128,24 @@ sealed class AnalyticsEvent(
         )
 
     data class CreateHabit(
-        val title: String,
         val duration: String,
-        val reward: String?,
     ) : AnalyticsEvent(
             name = "create_habit",
             screenName = Screen.HABIT_DETAIL,
             properties = mapOf(
-                "title" to title,
                 "duration" to duration.lowercase(),
-                "reward" to reward,
             ),
         )
 
     data class EditHabit(
         val habitId: Long,
-        val title: String,
         val duration: String,
-        val reward: String?,
     ) : AnalyticsEvent(
             name = "edit_habit",
             screenName = Screen.HABIT_DETAIL,
             properties = mapOf(
                 "habit_id" to habitId.toString(),
-                "title" to title,
                 "duration" to duration.lowercase(),
-                "reward" to reward,
             ),
         )
 
@@ -191,14 +161,12 @@ sealed class AnalyticsEvent(
 
     data class ToggleHabit(
         val habitId: Long,
-        val title: String,
         val isChecked: Boolean,
     ) : AnalyticsEvent(
             name = "toggle_habit",
             screenName = Screen.HABIT_LIST,
             properties = mapOf(
-                "habitId" to habitId.toString(),
-                "title" to title,
+                "habit_id" to habitId.toString(),
                 "is_checked" to isChecked,
             ),
         )
@@ -215,49 +183,37 @@ sealed class AnalyticsEvent(
 
     data class RetryHabit(
         val habitId: Long,
-        val title: String,
         val duration: String,
-        val reward: String?,
     ) : AnalyticsEvent(
             name = "retry_habit",
             screenName = Screen.HABIT_DETAIL,
             properties = mapOf(
                 "habit_id" to habitId.toString(),
-                "title" to title,
                 "duration" to duration.lowercase(),
-                "reward" to reward,
             ),
         )
 
     data class AcceptReward(
         val habitId: Long,
-        val title: String,
         val duration: String,
-        val reward: String?,
     ) : AnalyticsEvent(
             name = "accept_reward",
             screenName = Screen.REWARD_DETAIL,
             properties = mapOf(
                 "habit_id" to habitId.toString(),
-                "title" to title,
                 "duration" to duration.lowercase(),
-                "reward" to reward,
             ),
         )
 
     data class GiveReward(
         val habitId: Long,
-        val title: String,
         val duration: String,
-        val reward: String?,
     ) : AnalyticsEvent(
             name = "give_reward",
             screenName = Screen.REWARD_DETAIL,
             properties = mapOf(
                 "habit_id" to habitId.toString(),
-                "title" to title,
                 "duration" to duration.lowercase(),
-                "reward" to reward,
             ),
         )
 

@@ -74,7 +74,7 @@ class ShareViewModel
 
                 familyRepository.disconnectFamily(targetUserId)
                     .onSuccess {
-                        analyticsManager.track(AnalyticsEvent.DisconnectFamily(targetNickname))
+                        analyticsManager.track(AnalyticsEvent.DisconnectFamily)
                         closeDialog()
                         getFamiles()
                         sendEffect(ShareSideEffect.ShowSnackbar("가족 연결이 끊겼습니다."))
@@ -106,7 +106,7 @@ class ShareViewModel
             viewModelScope.launch {
                 familyRepository.connectFamily(code)
                     .onSuccess {
-                        analyticsManager.track(AnalyticsEvent.ConnectFamily(code))
+                        analyticsManager.track(AnalyticsEvent.ConnectFamily)
                         updateState { copy(codeErrorText = null) }
                         codeFieldState.clearText()
                         getFamiles()
