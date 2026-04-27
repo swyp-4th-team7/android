@@ -189,6 +189,20 @@ sealed class AnalyticsEvent(
             ),
         )
 
+    data class ToggleHabit(
+        val habitId: Long,
+        val title: String,
+        val isChecked: Boolean,
+    ) : AnalyticsEvent(
+            name = "toggle_habit",
+            screenName = Screen.HABIT_LIST,
+            properties = mapOf(
+                "habitId" to habitId.toString(),
+                "title" to title,
+                "is_checked" to isChecked,
+            ),
+        )
+
     data class DeleteFailedHabit(
         val habitId: Long,
     ) : AnalyticsEvent(

@@ -89,6 +89,13 @@ class HabitListViewModel
                     reward = habit.reward,
                     isCompleted = !habit.isCompleted,
                 ).onSuccess {
+                    analyticsManager.track(
+                        AnalyticsEvent.ToggleHabit(
+                            habitId = habit.habitId,
+                            title = habit.title,
+                            isChecked = !habit.isCompleted,
+                        ),
+                    )
                     getHabits()
                 }.onFailure {
                     if (it is HabitError.HabitNotFound) {
