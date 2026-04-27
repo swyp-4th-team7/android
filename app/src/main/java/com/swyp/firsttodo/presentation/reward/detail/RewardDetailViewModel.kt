@@ -5,6 +5,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.snackbarMsg
@@ -27,6 +29,7 @@ class RewardDetailViewModel
     constructor(
         savedStateHandle: SavedStateHandle,
         private val rewardRepository: RewardRepository,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<RewardDetailUiState, RewardDetailSideEffect>(RewardDetailUiState()) {
         val rewardFieldState = TextFieldState()
 
@@ -78,6 +81,14 @@ class RewardDetailViewModel
             viewModelScope.launch {
                 rewardRepository.startReward(habitId, inputReward)
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.AcceptReward(
+                                habitId = habitId,
+                                title = currentState.habit,
+                                duration = currentState.duration?.name ?: HabitDuration.SEVEN_DAYS.name,
+                                reward = inputReward,
+                            ),
+                        )
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 수락이 완료되었습니다."))
                     }.onFailure {
                         updateState { copy(loadingState = Async.Init) }
@@ -110,6 +121,14 @@ class RewardDetailViewModel
             viewModelScope.launch {
                 rewardRepository.completeReward(habitId)
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.GiveReward(
+                                habitId = habitId,
+                                title = currentState.habit,
+                                duration = currentState.duration?.name ?: HabitDuration.SEVEN_DAYS.name,
+                                reward = rewardFieldState.text.toString(),
+                            ),
+                        )
                         sendEffect(RewardDetailSideEffect.PopBackStack("보상 전달이 완료되었습니다."))
                     }
                     .onFailure {

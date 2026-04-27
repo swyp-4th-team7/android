@@ -3,6 +3,8 @@ package com.swyp.firsttodo.presentation.hamburger.share
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
 import com.swyp.firsttodo.core.common.extension.snackbarMsg
@@ -19,6 +21,7 @@ class ShareViewModel
     @Inject
     constructor(
         private val familyRepository: FamilyRepository,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<ShareUiState, ShareSideEffect>(ShareUiState()) {
         val codeFieldState = TextFieldState()
 
@@ -64,12 +67,14 @@ class ShareViewModel
 
         fun disconnectFamily() {
             val targetUserId = currentState.disconnectRequestMember?.userId ?: return
+            val targetNickname = currentState.disconnectRequestMember?.nickname ?: return
 
             viewModelScope.launch {
                 updateState { copy(disconnectState = Async.Loading()) }
 
                 familyRepository.disconnectFamily(targetUserId)
                     .onSuccess {
+                        analyticsManager.track(AnalyticsEvent.DisconnectFamily(targetNickname))
                         closeDialog()
                         getFamiles()
                         sendEffect(ShareSideEffect.ShowSnackbar("가족 연결이 끊겼습니다."))
@@ -101,6 +106,7 @@ class ShareViewModel
             viewModelScope.launch {
                 familyRepository.connectFamily(code)
                     .onSuccess {
+                        analyticsManager.track(AnalyticsEvent.ConnectFamily(code))
                         updateState { copy(codeErrorText = null) }
                         codeFieldState.clearText()
                         getFamiles()

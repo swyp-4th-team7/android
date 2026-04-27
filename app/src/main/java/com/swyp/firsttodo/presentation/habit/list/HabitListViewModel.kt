@@ -1,6 +1,8 @@
 package com.swyp.firsttodo.presentation.habit.list
 
 import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
@@ -21,6 +23,7 @@ class HabitListViewModel
     constructor(
         sessionManager: SessionManager,
         private val habitRepository: HabitRepository,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<HabitListUiState, HabitListSideEffect>(HabitListUiState()) {
         init {
             val role: Role = when (sessionManager.sessionState.value.userType) {
@@ -118,6 +121,12 @@ class HabitListViewModel
             viewModelScope.launch {
                 habitRepository.deleteHabit(habitId)
                     .onSuccess {
+                        if (currentState.isFailedHabitDelete) {
+                            analyticsManager.track(AnalyticsEvent.DeleteFailedHabit(habitId))
+                        } else {
+                            analyticsManager.track(AnalyticsEvent.DeleteHabit(habitId))
+                        }
+
                         val message = if (currentState.isFailedHabitDelete) "실패한 습관이 삭제되었습니다." else "습관이 삭제되었습니다."
                         updateState {
                             copy(

@@ -5,6 +5,8 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
@@ -50,6 +52,7 @@ class TodoViewModel
         private val todoRepository: TodoRepository,
         private val scheduleRepository: ScheduleRepository,
         private val stickerRepository: StickerRepository,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<TodoUiState, TodoSideEffect>(TodoUiState()) {
         val todoFieldState = TextFieldState()
         val scheduleTitleFieldState = TextFieldState()
@@ -250,11 +253,19 @@ class TodoViewModel
         }
 
         fun toggleCompleteTodo(todoUiModel: TodayTodoUiModel) {
+            val targetState = !todoUiModel.completed
             viewModelScope.launch {
                 todoRepository.editTodo(
                     todoId = todoUiModel.todoId,
-                    completed = !todoUiModel.completed,
+                    completed = targetState,
                 ).onSuccess {
+                    analyticsManager.track(
+                        AnalyticsEvent.ToggleTodo(
+                            todoId = todoUiModel.todoId,
+                            title = todoUiModel.title,
+                            isChecked = targetState,
+                        ),
+                    )
                     getTodos()
                     getWeeklyStickers()
                 }.onFailure { throwable ->
@@ -415,6 +426,7 @@ class TodoViewModel
             viewModelScope.launch {
                 todoRepository.deleteTodo(todoId)
                     .onSuccess {
+                        analyticsManager.track(AnalyticsEvent.DeleteTodo(todoId))
                         updateState { copy(delRequestedId = null, deleteState = Async.Init) }
                         sendEffect(TodoSideEffect.ShowSnackbar("할 일이 삭제되었습니다."))
                         getTodos()
@@ -456,6 +468,7 @@ class TodoViewModel
             viewModelScope.launch {
                 scheduleRepository.deleteSchedule(scheduleId)
                     .onSuccess {
+                        analyticsManager.track(AnalyticsEvent.DeleteSchedule(scheduleId))
                         updateState { copy(delRequestedId = null, deleteState = Async.Init) }
                         sendEffect(TodoSideEffect.ShowSnackbar("다가오는 일정이 삭제되었습니다."))
                         getSchedules()
@@ -520,6 +533,12 @@ class TodoViewModel
                     category = category,
                     color = color,
                 ).onSuccess {
+                    analyticsManager.track(
+                        AnalyticsEvent.CreateTodo(
+                            title = title,
+                            category = category,
+                        ),
+                    )
                     updateState {
                         copy(
                             todoBottomSheetState = Async.Success(Unit),
@@ -564,6 +583,13 @@ class TodoViewModel
                     category = category,
                     color = color,
                 ).onSuccess {
+                    analyticsManager.track(
+                        AnalyticsEvent.EditTodo(
+                            todoId = todoId,
+                            title = title,
+                            category = category,
+                        ),
+                    )
                     updateState {
                         copy(
                             todoBottomSheetState = Async.Success(Unit),
@@ -627,6 +653,13 @@ class TodoViewModel
                     scheduleDate = date,
                 )
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.CreateSchedule(
+                                title = title,
+                                date = date,
+                                category = category,
+                            ),
+                        )
                         updateState {
                             copy(
                                 scheduleBottomSheetState = Async.Success(Unit),
@@ -672,6 +705,14 @@ class TodoViewModel
                     scheduleDate = date,
                 )
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.EditSchedule(
+                                scheduleId = scheduleId,
+                                title = title,
+                                date = date,
+                                category = category,
+                            ),
+                        )
                         updateState {
                             copy(
                                 scheduleBottomSheetState = Async.Success(Unit),
