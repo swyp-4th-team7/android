@@ -60,14 +60,12 @@ sealed class AnalyticsEvent(
         )
 
     data class CreateTodo(
-        val todoId: Long,
         val title: String,
         val category: String,
     ) : AnalyticsEvent(
             name = "create_todo",
             screenName = Screen.TODO,
             properties = mapOf(
-                "todo_id" to todoId.toString(),
                 "title" to title,
                 "category" to category,
             ),
@@ -112,7 +110,6 @@ sealed class AnalyticsEvent(
         )
 
     data class CreateSchedule(
-        val scheduleId: Long,
         val title: String,
         val date: String,
         val category: String,
@@ -120,7 +117,6 @@ sealed class AnalyticsEvent(
             name = "create_schedule",
             screenName = Screen.TODO,
             properties = mapOf(
-                "schedule_id" to scheduleId.toString(),
                 "title" to title,
                 "date" to date,
                 "category" to category,
@@ -154,7 +150,6 @@ sealed class AnalyticsEvent(
         )
 
     data class CreateHabit(
-        val habitId: Long,
         val title: String,
         val duration: String,
         val reward: String?,
@@ -162,7 +157,6 @@ sealed class AnalyticsEvent(
             name = "create_habit",
             screenName = Screen.HABIT_DETAIL,
             properties = mapOf(
-                "habit_id" to habitId.toString(),
                 "title" to title,
                 "duration" to duration.lowercase(),
                 "reward" to reward,
@@ -189,6 +183,16 @@ sealed class AnalyticsEvent(
         val habitId: Long,
     ) : AnalyticsEvent(
             name = "delete_habit",
+            screenName = Screen.HABIT_LIST,
+            properties = mapOf(
+                "habit_id" to habitId.toString(),
+            ),
+        )
+
+    data class DeleteFailedHabit(
+        val habitId: Long,
+    ) : AnalyticsEvent(
+            name = "delete_failed_habit",
             screenName = Screen.HABIT_LIST,
             properties = mapOf(
                 "habit_id" to habitId.toString(),
