@@ -13,9 +13,10 @@ platform :android do
 
     gradle_file = "../app/build.gradle.kts"
     content = File.read(gradle_file)
-    new_content = content.gsub(/versionCode = (\d+)/) { "versionCode = #{$1.to_i + 1}" }
+    original_version_code = content.match(/versionCode = (\d+)/)[1].to_i
+    new_content = content.gsub(/versionCode = (\d+)/, "versionCode = #{original_version_code + 1}")
     File.open(gradle_file, "w") { |file| file.puts new_content }
-    UI.message("🚀 versionCode를 #{content.match(/versionCode = (\d+)/)[1].to_i + 1}로 올렸습니다!")
+    UI.message("🚀 versionCode를 #{original_version_code + 1}로 올렸습니다!")
 
     # 2. APK 빌드
     UI.message("📦 1. APK 빌드를 시작합니다...")
@@ -59,5 +60,16 @@ platform :android do
     Net::HTTP.post(uri, payload.to_json, "Content-Type" => "application/json")
 
     UI.success("🎉 QA 배포 및 디스코드 알림 전송이 완료되었습니다!")
+  end
+
+  error do |lane, exception|
+    gradle_file = "../app/build.gradle.kts"
+    content = File.read(gradle_file)
+    if content.match?(/versionCode = (\d+)/)
+      original_version_code = content.match(/versionCode = (\d+)/)[1].to_i - 1
+      restored_content = content.gsub(/versionCode = (\d+)/, "versionCode = #{original_version_code}")
+      File.open(gradle_file, "w") { |file| file.puts restored_content }
+      UI.error("❌ lane 실패로 versionCode를 #{original_version_code}으로 원복했습니다. (#{exception.message})")
+    end
   end
 end
