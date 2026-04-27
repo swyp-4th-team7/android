@@ -14,8 +14,19 @@ platform :android do
     }
   end
 
-  desc "QA 빌드 생성, Firebase 배포 및 디스코드 알림 전송"
-  lane :qa do
+  desc "QA 디버그 빌드 생성, Firebase 배포 및 디스코드 알림 전송"
+  lane :qa_debug do
+    deploy(build_type: "debug")
+  end
+
+  desc "QA 릴리즈 빌드 생성, Firebase 배포 및 디스코드 알림 전송"
+  lane :qa_release do
+    deploy(build_type: "release")
+  end
+
+  private_lane :deploy do |options|
+    build_type = options[:build_type]
+    is_release = build_type == "release"
 
     # 1. 릴리즈 노트 읽기 및 versionCode 자동 증가
     release_notes = File.read("release_notes.txt")
@@ -30,8 +41,8 @@ platform :android do
     version = get_version_info
 
     # 2. APK 빌드
-    UI.message("📦 1. APK 빌드를 시작합니다...")
-    gradle(task: "clean assembleRelease")
+    UI.message("📦 1. APK 빌드를 시작합니다... (#{build_type})")
+    gradle(task: "clean assemble#{build_type.capitalize}")
 
     # 3. Firebase App Distribution 등록
     UI.message("🔥 2. Firebase App Distribution에 업로드합니다...")
@@ -44,11 +55,11 @@ platform :android do
     # 4. Discord 알림 전송
     UI.message("💬 3. 디스코드로 알림을 전송합니다...")
 
-    webhook_url = ENV["DISCORD_WEBHOOK_URL"]
+    webhook_url = is_release ? ENV["DISCORD_RELEASE_WEBHOOK_URL"] : ENV["DISCORD_DEBUG_WEBHOOK_URL"]
     uri = URI(webhook_url)
-
-    # 디스코드에 보낼 메시지 포맷
     tags = ENV["DISCORD_USERS_TAG_ID"]
+    build_label = is_release ? "릴리즈" : "디버그"
+    embed_color = is_release ? 9739627 : 3447003
 
     payload = {
       content: "🚀 **Android QA 앱이 새로 배포되었습니다!** #{tags}",
@@ -56,8 +67,12 @@ platform :android do
         {
           title: "📱 Firebase App Distribution",
           description: "등록된 테스터 기기의 `App Tester` 앱 또는 메일함을 확인해 주세요.",
-          color: 9739627,
+          color: embed_color,
           fields: [
+            {
+              name: "🔧 빌드 타입",
+              value: build_label
+            },
             {
               name: "🏷️ 버전",
               value: "#{version[:version_name]} (#{version[:version_code]})"
@@ -71,10 +86,9 @@ platform :android do
       ]
     }
 
-    # HTTP 통신으로 디스코드에 쏘기
     Net::HTTP.post(uri, payload.to_json, "Content-Type" => "application/json")
 
-    UI.success("🎉 QA 배포 및 디스코드 알림 전송이 완료되었습니다!")
+    UI.success("🎉 QA #{build_label} 배포 및 디스코드 알림 전송이 완료되었습니다!")
   end
 
   error do |lane, exception|
