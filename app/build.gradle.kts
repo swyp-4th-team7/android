@@ -45,14 +45,14 @@ android {
         debug {
             buildConfigField("String", "BASE_URL", properties["base.url"].toString())
             buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties["google.web.client.id"]}\"")
-            buildConfigField("String", "AMPLITUDE_KEY", properties["amplitude.key"].toString())
+            buildConfigField("String", "AMPLITUDE_KEY", properties["amplitude.debug.key"].toString())
         }
 
         release {
             signingConfig = signingConfigs.getByName("release")
             buildConfigField("String", "BASE_URL", properties["base.url"].toString())
             buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties["google.web.client.id"]}\"")
-            buildConfigField("String", "AMPLITUDE_KEY", properties["amplitude.key"].toString())
+            buildConfigField("String", "AMPLITUDE_KEY", properties["amplitude.prod.key"].toString())
 
             isMinifyEnabled = false
             proguardFiles(
