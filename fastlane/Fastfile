@@ -36,6 +36,8 @@ platform :android do
     original_version_code = content.match(/versionCode = (\d+)/)[1].to_i
     new_content = content.gsub(/versionCode = (\d+)/, "versionCode = #{original_version_code + 1}")
     File.open(gradle_file, "w") { |file| file.puts new_content }
+    lane_context[:VERSION_CODE_BUMPED] = true
+    lane_context[:ORIGINAL_VERSION_CODE] = original_version_code
     UI.message("🚀 versionCode를 #{original_version_code + 1}로 올렸습니다!")
 
     version = get_version_info
@@ -92,13 +94,13 @@ platform :android do
   end
 
   error do |lane, exception|
+    next unless lane_context[:VERSION_CODE_BUMPED]
+
     gradle_file = "../app/build.gradle.kts"
     content = File.read(gradle_file)
-    if content.match?(/versionCode = (\d+)/)
-      original_version_code = content.match(/versionCode = (\d+)/)[1].to_i - 1
-      restored_content = content.gsub(/versionCode = (\d+)/, "versionCode = #{original_version_code}")
-      File.open(gradle_file, "w") { |file| file.puts restored_content }
-      UI.error("❌ lane 실패로 versionCode를 #{original_version_code}으로 원복했습니다. (#{exception.message})")
-    end
+    original = lane_context[:ORIGINAL_VERSION_CODE]
+    restored_content = content.gsub(/versionCode = \d+/, "versionCode = #{original}")
+    File.open(gradle_file, "w") { |file| file.puts restored_content }
+    UI.error("❌ lane 실패로 versionCode를 #{original}으로 원복했습니다. (#{exception.message})")
   end
 end
