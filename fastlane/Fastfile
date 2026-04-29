@@ -53,6 +53,7 @@ platform :android do
       groups: "swyp",
       release_notes: release_notes
     )
+    lane_context[:FIREBASE_UPLOADED] = true
 
     # 4. Discord 알림 전송
     UI.message("💬 3. 디스코드로 알림을 전송합니다...")
@@ -98,6 +99,7 @@ platform :android do
 
   error do |lane, exception|
     next unless lane_context[:VERSION_CODE_BUMPED]
+    next if lane_context[:FIREBASE_UPLOADED]
 
     gradle_file = "../app/build.gradle.kts"
     content = File.read(gradle_file)
