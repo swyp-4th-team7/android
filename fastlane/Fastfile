@@ -88,7 +88,10 @@ platform :android do
       ]
     }
 
-    Net::HTTP.post(uri, payload.to_json, "Content-Type" => "application/json")
+    response = Net::HTTP.post(uri, payload.to_json, "Content-Type" => "application/json")
+    unless response.is_a?(Net::HTTPSuccess)
+      UI.error("⚠️ 디스코드 알림 전송 실패 (HTTP #{response.code}): #{response.body}")
+    end
 
     UI.success("🎉 QA #{build_label} 배포 및 디스코드 알림 전송이 완료되었습니다!")
   end
