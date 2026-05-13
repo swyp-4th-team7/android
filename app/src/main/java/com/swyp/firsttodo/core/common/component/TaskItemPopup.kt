@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component.task
+package com.swyp.firsttodo.core.common.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
@@ -36,12 +36,8 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
+import com.swyp.firsttodo.core.common.type.TaskItemPopupType
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-
-enum class TaskItemPopupType(val text: String) {
-    EDIT(text = "수정하기"),
-    RETRY(text = "재도전하기"),
-}
 
 @Composable
 fun TaskItemPopup(
@@ -74,9 +70,7 @@ fun TaskItemPopup(
     }
 
     val popupProperties = remember {
-        PopupProperties(
-            focusable = true,
-        )
+        PopupProperties(focusable = true)
     }
 
     Popup(

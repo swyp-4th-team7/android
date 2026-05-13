@@ -8,17 +8,20 @@ import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitModel
 import com.swyp.firsttodo.presentation.habit.component.HabitListType
+import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 data class HabitListUiState(
     val role: Role? = null,
-    val habits: Async<List<HabitModel>> = Async.Init,
+    val habits: Async<ImmutableList<HabitModel>> = Async.Init,
     val delRequestedId: Long? = null,
     val deleteState: Async<Unit> = Async.Init,
-    val failedHabits: Async<List<HabitModel>> = Async.Init,
+    val failedHabits: Async<ImmutableList<HabitModel>> = Async.Init,
     val isFailedHabitDelete: Boolean = false,
 ) : UiState {
     val showDeleteDialog = delRequestedId != null
+
+    val isDialogLoading = deleteState is Async.Loading
 
     val habitsData = habits.getDataOrNull()
 

@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component
+package com.swyp.firsttodo.core.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -9,7 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.presentation.main.topbar.MAIN_TOP_BAR_HEIGHT
+
+const val MAIN_TOP_BAR_HEIGHT = 56
 
 @Composable
 fun TopBarArea(

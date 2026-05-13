@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component
+package com.swyp.firsttodo.core.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -80,9 +80,7 @@ private fun HaebomCardLayoutPreview() {
                 .fillMaxWidth()
                 .padding(all = 16.dp),
         ) {
-            Box(
-                modifier = Modifier.size(100.dp),
-            )
+            Box(modifier = Modifier.size(100.dp))
         }
     }
 }

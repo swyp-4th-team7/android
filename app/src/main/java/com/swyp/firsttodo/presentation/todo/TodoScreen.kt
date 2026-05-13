@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.component.HaebomDeleteDialog
+import com.swyp.firsttodo.core.common.component.TopBarArea
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.core.designsystem.theme.LabelColor
@@ -27,8 +29,6 @@ import com.swyp.firsttodo.domain.model.ScheduleCategory
 import com.swyp.firsttodo.domain.model.sticker.WeeklyStickerModel
 import com.swyp.firsttodo.domain.model.sticker.WeeklyStickersModel
 import com.swyp.firsttodo.domain.model.todo.TodoCategoryModel
-import com.swyp.firsttodo.presentation.common.component.HaebomDeleteDialog
-import com.swyp.firsttodo.presentation.common.component.TopBarArea
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
 import com.swyp.firsttodo.presentation.todo.component.ScheduleBottomSheet
@@ -39,6 +39,7 @@ import com.swyp.firsttodo.presentation.todo.component.TodoBanner
 import com.swyp.firsttodo.presentation.todo.component.TodoBottomSheet
 import com.swyp.firsttodo.presentation.todo.component.TodoList
 import com.swyp.firsttodo.presentation.todo.component.WeeklyCalendar
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun TodoRoute(
@@ -46,6 +47,8 @@ fun TodoRoute(
     viewModel: TodoViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isTodoEnabled by viewModel.isTodoEnabled.collectAsStateWithLifecycle()
+    val isScheduleEnabled by viewModel.isScheduleEnabled.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
     val activity = LocalContext.current as? Activity
 
@@ -66,14 +69,14 @@ fun TodoRoute(
             onConfirm = viewModel::onDeleteConfirm,
             onCancel = viewModel::onDeleteCancel,
             onDismiss = viewModel::onDeleteCancel,
-            loadingState = uiState.deleteState,
+            isLoading = uiState.isDialogLoading,
         )
     }
 
     if (uiState.showTodoBottomSheet) {
         TodoBottomSheet(
             sheetType = uiState.todoBottomSheetType,
-            btnEnabled = uiState.editingTodo.isBtnEnabled,
+            btnEnabled = isTodoEnabled,
             loadingStatus = uiState.todoBottomSheetState,
             categories = uiState.todoCategories,
             selectedCategory = uiState.editingTodo.category,
@@ -89,12 +92,12 @@ fun TodoRoute(
     if (uiState.showScheduleBottomSheet) {
         ScheduleBottomSheet(
             sheetType = uiState.scheduleBottomSheetType,
-            btnEnabled = uiState.editingSchedule.isBtnEnabled,
+            btnEnabled = isScheduleEnabled,
             loadingStatus = uiState.scheduleBottomSheetState,
             selectedCategory = uiState.editingSchedule.category,
             titleFieldState = viewModel.scheduleTitleFieldState,
             dateFieldState = viewModel.scheduleDateFieldState,
-            dateErrorText = uiState.editingSchedule.dateErrorText,
+            dateErrorText = viewModel.dateErrorText.value,
             onBtnClick = viewModel::onScheduleBottomBtnClick,
             onCategoryClick = viewModel::onScheduleCategoryClick,
             onDismiss = viewModel::closeScheduleBottomSheet,
@@ -201,7 +204,7 @@ private val previewWeeklyStickers = WeeklyStickersModel(
     ),
 )
 
-private val previewTodos = listOf(
+private val previewTodos = persistentListOf(
     TodayTodoUiModel(
         todoId = 1L,
         title = "수학 숙제 완료하기",
@@ -246,7 +249,7 @@ private val previewTodos = listOf(
     ),
 )
 
-private val previewSchedules = listOf(
+private val previewSchedules = persistentListOf(
     ScheduleUiModel(
         scheduleId = 1L,
         dDay = 3,

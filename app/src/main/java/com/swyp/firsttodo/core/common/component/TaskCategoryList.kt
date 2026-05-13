@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component.task
+package com.swyp.firsttodo.core.common.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.swyp.firsttodo.presentation.common.component.HaebomTag
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> TaskCategoryList(
-    categories: List<T>,
+    categories: ImmutableList<T>,
     selectedCategory: T?,
     onCategoryClick: (T) -> Unit,
     getDisplayName: (T) -> String,

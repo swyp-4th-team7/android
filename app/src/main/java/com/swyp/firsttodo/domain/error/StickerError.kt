@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.domain.throwable
+package com.swyp.firsttodo.domain.error
 
 sealed class StickerError(
     override val message: String?,

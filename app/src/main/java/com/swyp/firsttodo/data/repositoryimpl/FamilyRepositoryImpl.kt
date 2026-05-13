@@ -5,10 +5,10 @@ import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.FamilyDataSource
 import com.swyp.firsttodo.data.remote.dto.request.family.FamilyConnectRequestBody
+import com.swyp.firsttodo.domain.error.FamilyError
 import com.swyp.firsttodo.domain.model.family.ConnectedFamilyModel
 import com.swyp.firsttodo.domain.model.family.FamilyInfo
 import com.swyp.firsttodo.domain.repository.FamilyRepository
-import com.swyp.firsttodo.domain.throwable.FamilyError
 import javax.inject.Inject
 
 class FamilyRepositoryImpl
@@ -20,26 +20,19 @@ class FamilyRepositoryImpl
         override suspend fun connectFamily(inviteCode: String): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 familyDataSource.postFamilyConnect(FamilyConnectRequestBody(inviteCode))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = when (throwable) {
-                        is ApiError.BadRequest -> when (throwable.code) {
-                            40015 -> FamilyError.InviteCodeEmpty(throwable.serverMsg)
-                            40019 -> FamilyError.InviteCodeMySelf(throwable.serverMsg)
-                            else -> throwable
-                        }
-
-                        is ApiError.NotFound -> FamilyError.InviteCodeInvalid(throwable.serverMsg)
-
-                        is ApiError.Conflict -> FamilyError.InviteAlreadyDone(throwable.serverMsg)
-
-                        else -> throwable
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError -> when (e.code) {
+                        40015 -> FamilyError.InviteCodeEmpty(e.serverMsg)
+                        40019 -> FamilyError.InviteCodeMySelf(e.serverMsg)
+                        40404 -> FamilyError.InviteCodeInvalid(e.serverMsg)
+                        40903 -> FamilyError.InviteAlreadyDone(e.serverMsg)
+                        else -> e
                     }
 
-                    Result.failure(error)
-                },
-            )
+                    else -> e
+                }
+            }
 
         override suspend fun getConnectedFamily(): Result<List<ConnectedFamilyModel>> =
             apiResponseHandler.safeApiCall {
@@ -49,20 +42,12 @@ class FamilyRepositoryImpl
         override suspend fun disconnectFamily(targetUserId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 familyDataSource.deleteFamilyConnect(targetUserId)
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.BadRequest) {
-                        when (throwable.code) {
-                            40405 -> FamilyError.ConnectInvalid(throwable.serverMsg)
-                            else -> throwable
-                        }
-                    } else {
-                        throwable
-                    }
-                    Result.failure(error)
-                },
-            )
+            }.recoverCatching { e ->
+                throw when {
+                    e is ApiError.NotFound -> FamilyError.ConnectInvalid(e.serverMsg)
+                    else -> e
+                }
+            }
 
         override suspend fun getFamilyDashboard(): Result<List<FamilyInfo>> =
             apiResponseHandler.safeApiCall {
@@ -73,11 +58,10 @@ class FamilyRepositoryImpl
             apiResponseHandler.safeApiCall {
                 familyDataSource.getMyInviteCode()
             }.map { it.inviteCode }
-                .recoverCatching {
-                    throw if (it is ApiError && it.code == 40026) {
-                        FamilyError.OnboardingUncompleted(it.serverMsg)
-                    } else {
-                        it
+                .recoverCatching { e ->
+                    throw when {
+                        e is ApiError && e.code == 40026 -> FamilyError.OnboardingUncompleted(e.serverMsg)
+                        else -> e
                     }
                 }
     }

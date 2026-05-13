@@ -45,6 +45,8 @@ import com.swyp.firsttodo.core.common.extension.figmaDropShadow
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.presentation.reward.list.ChildRewardFilterType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 interface RewardFilterType {
     val displayName: String
@@ -53,7 +55,7 @@ interface RewardFilterType {
 
 @Composable
 fun <T : RewardFilterType> RewardFilter(
-    allFilters: List<T>,
+    allFilters: ImmutableList<T>,
     selectedFilterType: T,
     onFilterClick: (T) -> Unit,
     modifier: Modifier = Modifier,
@@ -108,7 +110,7 @@ fun <T : RewardFilterType> RewardFilter(
 
 @Composable
 private fun <T : RewardFilterType> FilterPopup(
-    allFilters: List<T>,
+    allFilters: ImmutableList<T>,
     selectedFilterType: T,
     onFilterClick: (T) -> Unit,
     onDismiss: () -> Unit,
@@ -157,7 +159,7 @@ private fun <T : RewardFilterType> FilterPopup(
 
 @Composable
 private fun <T : RewardFilterType> PopupContent(
-    allFilters: List<T>,
+    allFilters: ImmutableList<T>,
     selectedFilterType: T,
     onFilterClick: (T) -> Unit,
     modifier: Modifier = Modifier,
@@ -234,7 +236,7 @@ private fun RewardFilterPreview() {
             contentAlignment = Alignment.Center,
         ) {
             RewardFilter(
-                allFilters = ChildRewardFilterType.entries,
+                allFilters = ChildRewardFilterType.entries.toImmutableList(),
                 selectedFilterType = ChildRewardFilterType.IN_PROGRESS,
                 onFilterClick = {},
             )
@@ -247,7 +249,7 @@ private fun RewardFilterPreview() {
 private fun PopupContentPreview() {
     HaebomTheme {
         PopupContent(
-            allFilters = ChildRewardFilterType.entries,
+            allFilters = ChildRewardFilterType.entries.toImmutableList(),
             selectedFilterType = ChildRewardFilterType.COMPLETE,
             onFilterClick = {},
         )

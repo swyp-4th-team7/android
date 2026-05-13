@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component
+package com.swyp.firsttodo.core.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

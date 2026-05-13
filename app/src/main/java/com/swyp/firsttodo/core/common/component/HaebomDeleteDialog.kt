@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component
+package com.swyp.firsttodo.core.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,41 +23,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.extension.skeleton
+import com.swyp.firsttodo.core.common.type.DeleteDialogType
 import com.swyp.firsttodo.core.designsystem.component.HaebomBasicDialog
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-
-sealed class DeleteDialogType(
-    val title: String,
-    val description: String,
-) {
-    data object Todo : DeleteDialogType(
-        title = "선택한 할 일을 삭제할까요?",
-        description = "입력한 할 일이 사라져요!",
-    )
-
-    data object Schedule : DeleteDialogType(
-        title = "선택한 일정을 삭제할까요?",
-        description = "입력한 일정이 사라져요!",
-    )
-
-    data object Habit : DeleteDialogType(
-        title = "선택한 습관을 삭제할까요?",
-        description = "입력한 습관이 사라져요!",
-    )
-
-    data object FailedHabit : DeleteDialogType(
-        title = "실패한 습관을 삭제할까요?",
-        description = "실패한 습관이 사라져요!",
-    )
-
-    class Disconnect(nickname: String) : DeleteDialogType(
-        title = "${nickname}님과의 연결을 끊을까요?",
-        description = "연동이 끊기면 ${nickname}님의\n활동을 볼 수 없습니다.",
-    )
-}
 
 @Composable
 fun HaebomDeleteDialog(
@@ -66,21 +35,15 @@ fun HaebomDeleteDialog(
     onConfirm: () -> Unit,
     onCancel: () -> Unit,
     onDismiss: () -> Unit,
-    loadingState: Async<Unit>,
+    isLoading: Boolean,
     modifier: Modifier = Modifier,
     confirmBtnLabel: String = "네, 삭제할래요",
     cancelBtnLabel: String = "아니요",
 ) {
-    LaunchedEffect(loadingState) {
-        if (loadingState is Async.Success) onDismiss()
-    }
-
     HaebomBasicDialog(
         onDismiss = onDismiss,
         modifier = modifier.padding(horizontal = 20.dp),
     ) {
-        val isLoading = loadingState is Async.Loading
-
         DialogContent(
             dialogType = dialogType,
             onConfirm = onConfirm,
@@ -102,8 +65,7 @@ fun DialogContent(
     cancelBtnLabel: String,
 ) {
     Column(
-        modifier = Modifier
-            .padding(all = 24.dp),
+        modifier = Modifier.padding(all = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         if (isLoading) {

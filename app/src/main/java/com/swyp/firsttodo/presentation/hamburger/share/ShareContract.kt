@@ -16,6 +16,7 @@ data class ShareUiState(
 ) : UiState {
     val showDialog = disconnectRequestMember != null
     val dialogNickname = disconnectRequestMember?.nickname ?: ""
+    val isDialogLoading = disconnectState is Async.Loading
 }
 
 sealed interface ShareSideEffect : UiEffect {

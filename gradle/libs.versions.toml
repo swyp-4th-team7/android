@@ -48,6 +48,10 @@ googleid = "1.0.0"
 playServicesAuth = "21.4.0"
 credentials = "1.5.0-beta01"
 
+# -- Amplitude ---
+analytics = "1.+"
+sessionReplay = "0.20.14"
+
 # --- Testing ---
 junit = "4.13.2"
 junitVersion = "1.3.0"
@@ -103,6 +107,10 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 androidx-credentials = { group = "androidx.credentials", name = "credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { group = "androidx.credentials", name = "credentials-play-services-auth", version.ref = "credentials" }
+
+# -- Amplitude ---
+analytics = { group = "com.amplitude", name = "analytics-android", version.ref = "analytics" }
+session-replay = { group = "com.amplitude", name = "plugin-session-replay-android", version.ref = "sessionReplay" }
 
 # --- Testing ---
 junit = { group = "junit", name = "junit", version.ref = "junit" }

@@ -5,15 +5,17 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.auth.manager.SessionManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
 import com.swyp.firsttodo.core.network.model.ApiError
+import com.swyp.firsttodo.domain.error.HabitError
 import com.swyp.firsttodo.domain.model.Role
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.repository.HabitRepository
-import com.swyp.firsttodo.domain.throwable.HabitError
-import com.swyp.firsttodo.presentation.common.extension.snackbarMsg
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgs
 import com.swyp.firsttodo.presentation.habit.navigation.HabitNavArgsNavType
 import com.swyp.firsttodo.presentation.habit.navigation.HabitRoute
@@ -34,6 +36,7 @@ class HabitDetailViewModel
         savedStateHandle: SavedStateHandle,
         sessionManager: SessionManager,
         private val habitRepository: HabitRepository,
+        private val analyticsManager: AnalyticsManager,
     ) : BaseViewModel<HabitDetailUiState, HabitDetailSideEffect>(HabitDetailUiState()) {
         private val role: Role = when (sessionManager.sessionState.value.userType) {
             Role.PARENT.request -> Role.PARENT
@@ -106,7 +109,7 @@ class HabitDetailViewModel
             return reward.isNotBlank()
         }
 
-        private fun validateDuration(): Boolean = uiState.value.duration != null
+        private fun validateDuration(): Boolean = currentState.duration != null
 
         private fun validateAllField(): Boolean {
             return when (screenType) {
@@ -118,7 +121,7 @@ class HabitDetailViewModel
 
         private fun isChanged(): Boolean {
             val titleChanged = titleState.text.toString() != initialHabit?.title
-            val durationChanged = uiState.value.duration != initialHabit?.duration
+            val durationChanged = currentState.duration != initialHabit?.duration
             val rewardChanged = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString() != initialHabit?.reward
                 HabitDetailScreenType.PARENT -> false
@@ -128,7 +131,7 @@ class HabitDetailViewModel
         }
 
         fun onBtnClick() {
-            when (uiState.value.screenState) {
+            when (currentState.screenState) {
                 HabitDetailScreenState.IDLE -> Unit
 
                 HabitDetailScreenState.CREATE -> createHabit()
@@ -139,11 +142,11 @@ class HabitDetailViewModel
         }
 
         private fun createHabit() {
-            if (uiState.value.loadingState is Async.Loading) return
+            if (currentState.loadingState is Async.Loading) return
             if (!validateAllField()) return
 
             val inputTitle = titleState.text.toString()
-            val inputDuration = uiState.value.duration ?: return
+            val inputDuration = currentState.duration ?: return
             val inputReward = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString()
                 HabitDetailScreenType.PARENT -> null
@@ -158,6 +161,11 @@ class HabitDetailViewModel
                     duration = inputDuration,
                     reward = inputReward,
                 ).onSuccess {
+                    analyticsManager.track(
+                        AnalyticsEvent.CreateHabit(
+                            duration = inputDuration.name,
+                        ),
+                    )
                     sendEffect(HabitDetailSideEffect.PopBackStack("습관이 추가되었습니다."))
                     updateState { copy(loadingState = Async.Success(Unit)) }
                 }.onFailure { throwable ->
@@ -174,18 +182,18 @@ class HabitDetailViewModel
         }
 
         private fun editHabit() {
-            if (uiState.value.loadingState is Async.Loading) return
+            if (currentState.loadingState is Async.Loading) return
             if (!validateAllField()) return
 
-            val habitId = uiState.value.habitId ?: return
+            val habitId = currentState.habitId ?: return
             val inputTitle = titleState.text.toString()
-            val inputDuration = uiState.value.duration ?: return
+            val inputDuration = currentState.duration ?: return
             val inputReward = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString()
                 HabitDetailScreenType.PARENT -> null
                 HabitDetailScreenType.IDLE -> null
             }
-            val completed = uiState.value.isCompleted ?: return
+            val completed = currentState.isCompleted ?: return
 
             updateState { copy(loadingState = Async.Loading()) }
 
@@ -198,6 +206,12 @@ class HabitDetailViewModel
                     isCompleted = completed,
                 )
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.EditHabit(
+                                habitId = habitId,
+                                duration = inputDuration.name,
+                            ),
+                        )
                         sendEffect(HabitDetailSideEffect.PopBackStack("습관이 수정되었습니다."))
                         updateState { copy(loadingState = Async.Success(Unit)) }
                     }
@@ -215,9 +229,9 @@ class HabitDetailViewModel
         }
 
         private fun retryHabit() {
-            if (uiState.value.loadingState is Async.Loading) return
-            val habitId = uiState.value.habitId ?: return
-            val inputDuration = uiState.value.duration ?: return
+            if (currentState.loadingState is Async.Loading) return
+            val habitId = currentState.habitId ?: return
+            val inputDuration = currentState.duration ?: return
             val inputReward = when (screenType) {
                 HabitDetailScreenType.CHILD -> rewardState.text.toString()
                 HabitDetailScreenType.PARENT -> null
@@ -233,6 +247,12 @@ class HabitDetailViewModel
                     reward = inputReward,
                 )
                     .onSuccess {
+                        analyticsManager.track(
+                            AnalyticsEvent.RetryHabit(
+                                habitId = habitId,
+                                duration = inputDuration.name,
+                            ),
+                        )
                         sendEffect(HabitDetailSideEffect.PopBackStack("멋져요! 습관 재도전을 시작했습니다."))
                         updateState { copy(loadingState = Async.Success(Unit)) }
                     }

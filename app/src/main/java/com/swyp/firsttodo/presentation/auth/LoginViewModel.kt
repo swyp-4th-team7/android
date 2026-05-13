@@ -4,8 +4,12 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.swyp.firsttodo.BuildConfig
+import com.swyp.firsttodo.core.analytics.AnalyticsEvent
+import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.base.BaseViewModel
+import com.swyp.firsttodo.core.common.extension.snackbarMsg
+import com.swyp.firsttodo.core.network.model.ApiError
 import com.swyp.firsttodo.domain.model.SocialType
 import com.swyp.firsttodo.domain.usecase.auth.SocialLoginUseCase
 import com.swyp.firsttodo.presentation.auth.launcher.GoogleLoginResult
@@ -21,6 +25,7 @@ class LoginViewModel
     constructor(
         savedStateHandle: SavedStateHandle,
         private val socialLoginUseCase: SocialLoginUseCase,
+        private val analyticsManager: AnalyticsManager,
     ) :
     BaseViewModel<LoginUiState, LoginSideEffect>(LoginUiState()) {
         private val isSessionExpired = savedStateHandle.toRoute<AuthRoute.Login>().isSessionExpired
@@ -57,8 +62,8 @@ class LoginViewModel
         }
 
         fun onGoogleLoginClick() {
-            if (uiState.value.loginState is Async.Loading) return
-            if (uiState.value.token is Async.Loading) return
+            if (currentState.loginState is Async.Loading) return
+            if (currentState.token is Async.Loading) return
 
             updateState { copy(token = Async.Loading()) }
             sendEffect(LoginSideEffect.LaunchGoogleLogin)
@@ -90,7 +95,7 @@ class LoginViewModel
         }
 
         private fun socialLogin(type: SocialType) {
-            val token = (uiState.value.token as? Async.Success)?.data ?: return
+            val token = (currentState.token as? Async.Success)?.data ?: return
 
             updateState { copy(loginState = Async.Loading()) }
 
@@ -99,6 +104,13 @@ class LoginViewModel
                     socialType = type,
                     token = token,
                 ).onSuccess { isProfileComplete ->
+                    analyticsManager.track(
+                        AnalyticsEvent.Login(
+                            method = type.name,
+                            isProfileCompleted = isProfileComplete,
+                        ),
+                    )
+
                     updateState { copy(loginState = Async.Success(Unit)) }
 
                     when {
@@ -107,7 +119,7 @@ class LoginViewModel
                     }
                 }.onFailure {
                     updateState { copy(loginState = Async.Init) }
-                    sendEffect(LoginSideEffect.ShowSnackbar("로그인에 실패했어요. 다시 시도해주세요."))
+                    if (it is ApiError) sendEffect(LoginSideEffect.ShowSnackbar(it.snackbarMsg()))
                     Timber.e(it)
                 }
             }

@@ -1,4 +1,4 @@
-package com.swyp.firsttodo.presentation.common.component
+package com.swyp.firsttodo.core.common.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,22 +23,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.swyp.firsttodo.core.common.type.GrowthHeaderTabType
+import com.swyp.firsttodo.core.common.type.HaebomHeaderTabType
 import com.swyp.firsttodo.core.common.util.screenWidthDp
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
-import com.swyp.firsttodo.presentation.reward.list.RewardHeaderTabType
-
-interface HaebomHeaderTabType {
-    val index: Int
-    val label: String
-}
-
-enum class GrowthHeaderTabType(
-    override val index: Int,
-    override val label: String,
-) : HaebomHeaderTabType {
-    TODO(0, "할 일"),
-    REWARD(1, "보상"),
-}
 
 @Composable
 fun <T : HaebomHeaderTabType> HaebomHeaderTab(
@@ -99,12 +87,12 @@ fun <T : HaebomHeaderTabType> HaebomHeaderTab(
 @Preview(showBackground = true, widthDp = 360)
 @Composable
 private fun HaebomHeaderTabPreview() {
-    var currentTab by remember { mutableStateOf(RewardHeaderTabType.STICKER) }
+    var currentTab by remember { mutableStateOf(GrowthHeaderTabType.TODO) }
 
     HaebomTheme {
         HaebomHeaderTab(
             currentTab = currentTab,
-            tabs = RewardHeaderTabType.entries,
+            tabs = GrowthHeaderTabType.entries,
             onTabClick = { currentTab = it },
             modifier = Modifier
                 .fillMaxWidth()

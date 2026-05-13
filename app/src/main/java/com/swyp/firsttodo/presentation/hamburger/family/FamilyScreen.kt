@@ -14,17 +14,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.component.HaebomTopBar
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.family.FamilyHabit
 import com.swyp.firsttodo.domain.model.family.FamilyInfo
 import com.swyp.firsttodo.domain.model.family.FamilyTodo
-import com.swyp.firsttodo.presentation.common.component.HaebomTopBar
 import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyDashBoard
 import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyDashBoardEmpty
 import com.swyp.firsttodo.presentation.hamburger.family.component.FamilyHeader
 import com.swyp.firsttodo.presentation.main.snackbar.LocalSnackbarHostState
 import com.swyp.firsttodo.presentation.main.snackbar.showHaebomSnackbar
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun FamilyRoute(
@@ -73,16 +74,18 @@ fun FamilyScreen(
         ) {
             FamilyHeader()
 
-            if (uiState.familyInfos is Async.Empty) {
-                FamilyDashBoardEmpty(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                )
-            } else {
-                uiState.familyData?.let { data ->
+            when {
+                uiState.familyInfos is Async.Empty -> {
+                    FamilyDashBoardEmpty(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                    )
+                }
+
+                uiState.familyData != null -> {
                     FamilyDashBoard(
-                        familyInfos = data,
+                        familyInfos = uiState.familyData,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }
@@ -98,7 +101,7 @@ private fun FamilyScreenPreview() {
         FamilyScreen(
             uiState = FamilyUiState(
                 familyInfos = Async.Success(
-                    listOf(
+                    persistentListOf(
                         FamilyInfo(1L, "엄마는외계인", FamilyTodo(10, 3), FamilyHabit(completed = true)),
                         FamilyInfo(2L, "박영희영희영희영희영희", FamilyTodo(10, 10), FamilyHabit(completed = false)),
                         FamilyInfo(3L, "이민준", FamilyTodo(5, 0), FamilyHabit(completed = true)),

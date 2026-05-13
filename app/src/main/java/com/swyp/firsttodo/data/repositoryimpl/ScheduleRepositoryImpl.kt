@@ -5,11 +5,10 @@ import com.swyp.firsttodo.core.network.util.ApiResponseHandler
 import com.swyp.firsttodo.data.mapper.toModel
 import com.swyp.firsttodo.data.remote.datasource.ScheduleDataSource
 import com.swyp.firsttodo.data.remote.dto.request.schedule.ScheduleRequestDto
+import com.swyp.firsttodo.domain.error.ScheduleError
 import com.swyp.firsttodo.domain.model.ScheduleModel
 import com.swyp.firsttodo.domain.repository.ScheduleRepository
-import com.swyp.firsttodo.domain.throwable.ScheduleError
 import javax.inject.Inject
-import kotlin.map
 
 class ScheduleRepositoryImpl
     @Inject
@@ -24,23 +23,19 @@ class ScheduleRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 scheduleDataSource.createSchedule(ScheduleRequestDto(title, category, scheduleDate))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.BadRequest) {
-                        when (throwable.code) {
-                            40014 -> ScheduleError.TitleEmpty(throwable.serverMsg)
-                            40016 -> ScheduleError.CategoryEmpty(throwable.serverMsg)
-                            40017 -> ScheduleError.DateEmpty(throwable.serverMsg)
-                            else -> throwable
+            }.map { }
+                .recoverCatching { e ->
+                    throw when (e) {
+                        is ApiError -> when (e.code) {
+                            40014 -> ScheduleError.TitleEmpty(e.serverMsg)
+                            40016 -> ScheduleError.CategoryEmpty(e.serverMsg)
+                            40017 -> ScheduleError.DateEmpty(e.serverMsg)
+                            else -> e
                         }
-                    } else {
-                        throwable
-                    }
 
-                    Result.failure(error)
-                },
-            )
+                        else -> e
+                    }
+                }
 
         override suspend fun getSchedules(): Result<List<ScheduleModel>> =
             apiResponseHandler.safeApiCall {
@@ -55,32 +50,20 @@ class ScheduleRepositoryImpl
         ): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 scheduleDataSource.patchSchedule(scheduleId, ScheduleRequestDto(title, category, scheduleDate))
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.NotFound) {
-                        ScheduleError.ScheduleNotFound(throwable.serverMsg)
-                    } else {
-                        throwable
-                    }
-
-                    Result.failure(error)
-                },
-            )
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError.NotFound -> ScheduleError.ScheduleNotFound(e.serverMsg)
+                    else -> e
+                }
+            }
 
         override suspend fun deleteSchedule(scheduleId: Long): Result<Unit> =
             apiResponseHandler.safeApiCall {
                 scheduleDataSource.deleteSchedule(scheduleId)
-            }.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { throwable ->
-                    val error = if (throwable is ApiError.NotFound) {
-                        ScheduleError.ScheduleNotFound(throwable.serverMsg)
-                    } else {
-                        throwable
-                    }
-
-                    Result.failure(error)
-                },
-            )
+            }.recoverCatching { e ->
+                throw when (e) {
+                    is ApiError.NotFound -> ScheduleError.ScheduleNotFound(e.serverMsg)
+                    else -> e
+                }
+            }
     }

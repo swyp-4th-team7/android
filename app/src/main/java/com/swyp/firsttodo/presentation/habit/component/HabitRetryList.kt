@@ -42,22 +42,24 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.swyp.firsttodo.R
 import com.swyp.firsttodo.core.base.Async
+import com.swyp.firsttodo.core.common.component.TUTORIAL_MIN_SPACE_DP
+import com.swyp.firsttodo.core.common.component.TUTORIAL_SCROLL_AMOUNT_DP
+import com.swyp.firsttodo.core.common.component.TaskItemPopup
+import com.swyp.firsttodo.core.common.component.TutorialOverlay
 import com.swyp.firsttodo.core.common.extension.getDataOrNull
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
+import com.swyp.firsttodo.core.common.type.TaskItemPopupType
+import com.swyp.firsttodo.core.common.type.TutorialType
 import com.swyp.firsttodo.core.designsystem.theme.HaebomTheme
 import com.swyp.firsttodo.domain.model.habit.HabitDuration
 import com.swyp.firsttodo.domain.model.habit.HabitModel
-import com.swyp.firsttodo.presentation.common.component.TUTORIAL_MIN_SPACE_DP
-import com.swyp.firsttodo.presentation.common.component.TUTORIAL_SCROLL_AMOUNT_DP
-import com.swyp.firsttodo.presentation.common.component.TutorialOverlay
-import com.swyp.firsttodo.presentation.common.component.TutorialType
-import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopup
-import com.swyp.firsttodo.presentation.common.component.task.TaskItemPopupType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 @Composable
 fun HabitRetryList(
-    habits: Async<List<HabitModel>>,
+    habits: Async<ImmutableList<HabitModel>>,
     onRetry: (HabitModel) -> Unit,
     onDelete: (HabitModel) -> Unit,
     scrollState: ScrollState,
@@ -295,10 +297,10 @@ private fun RetryItem(
     }
 }
 
-private class HabitRetryListPreviewProvider : PreviewParameterProvider<Async<List<HabitModel>>> {
+private class HabitRetryListPreviewProvider : PreviewParameterProvider<Async<ImmutableList<HabitModel>>> {
     override val values = sequenceOf(
         Async.Success(
-            listOf(
+            persistentListOf(
                 HabitModel(
                     habitId = 1L,
                     title = "매일 물 2L 마시기 매일 물 2L 마시기 매일 물 2L 마시기 매일 물 2L 마시기 매일 물 2L 마시기",
@@ -323,7 +325,7 @@ private class HabitRetryListPreviewProvider : PreviewParameterProvider<Async<Lis
             ),
         ),
         Async.Success(
-            listOf(
+            persistentListOf(
                 HabitModel(
                     habitId = 4L,
                     title = "매일 물 2L 마시기",
@@ -347,7 +349,7 @@ private class HabitRetryListPreviewProvider : PreviewParameterProvider<Async<Lis
 @Preview
 @Composable
 private fun HabitRetryListPreview(
-    @PreviewParameter(HabitRetryListPreviewProvider::class) habits: Async<List<HabitModel>>,
+    @PreviewParameter(HabitRetryListPreviewProvider::class) habits: Async<ImmutableList<HabitModel>>,
 ) {
     val scrollState = androidx.compose.foundation.rememberScrollState()
     HaebomTheme {
