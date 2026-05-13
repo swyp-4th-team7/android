@@ -92,7 +92,6 @@ class HabitListViewModel
                     analyticsManager.track(
                         AnalyticsEvent.ToggleHabit(
                             habitId = habit.habitId,
-                            title = habit.title,
                             isChecked = !habit.isCompleted,
                         ),
                     )
