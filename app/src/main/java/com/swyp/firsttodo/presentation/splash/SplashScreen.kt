@@ -91,7 +91,8 @@ fun SplashScreen() {
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .height(if (isExpandedScreen()) 480.dp else 220.dp),
+                .offset(y = if (isExpandedScreen()) 156.dp else 36.dp)
+                .height(if (isExpandedScreen()) 480.dp else 240.dp),
             contentScale = ContentScale.FillHeight,
         )
 
@@ -100,8 +101,8 @@ fun SplashScreen() {
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .height(if (isExpandedScreen()) 320.dp else 240.dp)
-                .offset(y = (-64).dp),
+                .height(if (isExpandedScreen()) 288.dp else 240.dp)
+                .offset(y = if (isExpandedScreen()) 0.dp else (-24).dp),
             contentScale = ContentScale.FillHeight,
         )
     }
