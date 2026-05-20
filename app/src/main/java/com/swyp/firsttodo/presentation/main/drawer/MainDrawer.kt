@@ -24,9 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -166,12 +166,14 @@ private fun MainDrawerContent(
             drawerType = DrawerType.LOGOUT,
             currentType = uiState.currentDrawer,
             onClick = onLogoutClick,
+            defaultTextColor = HaebomTheme.colors.gray200,
         )
 
         DrawerTextButton(
             drawerType = DrawerType.WITHDRAWAL,
             currentType = uiState.currentDrawer,
             onClick = onWithdrawClick,
+            defaultTextColor = HaebomTheme.colors.gray200,
         )
     }
 }
@@ -210,15 +212,15 @@ private fun DrawerTextButton(
     currentType: DrawerType?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    defaultTextColor: Color = HaebomTheme.colors.black,
 ) {
     val colors = HaebomTheme.colors
 
-    val (backgroundColor, textColor) = remember(currentType, colors) {
+    val (backgroundColor, textColor) =
         when (drawerType == currentType) {
             true -> colors.gray50 to colors.black
-            false -> colors.white to colors.gray400
+            false -> colors.white to defaultTextColor
         }
-    }
 
     Text(
         text = drawerType.displayName,
