@@ -101,12 +101,16 @@ fun MainDrawer(
                         Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()),
                     )
                 } catch (_: ActivityNotFoundException) {
-                    context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            "https://play.google.com/store/apps/details?id=$packageName".toUri(),
-                        ),
-                    )
+                    try {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                "https://play.google.com/store/apps/details?id=$packageName".toUri(),
+                            ),
+                        )
+                    } catch (_: ActivityNotFoundException) {
+                        snackbarHost.showHaebomSnackbar("스토어를 열 수 없습니다.")
+                    }
                 }
             }
         }
