@@ -1,5 +1,7 @@
 package com.swyp.firsttodo.presentation.main.drawer
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -28,11 +30,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.swyp.firsttodo.BuildConfig
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
@@ -54,6 +59,8 @@ fun MainDrawer(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
+    val context = LocalContext.current
+    val packageName = BuildConfig.APPLICATION_ID
 
     LaunchedEffect(visible) {
         if (visible) viewModel.getMyInfo()
@@ -72,6 +79,21 @@ fun MainDrawer(
             MainDrawerSideEffect.NavigateToShare -> {
                 onDismiss()
                 onNavigateToShare()
+            }
+
+            MainDrawerSideEffect.OpenPlayStore -> {
+                try {
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()),
+                    )
+                } catch (_: ActivityNotFoundException) {
+                    context.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            "https://play.google.com/store/apps/details?id=$packageName".toUri(),
+                        ),
+                    )
+                }
             }
         }
     }
@@ -101,6 +123,7 @@ fun MainDrawer(
                 uiState = uiState,
                 onFamilyClick = viewModel::onFamilyClick,
                 onShareClick = viewModel::onShareClick,
+                onReviewClick = viewModel::onReviewClick,
                 onLogoutClick = viewModel::onLogoutClick,
                 onWithdrawClick = viewModel::onWithdrawalClick,
             )
@@ -123,6 +146,7 @@ private fun MainDrawerContent(
     uiState: MainDrawerUiState,
     onFamilyClick: () -> Unit,
     onShareClick: () -> Unit,
+    onReviewClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onWithdrawClick: () -> Unit,
 ) {
@@ -160,6 +184,12 @@ private fun MainDrawerContent(
             drawerType = DrawerType.SHARE,
             currentType = uiState.currentDrawer,
             onClick = onShareClick,
+        )
+
+        DrawerTextButton(
+            drawerType = DrawerType.REVIEW,
+            currentType = uiState.currentDrawer,
+            onClick = onReviewClick,
         )
 
         DrawerTextButton(
@@ -247,6 +277,7 @@ private fun MainDrawerContentPreview() {
             ),
             onFamilyClick = {},
             onShareClick = {},
+            onReviewClick = {},
             onLogoutClick = {},
             onWithdrawClick = {},
         )

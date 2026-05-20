@@ -48,6 +48,10 @@ class MainDrawerViewModel
             sendThrottledEffect(MainDrawerSideEffect.NavigateToShare)
         }
 
+        fun onReviewClick() {
+            sendThrottledEffect(MainDrawerSideEffect.OpenPlayStore)
+        }
+
         fun closeDialog() {
             updateState { copy(showDialog = false, currentDrawer = null, dialogLoadingState = Async.Init) }
         }

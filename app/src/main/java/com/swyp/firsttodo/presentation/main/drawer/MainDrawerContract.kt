@@ -10,6 +10,7 @@ enum class DrawerType(
 ) {
     FAMILY("가족보기"),
     SHARE("연결관리"),
+    REVIEW("앱 리뷰 남기기"),
     LOGOUT("로그아웃"),
     WITHDRAWAL("계정탈퇴"),
 }
@@ -31,6 +32,8 @@ sealed interface MainDrawerSideEffect : UiEffect {
     data object NavigateToFamily : MainDrawerSideEffect
 
     data object NavigateToShare : MainDrawerSideEffect
+
+    data object OpenPlayStore : MainDrawerSideEffect
 
     data class ShowSnackbar(val message: String) : MainDrawerSideEffect
 }
