@@ -1,5 +1,7 @@
 package com.swyp.firsttodo.presentation.main.drawer
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -24,15 +26,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.swyp.firsttodo.BuildConfig
 import com.swyp.firsttodo.core.base.Async
 import com.swyp.firsttodo.core.common.extension.noRippleClickable
 import com.swyp.firsttodo.core.common.util.HandleSideEffects
@@ -54,6 +59,8 @@ fun MainDrawer(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHost = LocalSnackbarHostState.current
+    val context = LocalContext.current
+    val packageName = BuildConfig.APPLICATION_ID
 
     LaunchedEffect(visible) {
         if (visible) viewModel.getMyInfo()
@@ -72,6 +79,39 @@ fun MainDrawer(
             MainDrawerSideEffect.NavigateToShare -> {
                 onDismiss()
                 onNavigateToShare()
+            }
+
+            is MainDrawerSideEffect.OpenMail -> {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = "mailto:".toUri()
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf("haebom20267@gmail.com"))
+                    putExtra(Intent.EXTRA_SUBJECT, effect.subject)
+                    putExtra(Intent.EXTRA_TEXT, effect.body)
+                }
+                try {
+                    context.startActivity(intent)
+                } catch (_: ActivityNotFoundException) {
+                    snackbarHost.showHaebomSnackbar("메일 앱을 찾을 수 없습니다.")
+                }
+            }
+
+            MainDrawerSideEffect.OpenPlayStore -> {
+                try {
+                    context.startActivity(
+                        Intent(Intent.ACTION_VIEW, "market://details?id=$packageName".toUri()),
+                    )
+                } catch (_: ActivityNotFoundException) {
+                    try {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                "https://play.google.com/store/apps/details?id=$packageName".toUri(),
+                            ),
+                        )
+                    } catch (_: ActivityNotFoundException) {
+                        snackbarHost.showHaebomSnackbar("스토어를 열 수 없습니다.")
+                    }
+                }
             }
         }
     }
@@ -101,6 +141,8 @@ fun MainDrawer(
                 uiState = uiState,
                 onFamilyClick = viewModel::onFamilyClick,
                 onShareClick = viewModel::onShareClick,
+                onContactClick = viewModel::onContactClick,
+                onReviewClick = viewModel::onReviewClick,
                 onLogoutClick = viewModel::onLogoutClick,
                 onWithdrawClick = viewModel::onWithdrawalClick,
             )
@@ -123,6 +165,8 @@ private fun MainDrawerContent(
     uiState: MainDrawerUiState,
     onFamilyClick: () -> Unit,
     onShareClick: () -> Unit,
+    onContactClick: () -> Unit,
+    onReviewClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onWithdrawClick: () -> Unit,
 ) {
@@ -163,15 +207,29 @@ private fun MainDrawerContent(
         )
 
         DrawerTextButton(
+            drawerType = DrawerType.CONTACT,
+            currentType = uiState.currentDrawer,
+            onClick = onContactClick,
+        )
+
+        DrawerTextButton(
+            drawerType = DrawerType.REVIEW,
+            currentType = uiState.currentDrawer,
+            onClick = onReviewClick,
+        )
+
+        DrawerTextButton(
             drawerType = DrawerType.LOGOUT,
             currentType = uiState.currentDrawer,
             onClick = onLogoutClick,
+            defaultTextColor = HaebomTheme.colors.gray200,
         )
 
         DrawerTextButton(
             drawerType = DrawerType.WITHDRAWAL,
             currentType = uiState.currentDrawer,
             onClick = onWithdrawClick,
+            defaultTextColor = HaebomTheme.colors.gray200,
         )
     }
 }
@@ -210,15 +268,15 @@ private fun DrawerTextButton(
     currentType: DrawerType?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    defaultTextColor: Color = HaebomTheme.colors.black,
 ) {
     val colors = HaebomTheme.colors
 
-    val (backgroundColor, textColor) = remember(currentType, colors) {
+    val (backgroundColor, textColor) =
         when (drawerType == currentType) {
             true -> colors.gray50 to colors.black
-            false -> colors.white to colors.gray400
+            false -> colors.white to defaultTextColor
         }
-    }
 
     Text(
         text = drawerType.displayName,
@@ -245,6 +303,8 @@ private fun MainDrawerContentPreview() {
             ),
             onFamilyClick = {},
             onShareClick = {},
+            onContactClick = {},
+            onReviewClick = {},
             onLogoutClick = {},
             onWithdrawClick = {},
         )
