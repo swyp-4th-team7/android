@@ -81,6 +81,20 @@ fun MainDrawer(
                 onNavigateToShare()
             }
 
+            is MainDrawerSideEffect.OpenMail -> {
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = "mailto:".toUri()
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf("haebom20267@gmail.com"))
+                    putExtra(Intent.EXTRA_SUBJECT, effect.subject)
+                    putExtra(Intent.EXTRA_TEXT, effect.body)
+                }
+                try {
+                    context.startActivity(intent)
+                } catch (_: ActivityNotFoundException) {
+                    snackbarHost.showHaebomSnackbar("메일 앱을 찾을 수 없습니다.")
+                }
+            }
+
             MainDrawerSideEffect.OpenPlayStore -> {
                 try {
                     context.startActivity(
@@ -123,6 +137,7 @@ fun MainDrawer(
                 uiState = uiState,
                 onFamilyClick = viewModel::onFamilyClick,
                 onShareClick = viewModel::onShareClick,
+                onContactClick = viewModel::onContactClick,
                 onReviewClick = viewModel::onReviewClick,
                 onLogoutClick = viewModel::onLogoutClick,
                 onWithdrawClick = viewModel::onWithdrawalClick,
@@ -146,6 +161,7 @@ private fun MainDrawerContent(
     uiState: MainDrawerUiState,
     onFamilyClick: () -> Unit,
     onShareClick: () -> Unit,
+    onContactClick: () -> Unit,
     onReviewClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onWithdrawClick: () -> Unit,
@@ -184,6 +200,12 @@ private fun MainDrawerContent(
             drawerType = DrawerType.SHARE,
             currentType = uiState.currentDrawer,
             onClick = onShareClick,
+        )
+
+        DrawerTextButton(
+            drawerType = DrawerType.CONTACT,
+            currentType = uiState.currentDrawer,
+            onClick = onContactClick,
         )
 
         DrawerTextButton(
@@ -277,6 +299,7 @@ private fun MainDrawerContentPreview() {
             ),
             onFamilyClick = {},
             onShareClick = {},
+            onContactClick = {},
             onReviewClick = {},
             onLogoutClick = {},
             onWithdrawClick = {},

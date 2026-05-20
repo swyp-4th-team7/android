@@ -10,6 +10,7 @@ enum class DrawerType(
 ) {
     FAMILY("가족보기"),
     SHARE("연결관리"),
+    CONTACT("문의하기"),
     REVIEW("앱 리뷰 남기기"),
     LOGOUT("로그아웃"),
     WITHDRAWAL("계정탈퇴"),
@@ -19,6 +20,7 @@ enum class DrawerType(
 data class MainDrawerUiState(
     val currentDrawer: DrawerType? = null,
     val nickname: Async<String> = Async.Init,
+    val userType: Async<String> = Async.Init,
     val showDialog: Boolean = false,
     val dialogType: DrawerDialogType = DrawerDialogType.LOGOUT,
     val dialogLoadingState: Async<Unit> = Async.Init,
@@ -32,6 +34,8 @@ sealed interface MainDrawerSideEffect : UiEffect {
     data object NavigateToFamily : MainDrawerSideEffect
 
     data object NavigateToShare : MainDrawerSideEffect
+
+    data class OpenMail(val subject: String, val body: String) : MainDrawerSideEffect
 
     data object OpenPlayStore : MainDrawerSideEffect
 

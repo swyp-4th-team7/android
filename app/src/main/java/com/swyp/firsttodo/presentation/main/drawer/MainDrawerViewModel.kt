@@ -1,6 +1,8 @@
 package com.swyp.firsttodo.presentation.main.drawer
 
+import android.os.Build
 import androidx.lifecycle.viewModelScope
+import com.swyp.firsttodo.BuildConfig
 import com.swyp.firsttodo.core.analytics.AnalyticsEvent
 import com.swyp.firsttodo.core.analytics.AnalyticsManager
 import com.swyp.firsttodo.core.base.Async
@@ -29,8 +31,11 @@ class MainDrawerViewModel
             viewModelScope.launch {
                 userRepository.getMyInfo()
                     .onSuccess { info ->
-                        if (info.nickname != null) {
-                            updateState { copy(nickname = Async.Success(info.nickname)) }
+                        updateState {
+                            copy(
+                                nickname = if (info.nickname != null) Async.Success(info.nickname) else nickname,
+                                userType = if (info.userType != null) Async.Success(info.userType) else userType,
+                            )
                         }
                     }
             }
@@ -46,6 +51,37 @@ class MainDrawerViewModel
 
         fun onShareClick() {
             sendThrottledEffect(MainDrawerSideEffect.NavigateToShare)
+        }
+
+        fun onContactClick() {
+            val nickname = (currentState.nickname as? Async.Success)?.data ?: ""
+            val accountType = when ((currentState.userType as? Async.Success)?.data) {
+                "PARENT" -> "부모"
+                "CHILD" -> "자녀"
+                else -> ""
+            }
+            val subject = "[해봄] $accountType · $nickname 님의 메일입니다."
+            val body = """
+안녕하세요! 해봄 팀입니다. 🌱
+불편한 점, 바라는 점, 버그, 칭찬까지 뭐든 편하게 적어 주세요.
+더 좋은 앱으로 발전하겠습니다. :)
+
+------
+
+내용을 여기에 적어 주세요.
+(버그라면 어떤 화면에서 발생했는지 함께 적어 주시면 도움이 됩니다.)
+
+------
+
+(아래의 내용을 지우시면 확인이 지연됩니다.)
+
+App Version: ${BuildConfig.VERSION_NAME}
+Build Number: ${BuildConfig.VERSION_CODE}
+Model: ${Build.MODEL}
+System Version: ${Build.VERSION.RELEASE}
+Account Type: $accountType
+            """.trimIndent()
+            sendThrottledEffect(MainDrawerSideEffect.OpenMail(subject, body))
         }
 
         fun onReviewClick() {
